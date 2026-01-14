@@ -1,24 +1,33 @@
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './contexts/Authen';
+import { GuestRoute } from './protecteds/RouteRedirect';
+import LayoutGuest from './layouts/guest';
+// Tạo nhanh vài component để test hiển thị
+const HomePage = () => <h1>Trang chủ (Guest)</h1>;
+const Dashboard = () => <h1>Đây là Dashboard (Member)</h1>;
+const AdminPage = () => <h1>Đây là Admin Page</h1>;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* --- NHÓM 1: GUEST --- */}
+          {/* Logic: Nếu là member -> Đá sang dashboard. Nếu chưa -> Hiện Layout */}
+          <Route element={<GuestRoute><LayoutGuest /></GuestRoute>}>
+              {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<div>Trang Login</div>} />
+          </Route>
+          {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
+          {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* --- NHÓM 3: ADMIN (Đích đến) --- */}
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
