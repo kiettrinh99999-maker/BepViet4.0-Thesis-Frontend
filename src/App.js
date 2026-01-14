@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
 import LayoutGuest from './layouts/guest';
+import MemberLayout from './layouts/user';
 // Tạo nhanh vài component để test hiển thị
 const HomePage = () => <h1>Trang chủ (Guest)</h1>;
 const Dashboard = () => <h1>Đây là Dashboard (Member)</h1>;
@@ -22,7 +23,7 @@ function App() {
           </Route>
           {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
           {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<MemberLayout showLoginNotice={false} />} />
           {/* --- NHÓM 3: ADMIN (Đích đến) --- */}
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
