@@ -1,13 +1,20 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({ role:'member', name: 'Nguyen Van A' });
+  const [api, SetApi] = useState('http://127.0.0.1:8000/api/');
+  const [store, SetStore] = useState('http://localhost:8000/storage');
+  const [user, setUser] = useState({ role: 'd', name: 'Nguyen Van A' });
+  const [config, SetConfig] = useState(null);
   const logout = () => setUser(null);
+  useEffect(() => {
+    fetch(api + 'config').then(response => response.json())
+      .then(data => SetConfig(data));
+  }, [])
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, logout, config, api, SetApi, store, SetStore }}>
       {children}
     </AuthContext.Provider>
   );

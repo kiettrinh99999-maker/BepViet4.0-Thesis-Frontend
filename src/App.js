@@ -2,7 +2,7 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
-import LayoutGuest from './layouts/guest';
+import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
 // Tạo nhanh vài component để test hiển thị
 const HomePage = () => <h1>Trang chủ (Guest)</h1>;
@@ -16,10 +16,10 @@ function App() {
         <Routes>
           {/* --- NHÓM 1: GUEST --- */}
           {/* Logic: Nếu là member -> Đá sang dashboard. Nếu chưa -> Hiện Layout */}
-          <Route element={<GuestRoute><LayoutGuest /></GuestRoute>}>
-              {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<div>Trang Login</div>} />
+          <Route element={<GuestRoute><GuestLayout /></GuestRoute>}>
+            {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<div>Trang Login</div>} />
           </Route>
           {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
           {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
