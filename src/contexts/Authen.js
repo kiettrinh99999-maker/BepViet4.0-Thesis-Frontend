@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [api, SetApi] = useState('http://127.0.0.1:8000/api/');
   const [store, SetStore] = useState('http://localhost:8000/storage');
-  const [user, setUser] = useState({ role: 'd', name: 'Nguyen Van A' });
+  const [user, setUser] = useState({ role: 'd', name: 'Nguyen Van A', id: 3 });
   const [config, SetConfig] = useState(null);
   const logout = () => setUser(null);
   useEffect(() => {

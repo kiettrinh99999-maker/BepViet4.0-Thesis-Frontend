@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
 import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
+import ForumPage from './pages/forums/list_forum';
 // Tạo nhanh vài component để test hiển thị
 const HomePage = () => <h1>Trang chủ (Guest)</h1>;
 const Dashboard = () => <h1>Đây là Dashboard (Member)</h1>;
@@ -20,6 +21,8 @@ function App() {
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<div>Trang Login</div>} />
+            <Route path="/forum" element={<ForumPage/>} />
+            
           </Route>
           {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
           {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
