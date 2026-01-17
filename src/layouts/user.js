@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
-const MemberLayout = ({ children, showLoginNotice = false }) => {
+const MemberLayout = () => {
   const [activeNav, setActiveNav] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);

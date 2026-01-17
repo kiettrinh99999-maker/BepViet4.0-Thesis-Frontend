@@ -5,9 +5,6 @@ import { GuestRoute } from './protecteds/RouteRedirect';
 import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
 // Tạo nhanh vài component để test hiển thị
-const HomePage = () => <h1>Trang chủ (Guest)</h1>;
-const Dashboard = () => <h1>Đây là Dashboard (Member)</h1>;
-const AdminPage = () => <h1>Đây là Admin Page</h1>;
 
 function App() {
   return (
@@ -15,17 +12,19 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* --- NHÓM 1: GUEST --- */}
-          {/* Logic: Nếu là member -> Đá sang dashboard. Nếu chưa -> Hiện Layout */}
-          <Route element={<GuestRoute><GuestLayout /></GuestRoute>}>
+          <Route element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<div>Trang Login</div>} />
+            <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
+            <Route path="/cong-thuc" element={<h1>Cài trang công thức tại đây</h1>} />
+            <Route path="/dien-dan" element={<h1>Cài trang diễn đàn tại đây</h1>} />
+            <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
+            <Route path="/shopping-list" element={<h1>Cài trang shopping tại đây</h1>} />
+            <Route path="/meal-plane" element={<h1>Cài trang meal plane tại đây</h1>} />
           </Route>
-          {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
-          {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
-          <Route path="/dashboard" element={<MemberLayout showLoginNotice={false} />} />
-          {/* --- NHÓM 3: ADMIN (Đích đến) --- */}
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/login" element={<div>Trang Login</div>} />
+           <Route path="/register" element={<div>Trang Đăng ký</div>} />
+          {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
+          <Route path="/admin" element={<h1>Cài trang Admin</h1>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
