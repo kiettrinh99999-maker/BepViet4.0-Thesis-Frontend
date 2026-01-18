@@ -1,16 +1,6 @@
-import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/Authen";
-
+//Kiểm tra role user trước khi quyết định trả về layout nào
 export const GuestRoute = ({ children }) => {
     const { user } = useAuth();
-    
-    if (user) {
-        if (user.role === "member") {
-            return <Navigate to="/dashboard" replace />;
-        }
-        if (user.role === 'admin') {
-            return <Navigate to="/admin" replace />;
-        }
-    }
-    return children ? children : <Outlet />;
-}
+    return user?.role === 'member' ? children[1] : children[0];
+};
