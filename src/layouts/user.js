@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const MemberLayout = ({ children, showLoginNotice = false }) => {
   const [activeNav, setActiveNav] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   // Đóng dropdown khi click bên ngoài
   useEffect(() => {
@@ -23,12 +24,19 @@ const MemberLayout = ({ children, showLoginNotice = false }) => {
 
   const handleNavClick = (nav) => {
     setActiveNav(nav);
-    alert(`Chuyển đến trang: ${nav === 'home' ? 'HOME' : 
-           nav === 'recipes' ? 'CÔNG THỨC' : 
-           nav === 'forum' ? 'DIỄN ĐÀN' : 
-           nav === 'blog' ? 'BLOG' : 
-           nav === 'shopping' ? 'SHOPPING LIST' : 
-           'KẾ HOẠCH BỮA ĂN'}`);
+    if (nav === 'home') {
+      navigate('/dashboard');
+    } else if (nav === 'recipes') {
+      navigate('/dashboard/recipes');
+    } else if (nav === 'forum') {
+      alert('Chuyển đến trang: DIỄN ĐÀN');
+    } else if (nav === 'blog') {
+      alert('Chuyển đến trang: BLOG');
+    } else if (nav === 'shopping') {
+      alert('Chuyển đến trang: SHOPPING LIST');
+    } else if (nav === 'mealplan') {
+      alert('Chuyển đến trang: KẾ HOẠCH BỮA ĂN');
+    }
   };
 
   const handleLogout = () => {
