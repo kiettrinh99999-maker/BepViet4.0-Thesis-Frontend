@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
 import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
+import ForumPage from './pages/forums/list_forum';
 // Tạo nhanh vài component để test hiển thị
 
 function App() {

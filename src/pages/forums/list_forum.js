@@ -1,0 +1,180 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/Authen";
+
+export default function ForumPage() {
+  const [questions, setQuestions] = useState(null);
+  const [totalAnswers, setTotalAnswers] = useState(null);
+  const [page, setPage] = useState(1);
+  const {api} = useAuth();
+  
+  useEffect(() => {
+    // Gọi API lấy danh sách question theo page
+    fetch(`${api}questions?page=${page}`)
+      .then(res => res.json())
+      .then(res => {
+        setQuestions(res.data);
+      });
+  }, [page]);
+
+  
+  useEffect(() => {
+    // Gọi API lấy tổng số answer
+    fetch(api + "answers")
+      .then(res => res.json())
+      .then(res => {
+        setTotalAnswers(res.data.total);
+      });
+  }, []);
+  
+  //Nếu chưa fetch xong sẽ hiển thị thông báo đang tải
+  if (questions === null || totalAnswers === null) {
+    return <h4 className="text-center mt-5">Đang tải...</h4>;
+  }
+  return (
+    <div className="container my-4">
+
+      {/* Login notice */}
+      <div className="alert alert-warning d-flex align-items-center mb-4">
+        <i className="fas fa-info-circle me-2"></i>
+        <div>
+          Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu
+          hỏi và tham gia thảo luận.
+        </div>
+      </div>
+      {/* Forum header */}
+      <div className="card shadow-sm mb-4">
+        <div className="card-body">
+          <h1 className="text-danger fw-bold mb-2">
+            Diễn Đàn Hỏi Đáp
+          </h1>
+
+          <p className="text-muted mb-3">
+            Nơi trao đổi, thảo luận và giải đáp mọi thắc mắc về ẩm thực Việt Nam.
+            Hãy đặt câu hỏi và chia sẻ kiến thức của bạn!
+          </p>
+
+          <div className="d-flex flex-wrap gap-3">
+            <div className="d-flex align-items-center bg-light rounded-pill px-3 py-2">
+              <i className="fas fa-question-circle text-danger me-2"></i>
+              <span>{questions.total} câu hỏi</span>
+            </div>
+
+            <div className="d-flex align-items-center bg-light rounded-pill px-3 py-2">
+              <i className="fas fa-comments text-danger me-2"></i>
+              <span>{totalAnswers} trả lời</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ask question form */}
+      <div className="card shadow-sm mb-4">
+        <div className="card-body">
+          <h5 className="text-danger mb-3">Đặt Câu Hỏi Mới</h5>
+
+          <form>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">
+                Tiêu đề câu hỏi
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Ví dụ: Làm thế nào để phở có nước dùng trong?"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">
+                Nội dung câu hỏi
+              </label>
+              <textarea
+                className="form-control"
+                rows="4"
+                placeholder="Mô tả chi tiết câu hỏi của bạn..."
+              ></textarea>
+            </div>
+
+            <button type="submit" className="btn btn-danger">
+              <i className="fas fa-paper-plane me-1"></i>
+              Đăng Câu Hỏi
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* Questions list */}
+      <div className="card shadow-sm mb-4">
+        <div className="list-group list-group-flush">
+
+          {questions.data.map((question) => (
+            <div
+              key={question.id}
+              className="list-group-item py-4"
+            >
+              {/* Title */}
+              <h5 className="fw-semibold mb-2">
+                <a
+                  href="#"
+                  className="text-decoration-none text-dark"
+                >
+                  {question.title}
+                </a>
+              </h5>
+
+              {/* Content */}
+              <p className="text-muted mb-3">
+                {question.description}
+              </p>
+
+              {/* Footer */}
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div className="d-flex align-items-center gap-2">
+                  <i className="fas fa-user-circle fs-4 text-secondary"></i>
+                  <div>
+                    <div className="fw-semibold">{question.user.username}</div>
+                    <small className="text-muted">{question.created_at}</small>
+                  </div>
+                </div>
+
+                <div className="text-muted">
+                  <i className="fas fa-comment me-1 text-danger"></i>
+                   {question.answers_count} bình luận
+                </div>
+              </div>
+            </div>
+          ))}
+
+        </div>
+      </div>
+
+      {/* Pagination */}
+      <nav className="d-flex justify-content-center mt-4">
+        <ul className="pagination">
+          {/* Previous */}
+          <li className={`page-item ${questions.current_page === 1 ? 'disabled' : ''}`}>
+            <button className="page-link" onClick={() => setPage(page - 1)}>
+              &laquo;
+            </button>
+          </li>
+          {/* Page numbers */}
+          {Array.from({ length: questions.last_page }, (_, i) => (
+            <li key={i} className={`page-item ${questions.current_page === i + 1 ? 'active' : ''}`}>
+              <button className="page-link" onClick={() => setPage(i + 1)}>
+                {i + 1}
+              </button>
+            </li>
+          ))}
+
+          {/* Next */}
+          <li className={`page-item ${questions.current_page === questions.last_page ? 'disabled' : ''}`}>
+            <button className="page-link" onClick={() => setPage(page + 1)}>
+              &raquo;
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  );
+}
