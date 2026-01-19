@@ -1,0 +1,461 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  --primary-color: #d32f2f;
+  --primary-light: #ff6659;
+  --primary-dark: #9a0007;
+  --secondary-color: #ffb74d;
+  --secondary-dark: #c88719;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --background-light: #f9f5f0;
+  --background-white: #ffffff;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --success-color: #2e7d32;
+  --drag-over-color: rgba(255, 107, 107, 0.2);
+  --breakfast-color: #ffcc80;
+  --lunch-color: #81c784;
+  --dinner-color: #64b5f6;
+  --snack-color: #ba68c8;
+}
+
+.meal-plan-container {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--background-light);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Page Title */
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--primary-dark);
+  margin: 0 0 10px;
+  text-align: center;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--text-light);
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+/* Controls */
+.meal-plan-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.week-btn {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.week-btn:hover {
+  background-color: #f9f9f9;
+  border-color: var(--primary-color);
+}
+
+.current-week {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  min-width: 200px;
+  text-align: center;
+}
+
+.action-btn {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.action-btn:hover {
+  background-color: #f9f9f9;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Drag Instructions */
+.drag-instructions {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+
+.drag-instructions i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+/* Layout */
+.meal-plan-layout {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 50px;
+}
+
+/* Sidebar */
+.recipe-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: var(--background-white);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.sidebar-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-header h2 i { color: var(--primary-color); }
+
+.filter-dropdown {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: white;
+  margin-bottom: 15px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.sidebar-search {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.sidebar-search input {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  outline: none;
+}
+
+.sidebar-search input:focus {
+  border-color: var(--primary-color);
+  background-color: white;
+}
+
+.sidebar-search i {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+}
+
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.quick-tag {
+  background-color: #f0f0f0;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.quick-tag:hover, .quick-tag.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.palette-recipes {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.palette-recipe {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 2px solid transparent;
+  cursor: grab;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.palette-recipe:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: rgba(211, 47, 47, 0.3);
+}
+
+.palette-recipe-title {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+.palette-recipe-region {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* Grid System */
+.meal-plan-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 1px;
+  background-color: var(--border-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.grid-header {
+  background-color: var(--primary-dark);
+  color: white;
+  padding: 15px 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.time-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 15px 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Meal Cell */
+.meal-cell {
+  background-color: white;
+  padding: 12px 10px;
+  min-height: 130px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.meal-cell.drag-over {
+  background-color: var(--drag-over-color);
+  border: 2px dashed var(--primary-color);
+}
+
+/* Ô trống (Empty State) - Đã chỉnh mờ theo yêu cầu */
+.meal-cell.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-style: italic;
+  font-size: 0.85rem;
+  min-height: 130px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.meal-cell.empty i {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #e0e0e0; /* Dấu cộng mờ */
+  transition: all 0.3s ease;
+}
+
+.meal-cell.empty:hover {
+  background-color: rgba(211, 47, 47, 0.05);
+}
+
+.meal-cell.empty:hover i {
+  color: var(--primary-color); /* Hiện rõ khi hover */
+  transform: scale(1.1);
+}
+
+/* Meal Content */
+.meal-content {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  height: 100%;
+  cursor: move;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.meal-content:hover {
+  background-color: #f9f9f9;
+  border-color: rgba(211, 47, 47, 0.2);
+}
+
+.meal-recipe {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.meal-region {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 10px;
+  align-self: flex-start;
+}
+
+/* Nút xóa (Ẩn mặc định, hiện khi hover) */
+.meal-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.meal-cell:hover .meal-actions {
+  opacity: 1;
+}
+
+.meal-action-btn {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  transition: all 0.3s;
+  z-index: 10;
+}
+
+.meal-action-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* NUTRITION SUMMARY - PHẦN THỐNG KÊ (Chuẩn file gốc) */
+.nutrition-summary {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 30px;
+  box-shadow: var(--shadow);
+}
+
+.nutrition-summary h3 {
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 15px;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+}
+
+.nutrition-summary h3 i {
+  color: var(--primary-color);
+}
+
+.nutrition-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.nutrition-stat {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  text-align: center;
+}
+
+.nutrition-stat-label {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.nutrition-stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.nutrition-stat-value.success {
+  color: var(--success-color);
+}
