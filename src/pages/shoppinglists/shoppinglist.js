@@ -237,7 +237,7 @@ const ShoppingList = () => {
       {/* Modal In Danh Sách */}
       <Modal show={showPrintModal} onHide={() => setShowPrintModal(false)} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title className="font-playfair text-danger">Xem trước khi in</Modal.Title>
+          <Modal.Title className="font-playfair text-danger">In danh sách</Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-4">
           <div className="text-center mb-4">
