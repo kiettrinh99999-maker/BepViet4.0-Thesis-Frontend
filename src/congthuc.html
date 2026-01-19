@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Thức Ẩm Thực Việt - Bếp Việt 4.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #d32f2f;
+            --primary-light: #ff6659;
+            --primary-dark: #9a0007;
+            --secondary-color: #ffb74d;
+            --secondary-dark: #c88719;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --background-light: #f9f5f0;
+            --background-white: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--background-white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .header-top .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-image i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .header-main {
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-menu a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #f5f5f5;
+            border-radius: 20px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .search-box i {
+            color: var(--text-light);
+            margin-right: 8px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+
+        .btn-login:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .btn-register {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .btn-register:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Login Notice */
+
+.login-notice {
+    text-align: center;
+    padding: 12px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+.login-notice i {
+    margin-right: 8px;
+}
+
+        /* Hero Section */
+        .hero {
+            padding: 40px 0;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: white;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .hero-tagline {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        .hero-tagline span {
+            padding: 5px 15px;
+            background-color: rgba(211, 47, 47, 0.8);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background-color: var(--background-white);
+            padding: 25px 0;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: white;
+            color: var(--text-dark);
+            min-width: 180px;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .filter-btn.reset {
+            background-color: var(--text-light);
+        }
+
+        .filter-btn.reset:hover {
+            background-color: var(--text-dark);
+        }
+
+        /* Recipe Grid */
+        .recipe-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--primary-dark);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .recipe-card {
+            background-color: var(--background-white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .recipe-image {
+            height: 200px;
+            width: 100%;
+            background-color: #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recipe-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .recipe-card:hover .recipe-image img {
+            transform: scale(1.05);
+        }
+
+        .recipe-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .recipe-content {
+            padding: 20px;
+        }
+
+        .recipe-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .recipe-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .recipe-time {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-light);
+        }
+
+        .recipe-difficulty {
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .difficulty-easy {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .difficulty-medium {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+
+        .difficulty-hard {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .recipe-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            color: var(--secondary-color);
+            margin-right: 10px;
+        }
+
+        .rating-count {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn.save {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.save:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .action-btn.view {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .action-btn.view:hover {
+            background-color: rgba(211, 47, 47, 0.1);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 60px;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .pagination-btn:hover {
+            background-color: #f5f5f5;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin: 0 5px;
+        }
+
+        /* Footer */
+       /* Footer - ĐÃ CẬP NHẬT ĐỂ ĐỒNG BỘ */
+footer {
+    background-color: var(--primary-dark);
+    color: white;
+    padding: 40px 0 20px;
+    margin-top: 50px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-logo-icon {
+    background-color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-logo-icon i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.footer-about {
+    flex: 1;
+    min-width: 300px;
+}
+
+.footer-about p {
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.footer-links {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-links h3 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.footer-links h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background-color: var(--secondary-color);
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-menu {
+                gap: 20px;
+            }
+            
+            .search-box {
+                width: 250px;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-menu {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .search-box {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .recipes-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .auth-buttons {
+                margin-top: 10px;
+            }
+            
+            .recipe-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
+            
+            .logo-text {
+                align-items: center;
+            }
+            
+            .hero-tagline {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="container">
+                <div class="logo-section">
+                    <div class="logo-image">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="logo-text">
+                        <a href="./trang chủ chưa đăng nhập.html" class="logo">Bếp Việt 4.0</a>
+                        <div class="logo-subtitle">Khám phá – Chia sẻ – Gìn giữ tinh hoa ẩm thực Việt Nam</div>
+                    </div>
+                </div>
+                <div class="auth-buttons">
+                    <button class="btn btn-login"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
+                    <button class="btn btn-register"><i class="fas fa-user-plus"></i> Đăng ký</button>
+                </div>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <div class="nav-container">
+                    <nav>
+                        <ul class="nav-menu">
+                            <li><a href="./trang chủ chưa đăng nhập.html">HOME</a></li>
+                            <li><a href="./công thức.html" class="active">CÔNG THỨC</a></li>
+                            <li><a href="./diễn đàn.html">DIỄN ĐÀN</a></li>
+                            <li><a href="./blog.html">BLOG</a></li>
+                        </ul>
+                    </nav>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search here...">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Notice -->
+    <div class="container">
+        <div class="login-notice">
+            <i class="fas fa-info-circle"></i> Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để tương tác và lưu công thức yêu thích.
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Công Thức Ẩm Thực Việt</h1>
+            <p>Khám phá hơn 500+ công thức nấu ăn đặc sắc từ ba miền Bắc - Trung - Nam</p>
+            <div class="hero-tagline">
+                <span>Miền Bắc</span>
+                <span>Miền Trung</span>
+                <span>Miền Nam</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label class="filter-label">Khu vực</label>
+                    <select class="filter-select" id="regionFilter">
+                        <option value="all">Tất cả khu vực</option>
+                        <option value="north">Miền Bắc</option>
+                        <option value="central">Miền Trung</option>
+                        <option value="south">Miền Nam</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Dịp đặc biệt</label>
+                    <select class="filter-select" id="occasionFilter">
+                        <option value="all">Tất cả dịp</option>
+                        <option value="daily">Ngày thường</option>
+                        <option value="tet">Ngày Tết</option>
+                        <option value="festival">Lễ hội</option>
+                        <option value="special">Đặc biệt</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Độ khó</label>
+                    <select class="filter-select" id="difficultyFilter">
+                        <option value="all">Tất cả độ khó</option>
+                        <option value="easy">Dễ</option>
+                        <option value="medium">Trung bình</option>
+                        <option value="hard">Khó</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Thời gian</label>
+                    <select class="filter-select" id="timeFilter">
+                        <option value="all">Tất cả thời gian</option>
+                        <option value="quick">Dưới 30 phút</option>
+                        <option value="medium">30-60 phút</option>
+                        <option value="long">Trên 60 phút</option>
+                    </select>
+                </div>
+                
+                <div class="filter-buttons">
+                    <button class="filter-btn" id="applyFilter">Áp dụng bộ lọc</button>
+                    <button class="filter-btn reset" id="resetFilter">Đặt lại</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recipe Grid Section -->
+    <section class="recipe-section">
+        <div class="container">
+            <h2 class="section-title">Danh Sách Công Thức</h2>
+            <div class="recipes-grid">
+                <!-- Recipe 1 -->
+                <div class="recipe-card" data-region="north" data-occasion="daily" data-difficulty="easy" data-time="medium">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN BẮC - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Phở bò Hà Nội">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Phở bò Hà Nội chính hiệu</h3>
+                        <p class="recipe-description">Món phở truyền thống với nước dùng trong, thơm ngon từ xương bò hầm nhiều giờ, thịt bò tái mềm và các loại rau thơm đặc trưng.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 2 giờ 30 phút
+                            </div>
+                            <div class="recipe-difficulty difficulty-medium">Trung bình</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="rating-count">31,591 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 2 -->
+                <div class="recipe-card" data-region="north" data-occasion="daily" data-difficulty="easy" data-time="quick">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN BẮC - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Bún chả Hà Nội">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Bún chả Hà Nội thịt nướng</h3>
+                        <p class="recipe-description">Bún chả với thịt nướng than hoa thơm lừng, nước mắm pha chua ngọt đậm đà, kèm rau sống và nem rán giòn rụm.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 45 phút
+                            </div>
+                            <div class="recipe-difficulty difficulty-easy">Dễ</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rating-count">28,743 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 3 -->
+                <div class="recipe-card" data-region="south" data-occasion="daily" data-difficulty="easy" data-time="medium">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN NAM - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Cơm tấm Sài Gòn">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Cơm tấm sườn nướng Sài Gòn</h3>
+                        <p class="recipe-description">Cơm tấm với sườn nướng mật ong thơm ngon, trứng ốp la, chả trứng và nước mắm chua ngọt đặc trưng miền Nam.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 1 giờ 15 phút
+                            </div>
+                            <div class="recipe-difficulty difficulty-easy">Dễ</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rating-count">30,581 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 4 -->
+                <div class="recipe-card" data-region="central" data-occasion="tet" data-difficulty="medium" data-time="long">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN TRUNG - NGÀY TẾT</div>
+                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Bánh chưng">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Bánh chưng truyền thống ngày Tết</h3>
+                        <p class="recipe-description">Bánh chưng vuông vức với nếp dẻo, đậu xanh bùi bùi, thịt mỡ thơm ngon, gói bằng lá dong xanh và luộc nhiều giờ.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 8 giờ
+                            </div>
+                            <div class="recipe-difficulty difficulty-hard">Khó</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="rating-count">12,456 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 5 -->
+                <div class="recipe-card" data-region="south" data-occasion="daily" data-difficulty="medium" data-time="medium">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN NAM - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hủ tiếu Nam Vang">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Hủ tiếu Nam Vang Sài Gòn</h3>
+                        <p class="recipe-description">Sợi hủ tiếu dai dai với nước dùng ngọt thanh từ xương heo, tôm, mực và thịt heo xay, ăn kèm rau sống và chanh ớt.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 1 giờ 30 phút
+                            </div>
+                            <div class="recipe-difficulty difficulty-medium">Trung bình</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rating-count">24,892 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 6 -->
+                <div class="recipe-card" data-region="central" data-occasion="daily" data-difficulty="easy" data-time="medium">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN TRUNG - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Bún bò Huế">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Bún bò Huế cay nồng</h3>
+                        <p class="recipe-description">Bún bò với nước dùng đậm đà từ xương bò, sả, ớt cay, thịt bò, giò heo và chả cua, ăn kèm rau sống và chanh.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 2 giờ
+                            </div>
+                            <div class="recipe-difficulty difficulty-medium">Trung bình</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="rating-count">29,541 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 7 -->
+                <div class="recipe-card" data-region="south" data-occasion="festival" data-difficulty="hard" data-time="long">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN NAM - LỄ HỘI</div>
+                        <img src="https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Bánh tét">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Bánh tét lá chuối miền Tây</h3>
+                        <p class="recipe-description">Bánh tét tròn dài với nếp dẻo thơm, nhân đậu xanh và thịt mỡ, gói bằng lá chuối và luộc chín, thường dùng trong dịp Tết.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 6 giờ
+                            </div>
+                            <div class="recipe-difficulty difficulty-hard">Khó</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="rating-count">9,873 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recipe 8 -->
+                <div class="recipe-card" data-region="north" data-occasion="daily" data-difficulty="easy" data-time="quick">
+                    <div class="recipe-image">
+                        <div class="recipe-tag">MIỀN BẮC - NGÀY THƯỜNG</div>
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Bánh cuốn">
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Bánh cuốn Thanh Trì Hà Nội</h3>
+                        <p class="recipe-description">Bánh cuốn mỏng tang với nhân thịt băm, mộc nhĩ, hành khô, ăn kèm chả quế và nước mắm chua ngọt, rắc chút hành phi thơm.</p>
+                        
+                        <div class="recipe-meta">
+                            <div class="recipe-time">
+                                <i class="far fa-clock"></i> 40 phút
+                            </div>
+                            <div class="recipe-difficulty difficulty-medium">Trung bình</div>
+                        </div>
+                        
+                        <div class="recipe-rating">
+                            <div class="stars">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="rating-count">22,781 đánh giá</div>
+                        </div>
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn save"><i class="far fa-bookmark"></i> Lưu công thức</button>
+                            <button class="action-btn view"><i class="far fa-eye"></i> Xem chi tiết</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn disabled">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">4</button>
+                <span class="pagination-ellipsis">...</span>
+                <button class="pagination-btn">12</button>
+                <button class="pagination-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+<!-- Footer - ĐÃ CẬP NHẬT ĐỂ ĐỒNG BỘ -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-about" style="flex: 1; text-align: center; min-width: 100%;">
+                <div class="footer-logo" style="justify-content: center;">
+                    <div class="footer-logo-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    Bếp Việt 4.0
+                </div>
+                <p style="text-align: center;">© 2028 BÁS VỌK 4D - Câu lạc bộ ẩm thực VN</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Bếp Việt 4.0 - Nơi gìn giữ hương vị Việt | Hotline: 1900 1234 | Email: contact@bepviet40.vn</p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        // Xử lý đăng nhập/đăng ký
+        document.querySelector('.btn-login').addEventListener('click', function() {
+            alert('Chức năng đăng nhập đang được phát triển. Vui lòng quay lại sau!');
+        });
+        
+        document.querySelector('.btn-register').addEventListener('click', function() {
+            alert('Chức năng đăng ký đang được phát triển. Vui lòng quay lại sau!');
+        });
+        
+        // Xử lý tìm kiếm
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    alert(`Đang tìm kiếm: "${query}". Chức năng tìm kiếm đang được phát triển.`);
+                    this.value = '';
+                }
+            }
+        });
+        
+        // Thêm hiệu ứng cho thẻ công thức khi hover
+        const recipeCards = document.querySelectorAll('.recipe-card');
+        recipeCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+        
+        // Xử lý nút Lưu công thức
+        const saveButtons = document.querySelectorAll('.action-btn.save');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const recipeTitle = this.closest('.recipe-content').querySelector('.recipe-title').textContent;
+                alert(`Đã lưu công thức "${recipeTitle}" vào danh sách yêu thích!`);
+            });
+        });
+        
+        // Xử lý nút Xem chi tiết
+        const viewButtons = document.querySelectorAll('.action-btn.view');
+        viewButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const recipeTitle = this.closest('.recipe-content').querySelector('.recipe-title').textContent;
+                alert(`Đang chuyển đến trang chi tiết công thức "${recipeTitle}"...`);
+            });
+        });
+        
+        // Xử lý bộ lọc
+        const applyFilterBtn = document.getElementById('applyFilter');
+        const resetFilterBtn = document.getElementById('resetFilter');
+        const regionFilter = document.getElementById('regionFilter');
+        const occasionFilter = document.getElementById('occasionFilter');
+        const difficultyFilter = document.getElementById('difficultyFilter');
+        const timeFilter = document.getElementById('timeFilter');
+        
+        applyFilterBtn.addEventListener('click', function() {
+            const region = regionFilter.value;
+            const occasion = occasionFilter.value;
+            const difficulty = difficultyFilter.value;
+            const time = timeFilter.value;
+            
+            // Ẩn tất cả công thức
+            recipeCards.forEach(card => {
+                card.style.display = 'none';
+            });
+            
+            // Hiển thị công thức phù hợp với bộ lọc
+            recipeCards.forEach(card => {
+                const cardRegion = card.getAttribute('data-region');
+                const cardOccasion = card.getAttribute('data-occasion');
+                const cardDifficulty = card.getAttribute('data-difficulty');
+                const cardTime = card.getAttribute('data-time');
+                
+                const regionMatch = region === 'all' || cardRegion === region;
+                const occasionMatch = occasion === 'all' || cardOccasion === occasion;
+                const difficultyMatch = difficulty === 'all' || cardDifficulty === difficulty;
+                const timeMatch = time === 'all' || cardTime === time;
+                
+                if (regionMatch && occasionMatch && difficultyMatch && timeMatch) {
+                    card.style.display = 'block';
+                }
+            });
+            
+            // Đếm số công thức hiển thị
+            const visibleCards = document.querySelectorAll('.recipe-card[style="display: block"]');
+            alert(`Đã tìm thấy ${visibleCards.length} công thức phù hợp với bộ lọc của bạn!`);
+        });
+        
+        resetFilterBtn.addEventListener('click', function() {
+            // Reset các select box
+            regionFilter.value = 'all';
+            occasionFilter.value = 'all';
+            difficultyFilter.value = 'all';
+            timeFilter.value = 'all';
+            
+            // Hiển thị tất cả công thức
+            recipeCards.forEach(card => {
+                card.style.display = 'block';
+            });
+            
+            alert('Đã đặt lại bộ lọc!');
+        });
+        
+        // Xử lý phân trang
+        const paginationBtns = document.querySelectorAll('.pagination-btn:not(.disabled)');
+        paginationBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('active') && !this.querySelector('i')) {
+                    // Xóa active class từ tất cả các nút
+                    document.querySelectorAll('.pagination-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Thêm active class cho nút được nhấn
+                    this.classList.add('active');
+                    
+                    alert(`Đang chuyển đến trang ${this.textContent}...`);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
