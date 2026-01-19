@@ -4,10 +4,11 @@ import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
 import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
-import RecipesPage from './pages/recipe';
+import AdminLayout from './layouts/admin';
 // Tạo nhanh vài component để test hiển thị
 import ShoppingList from './pages/shoppinglists/shoppinglist';
 import ForumPage from './pages/forums/list_forum';
+import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
             <Route path="/dien-dan" element={<ForumPage />} />
+            <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
             <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
             <Route element={<RouterProtected />}>
@@ -30,9 +32,12 @@ function App() {
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
           </Route>
-          {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
-          {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
-          <Route path="/dashboard" element={<MemberLayout showLoginNotice={false} />} />
+          <Route path="/login" element={<div>Trang Login</div>} />
+          <Route path="/register" element={<div>Trang Đăng ký</div>} />
+          {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
+          <Route path="/admin" element={<AdminLayout/>}>
+            
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>
