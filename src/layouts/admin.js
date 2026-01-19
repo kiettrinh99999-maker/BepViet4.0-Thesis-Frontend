@@ -1,0 +1,125 @@
+import { useState } from "react";
+import { Outlet, useNavigate } from "react-router";
+
+export default function AdminLayout() {
+  const [activeMenu, setActiveMenu] = useState("recipes");
+  const [showSidebar, setShowSidebar] = useState(true);
+  const navigate = useNavigate();
+
+  // Danh sách items sidebar
+  // path: sẽ dùng cho điều hướng khi bật navigate
+  const menus = [
+    { id: "dashboard", icon: "fa-chart-bar", label: "Dashboard", path: "/admin/dashboard" },
+    { id: "approve", icon: "fa-clipboard-check", label: "Duyệt công thức", path: "/admin/approve" },
+    { id: "recipes", icon: "fa-utensils", label: "Quản lý công thức", path: "/admin/recipes" },
+    { id: "categories", icon: "fa-list", label: "Quản lý danh mục", path: "/admin/categories" },
+    { id: "settings", icon: "fa-cog", label: "Cấu hình website", path: "/admin/settings" },
+    { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
+  ];
+
+  function handleClick(menu){
+    setActiveMenu(menu.id);
+    //navigate(menu.path); dùng để thay đổi đường dẫn
+    alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
+  };
+
+  return (
+    <div className="container-fluid">
+      <div className="row min-vh-100">
+        {/* Sidebar */}
+        {/* Sidebar chỉ hiển thị khi showSidebar = true */}
+        {showSidebar && (
+        <aside
+            className="col-12 col-lg-2 text-white p-0"
+            style={{ backgroundColor: "#2c3e50", minHeight: "100vh"}}
+        >
+            <div className="text-center py-4 border-bottom border-secondary">
+                <div className="d-flex align-items-center justify-content-center gap-2">
+                    <i
+                    className="fas fa-utensils"
+                    style={{ fontSize: "1.8rem", color: "#d32f2f" }}
+                    ></i>
+
+                    <h4 className="mb-0 fw-bold">
+                    Bếp Việt <span className="text-danger">4.0</span>
+                    </h4>
+                </div>
+            </div>
+            <ul className="nav flex-column mt-3">
+            {/* Danh sách menu */}
+            {menus.map(menu => (
+                <li
+                key={menu.id}
+                className={`nav-link d-flex align-items-center px-4 py-3 fs-6 ${
+                    activeMenu === menu.id
+                    ? "bg-light text-dark border-start border-4 border-danger fw-semibold"
+                    : "text-white"
+                }`}
+                style={{ cursor: "pointer" }}
+                onClick={() => handleClick(menu)}
+                >
+                <i className={`fas ${menu.icon} fs-5 me-4`}></i>
+                <span>{menu.label}</span>
+                </li>
+            ))}
+            </ul>
+        </aside>
+        )}
+
+        {/* Right container */}
+        <div className={showSidebar ? "col-lg-10 col-12 p-0 d-flex flex-column" : "col-12 p-0 d-flex flex-column"}>
+        
+          {/* Main content */}
+          <main className="flex-grow-1">
+            {/* Header */}
+            <nav className="navbar navbar-light bg-white shadow-sm px-3">
+              {/* Nút toggle sidebar*/}
+              <button
+                  className="btn btn-outline-secondary d-lg-none"
+                  onClick={() => setShowSidebar(!showSidebar)}
+              >
+                <i className="fas fa-bars"></i>
+              </button>
+
+              <form className="d-flex ms-3" >
+                  <input className="form-control" type="search" placeholder="Tìm kiếm..." />
+                  <button className="btn btn-outline-white" type="submit">
+                      <i className="fas fa-search"></i>
+                  </button>
+              </form>
+              
+              {/* Thông tin admin */}
+              <div className="d-flex align-items-center ms-auto">
+                  <img
+                  src="https://randomuser.me/api/portraits/men/32.jpg"
+                  alt="Admin"
+                  className="rounded-circle me-2"
+                  width="40"
+                  height="40"
+                  />
+                  <div className="d-none d-md-block">
+                  <strong>Nguyễn Văn Admin</strong>
+                  <div className="text-muted small">Quản trị viên</div>
+                  </div>
+              </div>
+            </nav>
+
+            {/* Page content */}
+            {/* Nội dung sẽ render ở đây */}
+            <section className="p-4">
+                <Outlet />
+            </section>
+          </main>
+
+          {/* Footer */}
+          <footer className="text-center py-3 border-top text-secondary small bg-white">
+              © 2023 Admin - Website Bếp Việt 4.0
+          </footer>
+
+        </div>
+
+      </div>
+    </div>
+  );
+};
+

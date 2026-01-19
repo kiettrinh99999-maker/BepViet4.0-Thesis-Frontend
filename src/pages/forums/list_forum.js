@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
-import QuestionItem from "./components/QuestionItem";
+import QuestionItem from "../../components/QuestionItem";
 
 export default function ForumPage() {
   const [questions, setQuestions] = useState(null);
