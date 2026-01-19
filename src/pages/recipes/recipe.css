@@ -1,0 +1,217 @@
+/* Import font chữ chuẩn mẫu */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+/* Khai báo biến màu sắc */
+:root {
+  --primary-color: #d32f2f;
+  --primary-dark: #9a0007;
+  --secondary-color: #ffb74d;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --background-light: #f9f5f0;
+  --background-white: #ffffff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Div lớn bao quanh toàn bộ trang */
+.list-recipe-container {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+/* 1. HERO SECTION */
+.hero {
+  padding: 60px 0;
+  text-align: center;
+  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto 30px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.hero-tagline {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.hero-tagline span {
+  padding: 8px 20px;
+  background-color: rgba(211, 47, 47, 0.85);
+  border-radius: 25px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* 2. ADD RECIPE SECTION */
+.add-recipe-section {
+  margin-top: -50px;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 30px;
+}
+
+.btn-add-recipe {
+  padding: 12px 30px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+  margin: 0 auto;
+}
+
+.btn-add-recipe:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+}
+
+/* 3. FILTER SECTION */
+.filter-section {
+  background-color: var(--background-white);
+  padding: 25px 0;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.filter-select {
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: white;
+  color: var(--text-dark);
+  cursor: pointer;
+  width: 100%;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-btn.apply {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.filter-btn.apply:hover {
+  background-color: var(--primary-dark);
+}
+
+.filter-btn.reset {
+  background-color: #f5f5f5;
+  color: var(--text-light);
+}
+
+.filter-btn.reset:hover {
+  background-color: #e0e0e0;
+  color: var(--text-dark);
+}
+
+/* 4. PAGINATION */
+.pagination-container {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pagination-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: var(--text-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+
+.pagination-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.pagination-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f9f9f9;
+}
