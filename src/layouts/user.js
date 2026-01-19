@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 
 const MemberLayout = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [activeNav, setActiveNav] = useState('home');
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   // Đóng dropdown khi click bên ngoài
   useEffect(() => {

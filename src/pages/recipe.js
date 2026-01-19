@@ -1,1 +1,1 @@
-export { default } from './recipes/ListRecipe';
+export { default } from './recipes/list_recipe';
