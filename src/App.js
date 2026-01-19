@@ -7,6 +7,12 @@ import MemberLayout from './layouts/user';
 // Tạo nhanh vài component để test hiển thị
 import ShoppingList from './pages/shoppinglists/shoppinglist';
 import ForumPage from './pages/forums/list_forum';
+import ForumDetailPage from './pages/forums/detail_forum';
+// Tạo nhanh vài component để test hiển thị
+const HomePage = () => <h1>Trang chủ (Guest)</h1>;
+const Dashboard = () => <h1>Đây là Dashboard (Member)</h1>;
+const AdminPage = () => <h1>Đây là Admin Page</h1>;
+
 function App() {
   return (
     <AuthProvider>
@@ -18,6 +24,7 @@ function App() {
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
             <Route path="/cong-thuc" element={<h1>Cài trang công thức tại đây</h1>} />
             <Route path="/dien-dan" element={<ForumPage/>} />
+            <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage/>} />
             <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
             <Route path="/shopping-list" element={<ShoppingList/>} />
             <Route path="/meal-plane" element={<h1>Cài trang meal plane tại đây</h1>} />

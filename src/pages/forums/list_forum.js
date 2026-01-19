@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
+import QuestionItem from "./components/QuestionItem";
 
 export default function ForumPage() {
   const [questions, setQuestions] = useState(null);
   const [totalAnswers, setTotalAnswers] = useState(null);
   const [page, setPage] = useState(1);
-  const {api} = useAuth();
+  const {user, api} = useAuth();
   
   useEffect(() => {
     // Gọi API lấy danh sách question theo page
@@ -14,7 +15,7 @@ export default function ForumPage() {
       .then(res => {
         setQuestions(res.data);
       });
-  }, [page]);
+  }, [page, api]);
 
   
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function ForumPage() {
       .then(res => {
         setTotalAnswers(res.data.total);
       });
-  }, []);
+  }, [api]);
   
   //Nếu chưa fetch xong sẽ hiển thị thông báo đang tải
   if (questions === null || totalAnswers === null) {
@@ -34,13 +35,15 @@ export default function ForumPage() {
     <div className="container my-4">
 
       {/* Login notice */}
-      <div className="alert alert-warning d-flex align-items-center mb-4">
-        <i className="fas fa-info-circle me-2"></i>
-        <div>
-          Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu
-          hỏi và tham gia thảo luận.
+      {!user && (
+        <div className="alert alert-warning d-flex align-items-center mb-4">
+          <i className="fas fa-info-circle me-2"></i>
+          <div>
+            Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu
+            hỏi và tham gia thảo luận.
+          </div>
         </div>
-      </div>
+      )}
       {/* Forum header */}
       <div className="card shadow-sm mb-4">
         <div className="card-body">
@@ -106,45 +109,9 @@ export default function ForumPage() {
       {/* Questions list */}
       <div className="card shadow-sm mb-4">
         <div className="list-group list-group-flush">
-
-          {questions.data.map((question) => (
-            <div
-              key={question.id}
-              className="list-group-item py-4"
-            >
-              {/* Title */}
-              <h5 className="fw-semibold mb-2">
-                <a
-                  href="#"
-                  className="text-decoration-none text-dark"
-                >
-                  {question.title}
-                </a>
-              </h5>
-
-              {/* Content */}
-              <p className="text-muted mb-3">
-                {question.description}
-              </p>
-
-              {/* Footer */}
-              <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                <div className="d-flex align-items-center gap-2">
-                  <i className="fas fa-user-circle fs-4 text-secondary"></i>
-                  <div>
-                    <div className="fw-semibold">{question.user.username}</div>
-                    <small className="text-muted">{question.created_at}</small>
-                  </div>
-                </div>
-
-                <div className="text-muted">
-                  <i className="fas fa-comment me-1 text-danger"></i>
-                   {question.answers_count} bình luận
-                </div>
-              </div>
-            </div>
+          {questions.data.map(q => (
+            <QuestionItem key={q.id} question={q} />
           ))}
-
         </div>
       </div>
 
