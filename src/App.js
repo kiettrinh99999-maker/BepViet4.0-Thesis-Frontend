@@ -8,6 +8,7 @@ import MemberLayout from './layouts/user';
 import ShoppingList from './pages/shoppinglists/shoppinglist';
 import ForumPage from './pages/forums/list_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
+import ListRecipe from './pages/recipes/list_recipe';
 function App() {
   return (
     <AuthProvider>
@@ -17,7 +18,7 @@ function App() {
           <Route element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
-            <Route path="/cong-thuc" element={<h1>Cài trang công thức tại đây</h1>} />
+            <Route path="/cong-thuc" element={<h1>Tạo trang công thức tại đây</h1>} />
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
@@ -27,7 +28,6 @@ function App() {
               <Route path="/profile" element={<h1>Profile</h1>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
-
           </Route>
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
