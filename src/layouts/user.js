@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import React, { useState, useRef, useEffect } from 'react';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 
 const MemberLayout = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeNav, setActiveNav] = useState('home');
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  // Đóng dropdown khi click bên ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleNavClick = (nav) => {
+    setActiveNav(nav);
+    alert(`Chuyển đến trang: ${nav === 'home' ? 'HOME' : 
+           nav === 'recipes' ? 'CÔNG THỨC' : 
+           nav === 'forum' ? 'DIỄN ĐÀN' : 
+           nav === 'blog' ? 'BLOG' : 
+           nav === 'shopping' ? 'SHOPPING LIST' : 
+           'KẾ HOẠCH BỮA ĂN'}`);
+  };
 
   const handleLogout = () => {
     if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
