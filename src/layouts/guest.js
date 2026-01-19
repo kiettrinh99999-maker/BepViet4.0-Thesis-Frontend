@@ -1,24 +1,13 @@
 import React, { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/Authen';
 
 const GuestLayout = () => {
-  const [activeNav, setActiveNav] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
-  //Gọi api lấy dữ liệu cấu hình
   const { config, store } = useAuth();
-  //hình website
-  console.log(config);
-  const handleNavClick = (nav) => {
-    setActiveNav(nav);
-    // Ví dụ logic cho Guest:
-    if (nav === 'shopping' || nav === 'mealplan') {
-      if (window.confirm('Vui lòng đăng nhập để sử dụng tính năng này!')) {
-        // navigate('/login');
-        console.log("Chuyển sang trang login");
-      }
-    }
-  };
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSearch = (e) => {
     if (e.key === 'Enter') {
@@ -30,180 +19,173 @@ const GuestLayout = () => {
   };
 
   const handleLogin = () => {
+    // navigate('/login');
     alert('Chuyển đến trang Đăng nhập');
   };
 
   const handleRegister = () => {
+    // navigate('/register');
     alert('Chuyển đến trang Đăng ký');
   };
 
-  // CSS inline
-  const styles = {
-    body: {
-      fontFamily: "'Inter', sans-serif",
-      color: '#333333',
-      backgroundColor: '#f9f5f0',
-      lineHeight: 1.6,
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column'
-    },
-    container: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '0 20px'
-    },
-    headerTop: {
-      backgroundColor: '#d32f2f',
-      color: 'white',
-      padding: '10px 0'
-    },
-    logo: {
-      fontFamily: "'Playfair Display', serif",
-      fontSize: '1.8rem',
-      fontWeight: 700,
-      color: 'white',
-      textDecoration: 'none'
-    },
-    logoSubtitle: {
-      fontSize: '0.8rem',
-      opacity: 0.9,
-      fontWeight: 300,
-      fontFamily: "'Inter', sans-serif"
-    },
-    navLink: {
-      textDecoration: 'none',
-      color: '#333333',
-      fontWeight: 500,
-      fontSize: '0.95rem',
-      position: 'relative',
-      transition: 'color 0.3s',
-      textTransform: 'uppercase',
-      letterSpacing: '0.5px'
-    },
-    searchBox: {
-      backgroundColor: '#f5f5f5',
-      borderRadius: '20px',
-      padding: '8px 15px'
-    },
-    // Style riêng cho nút Login/Register của Guest
-    btnLogin: {
-      border: '1px solid white',
-      color: 'white',
-      backgroundColor: 'transparent',
-      borderRadius: '20px',
-      padding: '5px 20px',
-      fontWeight: 500,
-      transition: 'all 0.3s',
-      fontSize: '0.9rem'
-    },
-    btnRegister: {
-      backgroundColor: 'white',
-      color: '#d32f2f',
-      border: '1px solid white',
-      borderRadius: '20px',
-      padding: '5px 20px',
-      fontWeight: 600,
-      transition: 'all 0.3s',
-      fontSize: '0.9rem'
-    },
-    heroTitle: {
-      fontFamily: "'Playfair Display', serif",
-      fontSize: '3.5rem',
-      fontWeight: 700,
-      color: '#9a0007',
-      marginBottom: '15px'
-    },
-    footer: {
-      backgroundColor: '#9a0007',
-      color: 'white',
-      padding: '50px 0 30px',
-      marginTop: 'auto'
+  // Xử lý khi bấm vào các link bị giới hạn
+  const handleRestrictedClick = (e, path) => {
+    e.preventDefault(); // Chặn chuyển trang mặc định
+    if (window.confirm('Vui lòng đăng nhập để sử dụng tính năng này!')) {
+      handleLogin();
     }
   };
-  
-  if (config ==null) return (<div style={styles.loadingWrapper}>
-    <div style={styles.logoWrapper}>
-      <img
-        src="http://localhost:8000/storage/config/web.jpg"
-        alt="Loading"
-        style={styles.logo}
-      />
+
+  // CSS Config
+  const styles = {
+    primaryColor: '#d32f2f',
+    primaryDark: '#9a0007',
+    secondaryColor: '#ffb74d',
+    backgroundLight: '#f9f5f0',
+    backgroundWhite: '#ffffff',
+
+    // Loading Styles
+    loadingWrapper: {
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#f9f5f0'
+    },
+    logoWrapper: {
+      animation: 'pulse 1.5s infinite'
+    }
+  };
+
+  // Hàm style cho Nav Link (Active state)
+  const getNavStyle = (path) => {
+    const isActive = location.pathname === path;
+    return {
+      color: isActive ? styles.primaryColor : '#333333',
+      fontSize: '1rem',
+      fontWeight: isActive ? '700' : '500',
+      textDecoration: 'none',
+      transition: 'color 0.3s ease',
+      borderBottom: isActive ? `2px solid ${styles.primaryColor}` : '2px solid transparent',
+      paddingBottom: '5px',
+      cursor: 'pointer' // Thêm cursor pointer cho các thẻ a/span
+    };
+  };
+
+  // Màn hình loading khi chưa có config
+  if (config == null) return (
+    <div style={styles.loadingWrapper}>
+      <div style={styles.logoWrapper}>
+        <h3>Đang tải dữ liệu...</h3>
+      </div>
     </div>
-  </div>)
-const imageUrl = `${store}/${config.data.data[0].image_path}`;
-console.log(imageUrl)
+  );
+
+  const imageUrl = `${store}/${config.data.data[0].image_path}`;
+
   return (
-    <div style={styles.body}>
-      {/* Load Font & Icon (Giống MemberLayout để đảm bảo hiển thị đúng) */}
+    <div style={{
+      fontFamily: "'Inter', sans-serif",
+      color: '#333',
+      backgroundColor: styles.backgroundLight,
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh'
+    }}>
+      {/* Load Font & Icon */}
       <style>
         {`
-          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
           @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
           
-          .btn-hover-login:hover { background-color: rgba(255,255,255,0.1) !important; }
-          .btn-hover-register:hover { background-color: #f0f0f0 !important; }
+          .btn-hover-login:hover { background-color: rgba(255,255,255,0.2) !important; }
+          .btn-hover-register:hover { background-color: #f0f0f0 !important; color: #d32f2f !important; }
         `}
       </style>
 
       {/* Header */}
       <header style={{
-        backgroundColor: '#ffffff',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+        backgroundColor: styles.backgroundWhite,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
         position: 'sticky',
         top: 0,
         zIndex: 1000
       }}>
-        {/* Header Top */}
-        <div style={styles.headerTop}>
-          <div style={styles.container}>
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+        {/* 1. Header Top (Màu đỏ) - Chứa Logo & Nút Auth */}
+        <div style={{
+          backgroundColor: styles.primaryColor,
+          color: 'white',
+          padding: '10px 0',
+          fontSize: '0.9rem'
+        }}>
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
               {/* Logo Section */}
-              <div className="d-flex align-items-center mb-2 mb-md-0 gap-3">
-                <div
-                  style={{
-                    width: '45px',
-                    height: '45px',
-                    backgroundColor: 'white',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                  }}
-                >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  backgroundColor: 'white',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
                   <img
                     src={imageUrl}
                     alt="Logo"
-                    style={{
-                      width: '30px',
-                      height: '30px',
-                      objectFit: 'contain',
-                    }}
+                    style={{ width: '35px', height: '35px', objectFit: 'contain' }}
                   />
                 </div>
                 <div>
-                  <a href="/" style={styles.logo}>{config.data.data[0].name}</a>
-                  <div style={styles.logoSubtitle}>
+                  <Link to="/" className="text-white text-decoration-none" style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: '1.8rem',
+                    fontWeight: '700',
+                    lineHeight: '1.2'
+                  }}>
+                    {config.data.data[0].name}
+                  </Link>
+                  <div style={{ fontSize: '0.8rem', opacity: '0.9', fontWeight: '300' }}>
                     Khám phá – Chia sẻ – Gìn giữ tinh hoa
                   </div>
                 </div>
               </div>
 
-              {/* Guest Actions (Login/Register) - KHÁC BIỆT SO VỚI MEMBER */}
+              {/* Guest Actions (Login/Register) */}
               <div className="d-flex align-items-center gap-3">
                 <button
                   className="btn btn-hover-login"
-                  style={styles.btnLogin}
                   onClick={handleLogin}
+                  style={{
+                    border: '1px solid white',
+                    color: 'white',
+                    backgroundColor: 'transparent',
+                    borderRadius: '20px',
+                    padding: '6px 20px',
+                    fontWeight: 500,
+                    transition: 'all 0.3s',
+                    fontSize: '0.9rem'
+                  }}
                 >
                   <i className="fas fa-sign-in-alt me-2"></i>Đăng nhập
                 </button>
                 <button
                   className="btn btn-hover-register"
-                  style={styles.btnRegister}
                   onClick={handleRegister}
+                  style={{
+                    backgroundColor: 'white',
+                    color: styles.primaryColor,
+                    border: '1px solid white',
+                    borderRadius: '20px',
+                    padding: '6px 20px',
+                    fontWeight: 600,
+                    transition: 'all 0.3s',
+                    fontSize: '0.9rem'
+                  }}
                 >
                   <i className="fas fa-user-plus me-2"></i>Đăng ký
                 </button>
@@ -213,63 +195,71 @@ console.log(imageUrl)
           </div>
         </div>
 
-        {/* Header Main (Navigation) */}
+        {/* 2. Header Main (Màu trắng) - Chứa Nav & Search */}
         <div style={{ padding: '15px 0' }}>
-          <div style={styles.container}>
-            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center">
+          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '15px'
+            }}>
+
               {/* Navigation Menu */}
               <nav>
-                <ul className="d-flex list-unstyled mb-3 mb-md-0 gap-3 gap-md-4">
-                  {['home', 'recipes', 'forum', 'blog'].map((item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        style={{
-                          ...styles.navLink,
-                          color: activeNav === item ? '#d32f2f' : '#333333'
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleNavClick(item);
-                        }}
-                        onMouseEnter={(e) => activeNav !== item && (e.target.style.color = '#d32f2f')}
-                        onMouseLeave={(e) => activeNav !== item && (e.target.style.color = '#333333')}
-                      >
-                        {item === 'home' ? 'HOME' :
-                          item === 'recipes' ? 'CÔNG THỨC' :
-                            item === 'forum' ? 'DIỄN ĐÀN' :
-                              item === 'blog' ? 'BLOG' :
-                                item === 'shopping' ? 'SHOPPING LIST' :
-                                  'KẾ HOẠCH BỮA ĂN'}
-                        {activeNav === item && (
-                          <span style={{
-                            position: 'absolute',
-                            bottom: '-5px',
-                            left: 0,
-                            width: '100%',
-                            height: '2px',
-                            backgroundColor: '#d32f2f'
-                          }}></span>
-                        )}
-                      </a>
-                    </li>
-                  ))}
+                <ul style={{
+                  display: 'flex',
+                  listStyle: 'none',
+                  gap: '30px',
+                  margin: 0,
+                  padding: 0,
+                  flexWrap: 'wrap'
+                }}>
+                  <li>
+                    <Link to="/" style={getNavStyle('/')}>HOME</Link>
+                  </li>
+                  <li>
+                    <Link to="/cong-thuc" style={getNavStyle('/cong-thuc')}>CÔNG THỨC</Link>
+                  </li>
+                  <li>
+                    <Link to="/dien-dan" style={getNavStyle('/dien-dan')}>DIỄN ĐÀN</Link>
+                  </li>
+                  <li>
+                    <Link to="/blog" style={getNavStyle('/blog')}>BLOG</Link>
+                  </li>
+                  {/* Restricted Links */}
+
+
                 </ul>
               </nav>
 
               {/* Search Box */}
-              <div className="d-flex align-items-center" style={styles.searchBox}>
-                <i className="fas fa-search me-2" style={{ color: '#666666' }}></i>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '20px',
+                padding: '8px 15px',
+                width: '300px'
+              }}>
+                <i className="fas fa-search" style={{ color: '#666666', marginRight: '8px' }}></i>
                 <input
                   type="text"
-                  className="form-control border-0 p-0 bg-transparent"
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    outline: 'none',
+                    width: '100%',
+                    fontSize: '0.9rem'
+                  }}
                   placeholder="Tìm kiếm món ăn..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={handleSearch}
-                  style={{ outline: 'none', fontSize: '0.9rem' }}
                 />
               </div>
+
             </div>
           </div>
         </div>
@@ -277,8 +267,16 @@ console.log(imageUrl)
 
       {/* Hero Section */}
       <section className="py-5" style={{ textAlign: 'center' }}>
-        <div style={styles.container}>
-          <h1 style={styles.heroTitle}>Bếp Việt 4.0</h1>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+          <h1 style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: '3.5rem',
+            fontWeight: 700,
+            color: '#9a0007',
+            marginBottom: '15px'
+          }}>
+            {config.data.data[0].name}
+          </h1>
           <p style={{ fontSize: '1.2rem', color: '#666666', maxWidth: '800px', margin: '0 auto 30px' }}>
             Khám phá – Chia sẻ – Gìn giữ tinh hoa ẩm thực Việt Nam
           </p>
@@ -288,6 +286,7 @@ console.log(imageUrl)
             fontWeight: 500,
             marginBottom: '30px'
           }}>
+            {/* Ví dụ các tag miền */}
             <span style={{ padding: '5px 15px', backgroundColor: 'rgba(211, 47, 47, 0.1)', borderRadius: '20px' }}>
               Miền Bắc
             </span>
@@ -301,14 +300,19 @@ console.log(imageUrl)
         </div>
       </section>
 
-      {/* Main Content */}
-      <main>
+      {/* Main Content Area */}
+      <main style={{ minHeight: '60vh' }}>
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer style={styles.footer}>
-        <div style={styles.container}>
+      <footer style={{
+        backgroundColor: styles.primaryDark,
+        color: 'white',
+        padding: '50px 0 30px',
+        marginTop: 'auto'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
           <div className="text-center mb-4">
             <div className="d-flex align-items-center justify-content-center gap-2 mb-3">
               <div style={{
@@ -320,14 +324,23 @@ console.log(imageUrl)
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <i className="fas fa-utensils" style={{ color: '#d32f2f' }}></i>
+                {/* --- ĐÃ SỬA THÀNH ẢNH Ở ĐÂY --- */}
+                <img
+                  src={imageUrl}
+                  alt="Logo"
+                  style={{
+                    width: '1.5rem',
+                    height: '1.5rem',
+                    objectFit: 'contain'
+                  }}
+                />
               </div>
               <h2 style={{
                 fontFamily: "'Playfair Display', serif",
                 fontSize: '2rem',
                 marginBottom: 0
               }}>
-                Bếp Việt 4.0
+                {config.data.data[0].name}
               </h2>
             </div>
             <p style={{ opacity: 0.8, marginBottom: '20px' }}>
@@ -340,7 +353,7 @@ console.log(imageUrl)
             fontSize: '0.9rem',
             opacity: 0.7
           }}>
-            Bếp Việt 4.0 - Nơi gìn giữ hương vị Việt | Hotline: {config.data.data[0].phone} | Email: {config.data.data[0].email} 
+            Bếp Việt 4.0 - Nơi gìn giữ hương vị Việt | Hotline: {config.data.data[0].phone} | Email: {config.data.data[0].email}
           </div>
         </div>
       </footer>

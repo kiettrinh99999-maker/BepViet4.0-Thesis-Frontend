@@ -28,6 +28,7 @@ function App() {
               <Route path="/shopping-list" element={<ShoppingList/>} />
               <Route path="/meal-plan" element={<MealPlan/>} />
               <Route path="/profile" element={<h1>Profile</h1>} />
+              <Route path="/tao-cong-thuc" element={<h1>Tạo công thức tại đây</h1>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
           </Route>

@@ -3,7 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { PlusCircle, Funnel, ChevronLeft, ChevronRight, Filter as FilterIcon, ArrowCounterclockwise } from 'react-bootstrap-icons';
 import FoodCard from '../../components/Recipe/FoodCard';
 import './recipe.css'
+import { useNavigate  } from 'react-router-dom';
 const ListRecipe = () => {
+  const navigate = useNavigate();
   // --- Dữ liệu giả (Mock Data) ---
   const recipes = [
     {
@@ -58,7 +60,8 @@ const ListRecipe = () => {
       {/* --- PHẦN 2: NÚT THÊM MÓN --- */}
       <section className="add-recipe-section">
         <div className="container">
-          <button className="btn-add-recipe">
+        {/* --- Kiệt: chuyển trang khi bấm vào thêm công thức */}
+          <button className="btn-add-recipe" onClick={() => navigate("/tao-cong-thuc")}>
             <PlusCircle size={18} /> Thêm Công Thức Mới
           </button>
         </div>
