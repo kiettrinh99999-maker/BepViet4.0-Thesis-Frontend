@@ -10,6 +10,7 @@ import ShoppingList from './pages/shoppinglists/shoppinglist';
 import ForumPage from './pages/forums/list_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
+import MealPlan from './pages/mealplanes/mealplane';
 function App() {
   return (
     <AuthProvider>
@@ -25,7 +26,7 @@ function App() {
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
             <Route element={<RouterProtected />}>
               <Route path="/shopping-list" element={<ShoppingList/>} />
-              <Route path="/meal-plan" element={<h1>Meal</h1>} />
+              <Route path="/meal-plan" element={<MealPlan/>} />
               <Route path="/profile" element={<h1>Profile</h1>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
