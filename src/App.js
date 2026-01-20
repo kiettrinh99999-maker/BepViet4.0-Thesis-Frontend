@@ -12,7 +12,8 @@ import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
 import MealPlan from './pages/mealplanes/mealplane';
-import ForumDetailPage from './pages/forums/detail_forum';
+import DashboardBody from './pages/admin/ManageDashboard/dashboard';
+
 function App() {
   return (
     <AuthProvider>
@@ -39,7 +40,7 @@ function App() {
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
           <Route path="/admin" element={<AdminLayout/>}>
-            
+            <Route index element={<DashboardBody/>} />
           </Route>
         </Routes>
       </BrowserRouter>
