@@ -12,7 +12,6 @@ import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
 import MealPlan from './pages/mealplanes/mealplane';
-import ForumDetailPage from './pages/forums/detail_forum';
 function App() {
   return (
     <AuthProvider>

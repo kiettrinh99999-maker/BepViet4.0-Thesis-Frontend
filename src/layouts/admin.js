@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
+import { useAuth } from "../contexts/Authen";
 
 export default function AdminLayout() {
   const [activeMenu, setActiveMenu] = useState("recipes");
   const [showSidebar, setShowSidebar] = useState(true);
+  const [config, setConfig] = useState(null);
+  const { api } = useAuth();
   const navigate = useNavigate();
 
   // Danh sách items sidebar
@@ -17,12 +20,23 @@ export default function AdminLayout() {
     { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
   ];
 
+    useEffect(() => {
+    // Gọi API lấy setting web
+      fetch(api + "config-active")
+        .then(res => res.json())
+        .then(res => {
+          setConfig(res.data);
+        });
+    }, [api]);
+
   function handleClick(menu){
     setActiveMenu(menu.id);
     //navigate(menu.path); dùng để thay đổi đường dẫn
     alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
   };
-
+  if (config === null) {
+    return <h4 className="text-center mt-5">Đang tải...</h4>;
+  }
   return (
     <div className="container-fluid">
       <div className="row min-vh-100">
@@ -35,13 +49,13 @@ export default function AdminLayout() {
         >
             <div className="text-center py-4 border-bottom border-secondary">
                 <div className="d-flex align-items-center justify-content-center gap-2">
-                    <i
-                    className="fas fa-utensils"
-                    style={{ fontSize: "1.8rem", color: "#d32f2f" }}
-                    ></i>
-
+                    <img
+                      src={config.image_path}
+                      alt="Logo"
+                      style={{ width: 40, height: 40 }}
+                    />
                     <h4 className="mb-0 fw-bold">
-                    Bếp Việt <span className="text-danger">4.0</span>
+                      {config.name}
                     </h4>
                 </div>
             </div>
@@ -113,7 +127,7 @@ export default function AdminLayout() {
 
           {/* Footer */}
           <footer className="text-center py-3 border-top text-secondary small bg-white">
-              © 2023 Admin - Website Bếp Việt 4.0
+              {config.copyright}
           </footer>
 
         </div>
