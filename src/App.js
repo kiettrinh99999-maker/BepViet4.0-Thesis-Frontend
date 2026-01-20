@@ -11,6 +11,9 @@ import ForumPage from './pages/forums/list_forum';
 import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
+import MealPlan from './pages/mealplanes/mealplane';
+import DashboardBody from './pages/admin/ManageDashboard/dashboard';
+
 function App() {
   return (
     <AuthProvider>
@@ -24,19 +27,20 @@ function App() {
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
             <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
-            {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
+            {/*Những đường dẫn mà phải đăng nhập được kiểm tra */}
             <Route element={<RouterProtected />}>
               <Route path="/shopping-list" element={<ShoppingList/>} />
-              <Route path="/meal-plan" element={<h1>Meal</h1>} />
+              <Route path="/meal-plan" element={<MealPlan/>} />
               <Route path="/profile" element={<h1>Profile</h1>} />
+              <Route path="/tao-cong-thuc" element={<h1>Tạo công thức tại đây</h1>} />
             </Route>
-            {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
+            {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
-          {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
+          {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout/>}>
-            
+            <Route index element={<DashboardBody/>} />
           </Route>
         </Routes>
       </BrowserRouter>
