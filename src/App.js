@@ -30,15 +30,15 @@ function App() {
               <Route path="/shopping-list" element={<ShoppingList/>} />
               <Route path="/meal-plan" element={<MealPlan/>} />
               <Route path="/profile" element={<h1>Profile</h1>} />
-              <Route path="/tao-cong-thuc" element={<h1>Tạo công thức tại đây</h1>} />
+              <Route path="/tao-cong-thuc" element={<CreateRecipe/>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
-          {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
+          {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout/>}>
-            
+            <Route index element={<DashboardBody/>} />
           </Route>
         </Routes>
       </BrowserRouter>
