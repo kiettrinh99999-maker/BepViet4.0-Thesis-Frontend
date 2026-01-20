@@ -38,7 +38,7 @@ function App() {
           </Route>
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
-          {/* --- NHÓM 2: ADMIN (Đích đến) --- */}
+          {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout/>}>
             <Route index element={<DashboardBody/>} />
           </Route>
