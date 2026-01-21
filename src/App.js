@@ -15,6 +15,8 @@ import MealPlan from './pages/mealplanes/mealplane';
 import CreateRecipe from './pages/recipes/add_recipe';
 import DashboardBody from './pages/admin/ManageDashboard/dashboard';
 import ConfigBody from './pages/admin/ManageAdmin/config';
+import ProfileBody from './pages/profiles/profile';
+
 import ReportContent from './pages/admin/ManageReports/report';
 function App() {
   return (
@@ -33,7 +35,7 @@ function App() {
             <Route element={<RouterProtected />}>
               <Route path="/shopping-list" element={<ShoppingList/>} />
               <Route path="/meal-plan" element={<MealPlan/>} />
-              <Route path="/profile" element={<h1>Profile</h1>} />
+              <Route path="/profile" element={<ProfileBody/>} />
               <Route path="/tao-cong-thuc" element={<CreateRecipe/>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
