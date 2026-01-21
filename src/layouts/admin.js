@@ -6,10 +6,9 @@ export default function AdminLayout() {
   // const [activeMenu, setActiveMenu] = useState("recipes");
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(true);
-  const [config, setConfig] = useState(null);
-  const { api } = useAuth();
+  const { config,api, store } = useAuth();
   const navigate = useNavigate();
-
+ 
   // Danh sách items sidebar
   // path: sẽ dùng cho điều hướng khi bật navigate
   const menus = [
@@ -21,17 +20,20 @@ export default function AdminLayout() {
     { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
   ];
 
-    useEffect(() => {
-    // Gọi API lấy setting web
-      fetch(api + "config-active")
-        .then(res => res.json())
-        .then(res => {
-          setConfig(res.data);
-        });
-    }, [api]);
+    // useEffect(() => {
+    // // Gọi API lấy setting web
+    //   fetch(api + "config-active")
+    //     .then(res => res.json())
+    //     .then(res => {
+    //       setConfig(res.data);
+    //     });
+    // }, [api]);
   if (config === null) {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
+const data_config = config.data.data[0];
+console.log(data_config)
+const imageUrl=store+data_config.image_path
   // function handleClick(menu){
   //   // setActiveMenu(menu.id);
   //   navigate(menu.path);// dùng để thay đổi đường dẫn
@@ -51,7 +53,7 @@ export default function AdminLayout() {
             <div className="text-center py-4 border-bottom border-secondary">
                 <div className="d-flex align-items-center justify-content-center gap-2">
                     <img
-                      src={config.image_path}
+                      src={imageUrl}
                       alt="Logo"
                       style={{ width: 40, height: 40 }}
                     />
