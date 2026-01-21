@@ -16,7 +16,9 @@ import CreateRecipe from './pages/recipes/add_recipe';
 import DashboardBody from './pages/admin/ManageDashboard/dashboard';
 import ConfigBody from './pages/admin/ManageAdmin/config';
 import RecipesManagement from './pages/admin/ManageRecipes/list_recipe';
+import ProfileBody from './pages/profiles/profile';
 
+import ReportContent from './pages/admin/ManageReports/report';
 function App() {
   return (
     <AuthProvider>
@@ -34,7 +36,7 @@ function App() {
             <Route element={<RouterProtected />}>
               <Route path="/shopping-list" element={<ShoppingList/>} />
               <Route path="/meal-plan" element={<MealPlan/>} />
-              <Route path="/profile" element={<h1>Profile</h1>} />
+              <Route path="/profile" element={<ProfileBody/>} />
               <Route path="/tao-cong-thuc" element={<CreateRecipe/>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
@@ -46,6 +48,8 @@ function App() {
             <Route index element={<DashboardBody/>} />
             <Route path="config" element={<ConfigBody/>} />
             <Route path="cong-thuc" element={<RecipesManagement/>} />
+            <Route path="report" element={<ReportContent/>} />
+
           </Route>
         </Routes>
       </BrowserRouter>
