@@ -15,23 +15,22 @@ import MealPlan from './pages/mealplanes/mealplane';
 import CreateRecipe from './pages/recipes/add_recipe';
 import DashboardBody from './pages/admin/ManageDashboard/dashboard';
 import ConfigBody from './pages/admin/ManageAdmin/config';
-import RecipesManagement from './pages/admin/ManageRecipes/list_recipe';
 import ProfileBody from './pages/profiles/profile';
+import BlogPage from './pages/blogs/list_blog';
 
-import ReportContent from './pages/admin/ManageReports/report';
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
           {/* --- NHÓM 1: GUEST --- */}
-          <Route element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
+          <Route ute element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
-            <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
+            <Route path="/blog" element={<BlogPage/>} />
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra */}
             <Route element={<RouterProtected />}>
               <Route path="/shopping-list" element={<ShoppingList/>} />
@@ -44,11 +43,9 @@ function App() {
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
-          <Route path="admin" element={<AdminLayout/>}>
+          <Route path="/admin" element={<AdminLayout/>}>
             <Route index element={<DashboardBody/>} />
             <Route path="config" element={<ConfigBody/>} />
-            <Route path="cong-thuc" element={<RecipesManagement/>} />
-            <Route path="report" element={<ReportContent/>} />
           </Route>
         </Routes>
       </BrowserRouter>
