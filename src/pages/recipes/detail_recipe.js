@@ -43,10 +43,6 @@ const CommentItem = ({ comment }) => {
             <button className="comment-action" onClick={() => setIsReplying(!isReplying)}>
               <i className="fas fa-reply"></i> Trả lời
             </button>
-            {/* Nút REPORT bình luận */}
-            <button className="comment-action">
-              <i className="fas fa-flag"></i> Báo cáo
-            </button>
           </div>
 
           {/* Form Reply */}

@@ -23,7 +23,22 @@ export const AuthProvider = ({ children }) => {
   };
   const [api, SetApi] = useState('http://127.0.0.1:8000/api/');
   const [store, SetStore] = useState('http://localhost:8000/storage/');
-  const [user, setUser] = useState({ role: 'member', name: 'Nguyen Van A' });
+  const [user, setUser] = useState({
+    id: 101,
+    username: 'nguyen_van_a',
+    name: 'Nguyễn Văn A',
+    role: 'member',        
+    email: 'vana@example.com',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    region_id: 1,  
+    bio: 'Thích ăn ngon nhưng lười vào bếp.',
+    created_at: '2023-05-20',
+    stats: {
+      followers: 12,
+      following: 50,
+      saved_recipes: 5
+    }
+  });
   const [config, SetConfig] = useState(null);
   const logout = () => setUser(null);
   //Gọi API config lấy dữ liệu để setting website
@@ -32,7 +47,7 @@ export const AuthProvider = ({ children }) => {
       .then(data => SetConfig(data));
   }, [])
   return (
-    <AuthContext.Provider value={{ user, logout, config, api, SetApi, store, SetStore,renderDate }}>
+    <AuthContext.Provider value={{ user, logout, config, api, SetApi, store, SetStore, renderDate }}>
       {children}
     </AuthContext.Provider>
   );
