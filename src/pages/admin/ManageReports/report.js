@@ -1,47 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Report.css';
+import { useAuth } from "../../../contexts/Authen";
 
-const ReportContent = () => {
-  // Dữ liệu mẫu
-  const [reports] = useState([
-    {
-      id: 1,
-      recipe: { name: 'Bánh mì Sài Gòn', image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=100', difficulty: 'Trung bình' },
-      reporter: { name: 'Nguyễn Thị Mai', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
-      reason: 'Sao chép nội dung không ghi nguồn',
-      date: '2023-11-15',
-      author: { name: 'Trần Văn B', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
-      status: 'pending'
-    },
-    {
-      id: 2,
-      recipe: { name: 'Phở Bò Hà Nội', image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=100', difficulty: 'Khó' },
-      reporter: { name: 'Lê Văn C', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
-      reason: 'Hình ảnh không đúng thực tế',
-      date: '2023-11-14',
-      author: { name: 'Phạm Văn D', avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
-      status: 'pending'
-    },
-    {
-      id: 3,
-      recipe: { name: 'Gỏi Cuốn Tôm Thịt', image: 'https://images.unsplash.com/photo-1552465011-b4e30bf7349d?w=100', difficulty: 'Dễ' },
-      reporter: { name: 'Trần Thị E', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' },
-      reason: 'Nội dung spam, quảng cáo',
-      date: '2023-11-13',
-      author: { name: 'Hoàng Thị F', avatar: 'https://randomuser.me/api/portraits/women/32.jpg' },
-      status: 'reviewed'
-    },
-    {
-      id: 4,
-      recipe: { name: 'Bánh Xèo Miền Tây', image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=100', difficulty: 'Trung bình' },
-      reporter: { name: 'Ngô Văn G', avatar: 'https://randomuser.me/api/portraits/men/11.jpg' },
-      reason: 'Ngôn từ không phù hợp',
-      date: '2023-11-12',
-      author: { name: 'Lý Văn H', avatar: 'https://randomuser.me/api/portraits/men/88.jpg' },
-      status: 'dismissed'
-    }
-  ]);
+const ReportBody = () => {
+  // 1. STATE MANAGEMENT
+  const [recipesReport, setRecipesReport] = useState([]); // Dữ liệu báo cáo
+  const [loading, setLoading] = useState(true);           // Trạng thái loading
 
+  // State cho bộ lọc
+  const [filters, setFilters] = useState({
+    status: 'all',
+    date: ''
+  });
+
+  // State cho phân trang
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    total: 0
+  });
+
+  const { api, renderDate } = useAuth();
   const renderStatus = (status) => {
     switch (status) {
       case 'pending': return <span className="badge badge-pending">Chờ xử lý</span>;
@@ -50,117 +30,238 @@ const ReportContent = () => {
       default: return null;
     }
   };
+  useEffect(() => {
+    setLoading(true);
+    let queryUrl = `${api}admin/report?page=${page}`;
+    if (filters.status && filters.status !== 'all') {
+      queryUrl += `&status=${filters.status}`;
+    }
+    if (filters.date) {
+      queryUrl += `&created_at=${filters.date}`;
+    }
+    fetch(queryUrl)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success || res.data) {
+          const result = res.data;
+          setRecipesReport(result.data);
+          setPagination({
+            current_page: result.current_page,
+            last_page: result.last_page,
+            total: result.total
+          });
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Lỗi tải báo cáo:", err);
+        setLoading(false);
+      });
+  }, [page, filters.status, filters.date, api]);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.last_page) {
+      setPage(newPage);
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const handleResetFilter = () => {
+    setFilters({ status: 'all', date: '' });
+    setPage(1);
+  };
+
+  if (loading) {
+    return <div className="loading-container"><h3>Đang tải dữ liệu...</h3></div>;
+  }
 
   return (
     <div className="report-main-content">
-      
-      {/* 1. Page Title */}
+
+      {/* Header */}
       <div className="page-header-content">
         <div className="page-title">
           <h2>Quản Lý Báo Cáo Vi Phạm</h2>
         </div>
       </div>
 
-      {/* 2. Filter Section (CHỈ CÒN 2 BỘ LỌC) */}
+      {/* Filter Section */}
       <div className="filter-box">
         <div className="filter-row">
           <div className="filter-item">
             <label>Trạng thái</label>
-            <select defaultValue="all">
+            <select
+              name="status"
+              value={filters.status}
+              onChange={handleFilterChange}
+            >
               <option value="all">Tất cả</option>
               <option value="pending">Chờ xử lý</option>
               <option value="reviewed">Đã xem xét</option>
               <option value="dismissed">Đã bỏ qua</option>
             </select>
           </div>
-          
+
           <div className="filter-item">
             <label>Ngày báo cáo</label>
-            <input type="date" />
+            <input
+              type="date"
+              name="date"
+              value={filters.date}
+              onChange={handleFilterChange}
+            />
           </div>
 
           <div className="filter-actions">
-            <button className="btn-filter btn-apply"><i className="fas fa-filter"></i> Áp dụng</button>
-            <button className="btn-filter btn-reset"><i className="fas fa-sync-alt"></i></button>
+            {/* Nút reset filter */}
+            <button className="btn-filter btn-reset" onClick={handleResetFilter} title="Làm mới bộ lọc">
+              <i className="fas fa-sync-alt"></i>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 3. Table Section */}
+      {/* Table Section */}
       <div className="table-card">
         <div className="table-responsive">
           <table className="custom-table">
             <thead>
               <tr>
-                <th style={{width: '25%'}}>Công thức</th>
-                <th style={{width: '15%'}}>Người báo cáo</th>
-                <th style={{width: '20%'}}>Lý do</th>
-                <th style={{width: '10%'}}>Ngày</th>
-                <th style={{width: '15%'}}>Tác giả</th>
-                <th style={{width: '10%'}}>Trạng thái</th>
-                <th style={{width: '5%'}}>Thao tác</th>
+                <th style={{ width: '25%' }}>Công thức</th>
+                <th style={{ width: '15%' }}>Người báo cáo</th>
+                <th style={{ width: '20%' }}>Lý do</th>
+                <th style={{ width: '10%' }}>Ngày</th>
+                <th style={{ width: '15%' }}>Tác giả bài viết</th>
+                <th style={{ width: '10%' }}>Trạng thái</th>
+                <th style={{ width: '5%' }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              {reports.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="info-group">
-                      <img src={item.recipe.image} alt="Recipe" className="info-img" />
-                      <div className="info-text">
-                        <h4>{item.recipe.name}</h4>
-                        <p>{item.recipe.difficulty}</p>
+              {recipesReport.length > 0 ? (
+                recipesReport.map((item) => (
+                  <tr key={item.id}>
+                    {/* Cột Công Thức */}
+                    <td>
+                      <div className="info-group">
+                        <img
+                          src={item.recipe?.image_path || '/default-recipe.jpg'}
+                          alt="Recipe"
+                          className="info-img"
+                          onError={(e) => e.target.src = 'https://placehold.co/100'}
+                        />
+                        <div className="info-text">
+                          <h4>{item.recipe?.title}</h4>
+                          <p>{item.recipe?.difficulty?.name}</p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="user-group">
-                      <img src={item.reporter.avatar} alt="User" className="user-avatar" />
-                      <span className="user-name">{item.reporter.name}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <p style={{fontSize:'0.9rem', lineHeight:'1.4'}}>{item.reason}</p>
-                  </td>
-                  <td>{item.date}</td>
-                  <td>
-                    <div className="user-group">
-                      <img src={item.author.avatar} alt="Author" className="user-avatar" />
-                      <span className="user-name">{item.author.name}</span>
-                    </div>
-                  </td>
-                  <td>{renderStatus(item.status)}</td>
-                  <td>
-                    <div className="action-group">
-                      <button className="btn-icon btn-view" title="Xem chi tiết"><i className="fas fa-eye"></i></button>
-                      {item.status === 'pending' && (
-                        <>
-                          <button className="btn-icon btn-check" title="Xác nhận vi phạm"><i className="fas fa-check"></i></button>
-                          <button className="btn-icon btn-trash" title="Bỏ qua báo cáo"><i className="fas fa-times"></i></button>
-                        </>
-                      )}
-                    </div>
+                    </td>
+
+                    {/* Cột Người Báo Cáo */}
+                    <td>
+                      <div className="user-group">
+                        <img
+                          src={item.user?.profile?.image_path || 'https://placehold.co/50'}
+                          alt="User"
+                          className="user-avatar"
+                        />
+                        <span className="user-name">{item.user?.profile?.name || 'Ẩn danh'}</span>
+                      </div>
+                    </td>
+
+                    {/* Cột Lý Do */}
+                    <td>
+                      <p style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>{item.content}</p>
+                    </td>
+
+                    {/* Cột Ngày (Logic mới tạo) */}
+                    <td>{renderDate(item.created_at)}</td>
+
+                    {/* Cột Tác Giả (Chủ công thức) */}
+                    <td>
+                      <div className="user-group">
+                        <img
+                          src={item.recipe?.user?.profile?.image_path || 'https://placehold.co/50'}
+                          alt="Author"
+                          className="user-avatar"
+                        />
+                        <span className="user-name">{item.recipe?.user?.profile?.name || 'Ẩn danh'}</span>
+                      </div>
+                    </td>
+
+                    {/* Cột Trạng Thái */}
+                    <td>{renderStatus(item.status)}</td>
+
+                    {/* Cột Thao Tác */}
+                    <td>
+                      <div className="action-group">
+                        <button className="btn-icon btn-view" title="Xem chi tiết">
+                          <i className="fas fa-eye"></i>
+                        </button>
+                        {item.status === 'pending' && (
+                          <>
+                            <button className="btn-icon btn-check" title="Xác nhận vi phạm">
+                              <i className="fas fa-check"></i>
+                            </button>
+                            <button className="btn-icon btn-trash" title="Bỏ qua báo cáo">
+                              <i className="fas fa-times"></i>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                    Không có báo cáo nào.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination (Đã căn giữa) */}
-        <div className="pagination-container">
-          <div className="pagination">
-            <button className="page-link">Trước</button>
-            <button className="page-link active">1</button>
-            <button className="page-link">2</button>
-            <button className="page-link">3</button>
-            <button className="page-link">Tiếp</button>
-          </div>
-        </div>
-      </div>
+        {/* Dynamic Pagination Section */}
+        {pagination.last_page >= 1 && (
+          <div className="pagination-container">
+            <div className="pagination">
+              <button
+                className="page-link"
+                disabled={pagination.current_page === 1}
+                onClick={() => handlePageChange(pagination.current_page - 1)}
+              >
+                Trước
+              </button>
 
+              {/* Tạo mảng số trang */}
+              {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  className={`page-link ${pageNum === pagination.current_page ? 'active' : ''}`}
+                  onClick={() => handlePageChange(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <button
+                className="page-link"
+                disabled={pagination.current_page === pagination.last_page}
+                onClick={() => handlePageChange(pagination.current_page + 1)}
+              >
+                Tiếp
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default ReportContent;
+export default ReportBody;

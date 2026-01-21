@@ -49,7 +49,6 @@ function App() {
             <Route path="config" element={<ConfigBody/>} />
             <Route path="cong-thuc" element={<RecipesManagement/>} />
             <Route path="report" element={<ReportContent/>} />
-
           </Route>
         </Routes>
       </BrowserRouter>
