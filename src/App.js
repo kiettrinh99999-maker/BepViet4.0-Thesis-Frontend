@@ -15,6 +15,7 @@ import MealPlan from './pages/mealplanes/mealplane';
 import CreateRecipe from './pages/recipes/add_recipe';
 import DashboardBody from './pages/admin/ManageDashboard/dashboard';
 import ConfigBody from './pages/admin/ManageAdmin/config';
+import RecipesManagement from './pages/admin/ManageRecipes/list_recipe';
 
 function App() {
   return (
@@ -41,9 +42,10 @@ function App() {
           <Route path="/login" element={<div>Trang Login</div>} />
           <Route path="/register" element={<div>Trang Đăng ký</div>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
-          <Route path="/admin" element={<AdminLayout/>}>
+          <Route path="admin" element={<AdminLayout/>}>
             <Route index element={<DashboardBody/>} />
             <Route path="config" element={<ConfigBody/>} />
+            <Route path="cong-thuc" element={<RecipesManagement/>} />
           </Route>
         </Routes>
       </BrowserRouter>

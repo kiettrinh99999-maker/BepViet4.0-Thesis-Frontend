@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/Authen";
-import { Outlet, useNavigate,useLocation } from "react-router";
+import { Outlet, useNavigate, useLocation } from "react-router";
 
 export default function AdminLayout() {
   // const [activeMenu, setActiveMenu] = useState("recipes");
@@ -15,7 +15,7 @@ export default function AdminLayout() {
   const menus = [
     { id: "dashboard", icon: "fa-chart-bar", label: "Dashboard", path: "/admin/" },
     { id: "approve", icon: "fa-clipboard-check", label: "Duyệt công thức", path: "/admin/approve" },
-    { id: "recipes", icon: "fa-utensils", label: "Quản lý công thức", path: "/admin/recipes" },
+    { id: "recipes", icon: "fa-utensils", label: "Quản lý công thức", path: "/admin/cong-thuc" },
     { id: "categories", icon: "fa-list", label: "Quản lý danh mục", path: "/admin/categories" },
     { id: "settings", icon: "fa-cog", label: "Cấu hình website", path: "/admin/config" },
     { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
@@ -29,12 +29,6 @@ export default function AdminLayout() {
           setConfig(res.data);
         });
     }, [api]);
-
-  function handleClick(menu){
-    setActiveMenu(menu.id);
-    //navigate(menu.path); dùng để thay đổi đường dẫn
-    alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
-  };
   if (config === null) {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
