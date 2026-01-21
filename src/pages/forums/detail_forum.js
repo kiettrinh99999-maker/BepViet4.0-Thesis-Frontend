@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
 import { useParams, useNavigate } from "react-router";
-import AnswerItem from "../../components/AnswerItem";
+import AnswerItem from "../../components/Forums/AnswerItem";
 
 export default function ForumDetailPage(){
     const {id} = useParams();

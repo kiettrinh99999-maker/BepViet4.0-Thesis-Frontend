@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
-import QuestionItem from "../../components/QuestionItem";
+import QuestionItem from "../../components/Forums/QuestionItem";
 
 export default function ForumPage() {
   const [questions, setQuestions] = useState(null);
@@ -86,7 +86,6 @@ export default function ForumPage() {
                 placeholder="Ví dụ: Làm thế nào để phở có nước dùng trong?"
               />
             </div>
-
             <div className="mb-3">
               <label className="form-label fw-semibold">
                 Nội dung câu hỏi
@@ -97,7 +96,16 @@ export default function ForumPage() {
                 placeholder="Mô tả chi tiết câu hỏi của bạn..."
               ></textarea>
             </div>
-
+            <div className="mb-3">
+              <label className="form-label fw-semibold">
+                Ảnh minh họa (không bắt buộc)
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+              />
+            </div>
             <button type="submit" className="btn btn-danger">
               <i className="fas fa-paper-plane me-1"></i>
               Đăng Câu Hỏi
@@ -117,31 +125,51 @@ export default function ForumPage() {
 
       {/* Pagination */}
       <nav className="d-flex justify-content-center mt-4">
-        <ul className="pagination">
+        <ul className="pagination gap-2">
+
           {/* Previous */}
-          <li className={`page-item ${questions.current_page === 1 ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => setPage(page - 1)}>
+          <li className="page-item">
+            <button
+              className="btn btn-outline-danger"
+              disabled={questions.current_page === 1}
+              onClick={() => setPage(page - 1)}
+            >
               &laquo;
             </button>
           </li>
+
           {/* Page numbers */}
-          {Array.from({ length: questions.last_page }, (_, i) => (
-            <li key={i} className={`page-item ${questions.current_page === i + 1 ? 'active' : ''}`}>
-              <button className="page-link" onClick={() => setPage(i + 1)}>
-                {i + 1}
-              </button>
-            </li>
-          ))}
+          {Array.from({ length: questions.last_page }, (_, i) => {
+            const pageNumber = i + 1;
+            const isActive = questions.current_page === pageNumber;
+
+            return (
+              <li key={i} className="page-item">
+                <button
+                  className={`btn ${
+                    isActive ? "btn-danger text-white" : "btn-outline-danger"
+                  }`}
+                  onClick={() => setPage(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            );
+          })}
 
           {/* Next */}
-          <li className={`page-item ${questions.current_page === questions.last_page ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => setPage(page + 1)}>
+          <li className="page-item">
+            <button
+              className="btn btn-outline-danger"
+              disabled={questions.current_page === questions.last_page}
+              onClick={() => setPage(page + 1)}
+            >
               &raquo;
             </button>
           </li>
+
         </ul>
       </nav>
-
     </div>
   );
 }
