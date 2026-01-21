@@ -21,6 +21,42 @@ const ReportBody = () => {
     total: 0
   });
 
+  //Button xử lý status
+  // Button xử lý status
+  const handleStatus = async (id, status) => {
+    try {
+      const res = await fetch(`${api}admin/report/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          // nếu có auth token thì mở dòng dưới
+          // "Authorization": `Bearer ${store.token}`,
+        },
+        body: JSON.stringify({ status })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error("Lỗi cập nhật:", data);
+        alert(data.message || "Cập nhật thất bại");
+        return;
+      }
+      setRecipesReport(prev =>
+        prev.map(item =>
+          item.id === id ? { ...item, status } : item
+        )
+      );
+      alert("Cập nhật trạng thái thành công ✅");
+
+    } catch (error) {
+      console.error("Lỗi mạng:", error);
+      alert("Không thể kết nối server");
+    }
+  };
+
+
   const { api, renderDate } = useAuth();
   const renderStatus = (status) => {
     switch (status) {
@@ -198,15 +234,39 @@ const ReportBody = () => {
                     {/* Cột Thao Tác */}
                     <td>
                       <div className="action-group">
-                        <button className="btn-icon btn-view" title="Xem chi tiết">
+
+                        {/* 1. Nút Mắt: LUÔN LUÔN HIỆN (dù status là gì) */}
+                        {/* Bạn cần thêm onClick để nó hoạt động */}
+                        <button
+                          className="btn-icon btn-view"
+                          title="Xem chi tiết"
+                          onClick={() => {
+                            // Logic chuyển hướng trang xem chi tiết ở đây
+                            console.log("Chuyển đến trang chi tiết bài viết:", item.recipe_id);
+                            // nav(`/recipes/${item.recipe_id}`); 
+                          }}
+                        >
                           <i className="fas fa-eye"></i>
                         </button>
+
+                        {/* 2. Hai nút Duyệt/Hủy: CHỈ HIỆN KHI CÒN PENDING */}
                         {item.status === 'pending' && (
                           <>
-                            <button className="btn-icon btn-check" title="Xác nhận vi phạm">
+                            {/* Nút Check: Xác nhận vi phạm -> Status thành REVIEWED */}
+                            <button
+                              className="btn-icon btn-check"
+                              title="Xác nhận vi phạm (Đã xử lý)"
+                              onClick={() => handleStatus(item.id, "reviewed")}
+                            >
                               <i className="fas fa-check"></i>
                             </button>
-                            <button className="btn-icon btn-trash" title="Bỏ qua báo cáo">
+
+                            {/* Nút Trash: Bỏ qua báo cáo -> Status thành DISMISSED */}
+                            <button
+                              className="btn-icon btn-trash"
+                              title="Bỏ qua (Không vi phạm)"
+                              onClick={() => handleStatus(item.id, "dismissed")}
+                            >
                               <i className="fas fa-times"></i>
                             </button>
                           </>

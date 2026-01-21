@@ -135,7 +135,6 @@ const imageUrl=store+data_config.image_path
           </footer>
 
         </div>
-
       </div>
     </div>
   );
