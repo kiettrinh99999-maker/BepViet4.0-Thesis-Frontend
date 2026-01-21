@@ -27,21 +27,23 @@ api.interceptors.request.use(
 // Interceptor để xử lý response - chuẩn hóa response format
 api.interceptors.response.use(
   (response) => {
-    // Chuẩn hóa response format
-    if (response.data && response.data.success !== undefined) {
-      return response.data; // Trả về data object từ Laravel API
-    }
-    return response;
+    console.log('API Response:', response.status, response.data);
+    // Trả về toàn bộ response.data (chứa success, message, data)
+    return response.data;
   },
   (error) => {
+    console.error('API Error:', {
+      status: error.response?.status,
+      message: error.message,
+      data: error.response?.data
+    });
+    
     if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
     }
     
-    // Chuẩn hóa error format
     if (error.response?.data) {
       return Promise.reject(error.response.data);
     }

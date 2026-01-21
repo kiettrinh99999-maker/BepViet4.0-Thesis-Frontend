@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Clock, StarFill, Bookmark, Eye } from 'react-bootstrap-icons';
 
-// Khai báo các tham số đầu vào (Props)
 const FoodCard = ({ 
   image, 
   tag, 
@@ -12,19 +11,23 @@ const FoodCard = ({
   level, 
   reviewCount 
 }) => {
+  const [imageError, setImageError] = useState(false);
+
+  const defaultImage = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop';
+  const displayImage = imageError ? defaultImage : (image || defaultImage);
+
   return (
     <div className="d-flex justify-content-center mt-3">
-      {/* Container của Card */}
       <div className="card shadow-sm border-0 rounded-4" style={{ width: '400px' }}>
         
-        {/* Phần hình ảnh và Badge */}
         <div className="position-relative">
-          {/* Ảnh món ăn - Thay bằng prop image */}
           <img 
-            src={image} 
+            src={displayImage} 
             className="card-img-top rounded-top-4" 
             alt={title} 
             style={{ height: '220px', objectFit: 'cover' }}
+            onError={() => setImageError(true)}
+            loading="lazy"
           />
           
           {/* Badge màu đỏ - Thay bằng prop tag */}
