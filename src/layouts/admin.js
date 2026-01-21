@@ -7,9 +7,9 @@ export default function AdminLayout() {
   const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(true);
   const [config, setConfig] = useState(null);
-  const { api } = useAuth();
+  const { api, store } = useAuth();
   const navigate = useNavigate();
-
+ 
   // Danh sách items sidebar
   // path: sẽ dùng cho điều hướng khi bật navigate
   const menus = [
@@ -32,6 +32,7 @@ export default function AdminLayout() {
   if (config === null) {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
+   const imageUrl=store+config.image_path
   // function handleClick(menu){
   //   // setActiveMenu(menu.id);
   //   navigate(menu.path);// dùng để thay đổi đường dẫn
@@ -51,7 +52,7 @@ export default function AdminLayout() {
             <div className="text-center py-4 border-bottom border-secondary">
                 <div className="d-flex align-items-center justify-content-center gap-2">
                     <img
-                      src={config.image_path}
+                      src={imageUrl}
                       alt="Logo"
                       style={{ width: 40, height: 40 }}
                     />
