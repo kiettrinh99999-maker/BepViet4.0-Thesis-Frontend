@@ -17,6 +17,7 @@ import DashboardBody from './pages/admin/ManageDashboard/dashboard';
 import ConfigBody from './pages/admin/ManageAdmin/config';
 import ProfileBody from './pages/profiles/profile';
 
+import ReportContent from './pages/admin/ManageReports/report';
 function App() {
   return (
     <AuthProvider>
@@ -45,6 +46,8 @@ function App() {
           <Route path="/admin" element={<AdminLayout/>}>
             <Route index element={<DashboardBody/>} />
             <Route path="config" element={<ConfigBody/>} />
+            <Route path="report" element={<ReportContent/>} />
+
           </Route>
         </Routes>
       </BrowserRouter>
