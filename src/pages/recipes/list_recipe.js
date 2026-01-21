@@ -1,114 +1,134 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { PlusCircle, Funnel, ChevronLeft, ChevronRight, Filter as FilterIcon, ArrowCounterclockwise } from 'react-bootstrap-icons';
+import { PlusCircle, ChevronLeft, ChevronRight, Filter as FilterIcon, ArrowCounterclockwise } from 'react-bootstrap-icons';
 import FoodCard from '../../components/Recipe/FoodCard';
-import { recipeService } from '../../services/recipeService';
-import './recipe.css'
-
-// Helper maps
-const regionMap = {
-  1: 'Miền Bắc',
-  2: 'Miền Trung',
-  3: 'Miền Nam',
-  4: 'Miền Nam'
-};
-
-const difficultyMap = {
-  1: 'Dễ',
-  2: 'Trung bình',
-  3: 'Khó'
-};
-
-const getRegionName = (regionId) => regionMap[regionId] || 'Không xác định';
-const getDifficultyName = (difficultyId) => difficultyMap[difficultyId] || 'Trung bình';
-
-// Placeholder images
-const getPlaceholderImage = (title) => {
-  const placeholders = {
-    'phở': 'https://images.unsplash.com/photo-1644073514976-f4ee4c375ca9?q=80&w=600&auto=format&fit=crop',
-    'bánh': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=600&auto=format&fit=crop',
-    'cơm': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600&auto=format&fit=crop',
-    'gà': 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?q=80&w=600&auto=format&fit=crop',
-    'tôm': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=600&auto=format&fit=crop',
-    'cá': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=600&auto=format&fit=crop',
-    'nước': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=600&auto=format&fit=crop',
-  };
-
-  if (title) {
-    const lowerTitle = title.toLowerCase();
-    for (const [key, url] of Object.entries(placeholders)) {
-      if (lowerTitle.includes(key)) {
-        return url;
-      }
-    }
-  }
-  return 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop';
-};
+import './recipe.css';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/Authen';
 
 const ListRecipe = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
+  const { user, api, store } = useAuth();
 
-  // Check if user is logged in
+  const [recipes, setRecipes] = useState(null);
+
+  // 1. Thêm State cho phân trang
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [regions, setRegion] = useState('');
+  const [events, setEvent] = useState('');
+  const [difficult, setDiff] = useState('');
+  const [regions_data, setRegionData] = useState(null);
+  const [events_data, setEventData] = useState(null);
+  const [difficult_data, setDiffData] = useState(null);
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!(user && token));
+    fetch(api + 'get-event-region') // Đảm bảo đúng đường dẫn API bạn đặt trong Laravel
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          console.log("Dữ liệu API:", res.data);
+          setRegionData(res.data.regions || []);
+          setEventData(res.data.events || []);
+          setDiffData(res.data.difficulties || []);
+        }
+      })
+      .catch((err) => console.error(err));
   }, []);
 
-  // Fetch recipes from API
+  //Lấy dữ liệu recipe
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const params = {
-          page: currentPage,
-          per_page: 9
-        };
+    // URL cơ bản
+    let url = `${api}recipes?page=${currentPage}`;
 
-        const response = await recipeService.getAll(params);
-        console.log('API Response:', response);
-        
-        // Extract recipes from response
-        let recipeData = [];
-        if (response?.data?.data && Array.isArray(response.data.data)) {
-          recipeData = response.data.data;
-        } else if (Array.isArray(response?.data)) {
-          recipeData = response.data;
-        } else if (Array.isArray(response)) {
-          recipeData = response;
+    // Lọc theo Vùng miền (nếu có chọn và khác rỗng)
+    if (regions && regions !== "") {
+      url += `&region_id=${regions}`;
+    }
+
+    // Lọc theo Sự kiện
+    if (events && events !== "") {
+      url += `&event_id=${events}`;
+    }
+
+    // Lọc theo Độ khó
+    if (difficult && difficult !== "") {
+      url += `&difficulty_id=${difficult}`;
+    }
+
+    // Mock user region (nếu logic dự án yêu cầu ưu tiên cái này thì giữ, không thì có thể bỏ nếu xung đột với filter)
+    if (user && user.region_id && !regions) {
+      // Chỉ dùng user region mặc định nếu người dùng CHƯA chọn filter vùng miền nào
+      url += `&mock_user_region=${user.region_id}`;
+    }
+    console.log("Fetching URL:", url); // Log ra để kiểm tra link đúng không
+    fetch(url)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          setRecipes(res.data.data || []);
+          setCurrentPage(res.data.current_page);
+          setTotalPages(res.data.last_page);
+        } else {
+          setRecipes([]);
         }
-        
-        console.log('Recipes loaded:', recipeData);
-        setRecipes(recipeData);
-      } catch (err) {
-        console.error('Failed to fetch recipes:', err);
-        setError('Không thể tải danh sách công thức. Vui lòng thử lại.');
-      } finally {
-        setLoading(false);
-      }
-    };
+      })
+      .catch(err => {
+        console.log("Lỗi fetch:", err);
+        setRecipes([]);
+      });
 
-    fetchRecipes();
-  }, [currentPage]);
+  }, [user, api, currentPage, regions, events, difficult]);
+
+  // Hàm chuyển trang
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      // Cuộn lên đầu trang cho mượt
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+  // Hàm đặt lại bộ lọc
+  const handleResetFilter = () => {
+    setRegion("");    // Xóa chọn vùng
+    setEvent("");     // Xóa chọn dịp
+    setDiff("");      // Xóa chọn độ khó
+    setCurrentPage(1); // Quay về trang 1
+  };
+  // Hàm đặt lại bộ lọc
+  const handleReset = () => {
+    setEvent("");     // Xóa chọn dịp
+    setDiff("");      // Xóa chọn độ khó
+  };
+
+  if (!recipes) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
+        <div className="spinner-border text-danger" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="list-recipe-page">
-
       {/* --- PHẦN 1: HERO SECTION --- */}
       <section className="hero">
         <div className="container">
           <h1>Công Thức Ẩm Thực Việt</h1>
           <p>Khám phá hơn 500+ công thức nấu ăn đặc sắc từ ba miền Bắc - Trung - Nam</p>
           <div className="hero-tagline">
-            <span>Miền Bắc</span>
-            <span>Miền Trung</span>
-            <span>Miền Nam</span>
+            {regions_data && regions_data.map((item) => (
+              <span
+                key={item.id}
+                onClick={() => {
+                  setRegion(item.id);
+                }}
+                className={regions === item.id ? "active-region" : ""}
+                style={{ cursor: "pointer", marginRight: "15px" }} // CSS nhanh để dễ nhìn
+              >
+                {item.name}
+              </span>
+            ))}
           </div>
         </div>
       </section>
@@ -116,139 +136,149 @@ const ListRecipe = () => {
       {/* --- PHẦN 2: NÚT THÊM MÓN --- */}
       <section className="add-recipe-section">
         <div className="container">
-          <button className="btn-add-recipe">
+          <button className="btn-add-recipe" onClick={() => navigate("/tao-cong-thuc")}>
             <PlusCircle size={18} /> Thêm Công Thức Mới
-           </button>
+          </button>
         </div>
       </section>
 
       <div className="container">
-        {/* --- PHẦN 3: BỘ LỌC (FILTER) --- */}
+        {/* --- PHẦN 3: BỘ LỌC (Giữ nguyên) --- */}
         <section className="filter-section px-4">
           <div className="filter-container">
-            
-            {/* Nhóm lọc: Khu vực */}
+            {/* ... (Giữ nguyên code bộ lọc của bạn ở đây) ... */}
+            {/* Để gọn code tôi ẩn phần này đi, bạn giữ nguyên code cũ nhé */}
+            {/* --- 1. KHU VỰC --- */}
             <div className="filter-group">
               <label className="filter-label">Khu vực</label>
-              <select className="filter-select">
-                <option value="all">Tất cả miền</option>
-                <option value="bac">Miền Bắc</option>
-                <option value="trung">Miền Trung</option>
-                <option value="nam">Miền Nam</option>
+              <select
+                className="filter-select"
+                // QUAN TRỌNG: Thêm dòng này để React điều khiển giá trị hiển thị
+                value={regions}
+                onChange={(e) => {
+                  setRegion(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                {/* Giá trị value="" này khớp với state khi reset */}
+                <option value="">Tất cả miền</option>
+                {regions_data && regions_data.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
             </div>
 
-            {/* Nhóm lọc: Phân loại */}
+            {/* --- 2. DỊP ĐẶC BIỆT --- */}
             <div className="filter-group">
-              <label className="filter-label">Phân loại</label>
-              <select className="filter-select">
-                <option value="all">Tất cả loại món</option>
-                <option value="sang">Ăn sáng</option>
-                <option value="chinh">Món chính</option>
-                <option value="vat">Ăn vặt</option>
+              <label className="filter-label">Dịp đặc biệt</label>
+              <select
+                className="filter-select"
+                // QUAN TRỌNG: Thêm value={events}
+                value={events}
+                onChange={(e) => {
+                  setEvent(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">Tất cả các dịp</option>
+                {events_data && events_data.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
             </div>
 
-            {/* Nhóm lọc: Độ khó */}
+            {/* --- 3. ĐỘ KHÓ --- */}
             <div className="filter-group">
               <label className="filter-label">Độ khó</label>
-              <select className="filter-select">
-                <option value="all">Tất cả</option>
-                <option value="de">Dễ</option>
-                <option value="tb">Trung bình</option>
-                <option value="kho">Khó</option>
+              <select
+                className="filter-select"
+                // QUAN TRỌNG: Thêm value={difficult}
+                value={difficult}
+                onChange={(e) => {
+                  setDiff(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">Tất cả độ khó</option>
+                {difficult_data && difficult_data.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
             </div>
-
-            {/* Nhóm lọc: Sắp xếp */}
-            <div className="filter-group">
-              <label className="filter-label">Sắp xếp</label>
-              <select className="filter-select">
-                <option value="newest">Mới nhất</option>
-                <option value="popular">Phổ biến nhất</option>
-                <option value="time">Thời gian nấu</option>
-              </select>
-            </div>
-
-            {/* Nút bấm */}
             <div className="filter-buttons">
-              <button className="filter-btn apply">
-                <FilterIcon className="me-1"/> Lọc
-              </button>
-              <button className="filter-btn reset">
-                <ArrowCounterclockwise className="me-1"/> Đặt lại
-              </button>
-            </div>
-
+              {/* <button className="filter-btn apply"><FilterIcon className="me-1" /> Lọc</button> */}
+              <button
+                className="filter-btn reset"
+                onClick={handleResetFilter}
+                style={{ marginLeft: '10px', backgroundColor: '#6c757d', color: 'white' }} // Style nhanh hoặc dùng CSS bên dưới
+              >
+                <ArrowCounterclockwise className="me-1" /> Đặt lại
+              </button></div>
           </div>
         </section>
 
-        {/* --- PHẦN 4: DANH SÁCH MÓN ĂN (GRID) --- */}
-        {loading ? (
-          <div className="text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Đang tải...</span>
+        {/* --- PHẦN 4: DANH SÁCH MÓN ĂN --- */}
+        <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+          {recipes.length > 0 ? (
+            recipes.map((item) => (
+              <div className="col" key={item.id}>
+                <FoodCard
+                  image={`${store}${item.image_path}`}
+                  tag={item.region ? item.region.name : 'Việt Nam'}
+                  title={item.title}
+                  description={item.description}
+                  time={`${item.cooking_time} phút`}
+                  level={item.difficulty ? item.difficulty.name : 'Trung bình'}
+                  rating={item.rates_avg_score ? parseFloat(item.rates_avg_score).toFixed(1) : 0}
+                  reviewCount={item.rates_count || 0}
+                  onClick={() => navigate(`/cong-thuc/${item.title_slug || item.id}`)}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="col-12 text-center py-5">
+              <p>Chưa có công thức nào.</p>
             </div>
-            <p className="mt-3 text-secondary">
-              {isLoggedIn ? 'Đang tải công thức yêu thích...' : 'Đang tải danh sách công thức mới nhất...'}
-            </p>
-          </div>
-        ) : error ? (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        ) : recipes.length === 0 ? (
-          <div className="alert alert-info" role="alert">
-            Không tìm thấy công thức nào.
-          </div>
-        ) : (
-          <>
-            <div className="mb-3 text-secondary">
-              {isLoggedIn ? '📌 Những công thức phù hợp với sở thích của bạn' : '🆕 Công thức mới nhất'}
-            </div>
-            <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-              {recipes.map((item) => {
-                const imageUrl = item.image_path 
-                  ? `http://127.0.0.1:8000${item.image_path}` 
-                  : getPlaceholderImage(item.title);
-                
-                const regionName = item.region?.name || getRegionName(item.region_id) || 'CHƯA XÁC ĐỊNH';
-                const difficultyName = item.difficulty?.name || getDifficultyName(item.difficulty_id) || 'Trung bình';
-                
-                return (
-                  <div className="col" key={item.id}>
-                    <FoodCard 
-                      image={imageUrl}
-                      tag={regionName}
-                      title={item.title}
-                      description={item.description}
-                      time={`${item.cooking_time || '--'} phút`}
-                      level={difficultyName}
-                      reviewCount={item.review_count || '0'}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
+          )}
+        </div>
 
-        {/* --- PHẦN 5: PHÂN TRANG (PAGINATION) --- */}
-        {!loading && recipes.length > 0 && (
+        {/* --- PHẦN 5: PHÂN TRANG (ĐÃ SỬA) --- */}
+        {totalPages >= 1 && (
           <div className="pagination-container">
-            <button 
-              className="pagination-btn"
-              onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+            {/* Nút Previous */}
+            <button
+              className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+              onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
             >
               <ChevronLeft />
             </button>
-            <button className="pagination-btn active">
-              {currentPage}
-            </button>
-            <button 
-              className="pagination-btn"
-              onClick={() => setCurrentPage(currentPage + 1)}
+
+            {/* Render các số trang */}
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNum = index + 1;
+              return (
+                <button
+                  key={pageNum}
+                  className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                  onClick={() => handlePageChange(pageNum)}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            {/* Nút Next */}
+            <button
+              className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
             >
               <ChevronRight />
             </button>
