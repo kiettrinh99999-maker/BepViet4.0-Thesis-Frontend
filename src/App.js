@@ -12,7 +12,9 @@ import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
 import MealPlan from './pages/mealplanes/mealplane';
+import CreateRecipe from './pages/recipes/add_recipe';
 import DashboardBody from './pages/admin/ManageDashboard/dashboard';
+import ConfigBody from './pages/admin/ManageAdmin/config';
 
 function App() {
   return (
@@ -32,7 +34,7 @@ function App() {
               <Route path="/shopping-list" element={<ShoppingList/>} />
               <Route path="/meal-plan" element={<MealPlan/>} />
               <Route path="/profile" element={<h1>Profile</h1>} />
-              <Route path="/tao-cong-thuc" element={<h1>Tạo công thức tại đây</h1>} />
+              <Route path="/tao-cong-thuc" element={<CreateRecipe/>} />
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
@@ -41,6 +43,7 @@ function App() {
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout/>}>
             <Route index element={<DashboardBody/>} />
+            <Route path="config" element={<ConfigBody/>} />
           </Route>
         </Routes>
       </BrowserRouter>

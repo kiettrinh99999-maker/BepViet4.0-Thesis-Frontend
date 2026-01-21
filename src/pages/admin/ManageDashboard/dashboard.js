@@ -1,71 +1,103 @@
-import React, { useState, useMemo } from 'react';
-import './DashboardBody.css'; // File CSS ở bước 2
+import React, { useState, useEffect } from 'react';
+import './DashboardBody.css'; 
 
 const DashboardBody = () => {
-  const [selectedYear, setSelectedYear] = useState('2023');
+  // Mặc định chọn năm hiện tại
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [loading, setLoading] = useState(true);
+  
+  const [dashboardData, setDashboardData] = useState({
+    stats: { total_recipes: 0, total_users: 0, total_blogs: 0, pending_recipes: 0 },
+    chart: { data: [], label: '' },
+    // Thêm state mảng năm (mặc định rỗng)
+    available_years: [] 
+  });
 
-  // Dữ liệu mẫu (Lấy từ script cũ của bạn)
-  const yearData = useMemo(() => ({
-    '2023': [42850, 35200, 38500, 46100, 50800, 54500, 58200, 62800, 51300, 47600, 43900, 40200],
-    '2022': [38500, 31200, 34500, 42100, 46800, 49500, 53200, 57800, 46300, 41600, 38900, 35200],
-    '2021': [32500, 28200, 29500, 36100, 39800, 42500, 46200, 49800, 38300, 34600, 31900, 29200],
-    '2020': [28500, 23200, 25500, 30100, 32800, 35500, 39200, 42800, 31300, 27600, 24900, 22200]
-  }), []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Gọi API
+        const response = await fetch(`http://localhost:8000/api/admin/dashboard?year=${selectedYear}`);
+        if (!response.ok) throw new Error('Lỗi kết nối');
+        
+        const result = await response.json();
+        if (result.success) {
+          setDashboardData(result.data);
+          
+          // Logic phụ: Nếu năm đang chọn không nằm trong danh sách năm có dữ liệu 
+          // (VD: Năm mới sang nhưng chưa có data), thì tự động set về năm mới nhất có data
+          if (result.data.available_years.length > 0 && !result.data.available_years.includes(parseInt(selectedYear))) {
+             setSelectedYear(result.data.available_years[0]); // Bỏ comment dòng này nếu muốn tự nhảy năm
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Lấy data theo năm, mặc định là 2023
-  const currentData = yearData[selectedYear] || yearData['2023'];
-  const MAX_VALUE = 80000; // Giá trị trần để tính % chiều cao
+    fetchData();
+  }, [selectedYear]);
+
+  const chartValues = dashboardData.chart.data || [];
+  const maxVal = Math.max(...chartValues, 5);
+  const MAX_HEIGHT = Math.ceil(maxVal * 1.2);
 
   return (
     <div className="dashboard-body">
       <h1 className="page-title">Dashboard Thống Kê</h1>
-      
-      {/* 1. KHỐI THỐNG KÊ (Stats Cards) */}
+
+      {/* 1. CARDS - Giữ nguyên */}
       <div className="stats-cards">
-        <StatCard icon="fa-utensils" color="red" value="1,248" label="Công thức món ăn" />
-        <StatCard icon="fa-user-check" color="orange" value="5,623" label="Người dùng đăng ký" />
-        <StatCard icon="fa-blog" color="green" value="287" label="Số blog" />
-        <StatCard icon="fa-clock" color="blue" value="48" label="Công thức chờ duyệt" />
+        <StatCard icon="fa-utensils" color="red" value={dashboardData.stats.total_recipes} label="Công thức món ăn" />
+        <StatCard icon="fa-user-check" color="orange" value={dashboardData.stats.total_users} label="Sô người dùng" />
+        <StatCard icon="fa-blog" color="green" value={dashboardData.stats.total_blogs} label="Bài viết Blog" />
+        <StatCard icon="fa-clock" color="blue" value={dashboardData.stats.pending_recipes} label="Công thức chờ duyệt" />
       </div>
-      
-      {/* 2. KHỐI BIỂU ĐỒ (Chart Section) */}
-      <div className="chart-section">
+
+      {/* 2. BIỂU ĐỒ */}
+      <div className="chart-section" style={{ minHeight: '450px' }}>
         <div className="section-header">
-          <h3 className="section-title">Lượt truy cập (12 tháng gần nhất)</h3>
+          <h3 className="section-title">Số người ({selectedYear})</h3>
+          
+          {/* SELECT NĂM ĐỘNG */}
           <div className="year-selector">
-            <label htmlFor="yearSelect">Năm: </label>
-            <select 
-              id="yearSelect" 
-              value={selectedYear} 
-              onChange={(e) => setSelectedYear(e.target.value)}
-            >
-              <option value="2023">2023</option>
-              <option value="2022">2022</option>
-              <option value="2021">2021</option>
-              <option value="2020">2020</option>
+            <label>Năm: </label>
+            <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+              {/* Nếu có danh sách năm từ API thì map ra, nếu chưa có thì hiện năm hiện tại */}
+              {dashboardData.available_years.length > 0 ? (
+                dashboardData.available_years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))
+              ) : (
+                <option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>
+              )}
             </select>
           </div>
         </div>
         
-        <div className="chart-container">
-          {/* Các dòng kẻ ngang (Background lines) */}
+        <div className="chart-container" style={{ paddingBottom: '20px' }}>
+           {/* Logic vẽ biểu đồ giữ nguyên */}
           <div className="chart-lines">
-            {[80, 70, 60, 50, 40].map(val => (
-              <div key={val} className="chart-line"><span>{val},000</span></div>
+            {[100, 75, 50, 25, 0].map(p => (
+              <div key={p} className="chart-line">
+                <span>{Math.round((MAX_HEIGHT * p) / 100)}</span>
+              </div>
             ))}
           </div>
           
-          {/* Các cột biểu đồ (Bars) */}
           <div className="chart-bars">
-            {currentData.map((value, index) => {
-              const heightPercent = (value / MAX_VALUE) * 100;
-              return (
-                <div key={index} className={`chart-bar bar-${index + 1}`} style={{ height: `${heightPercent}%` }}>
-                  <div className="chart-bar-value">{value.toLocaleString()}</div>
-                  <div className="chart-bar-label">T{index + 1}</div>
+            {chartValues.map((val, idx) => (
+              <div key={idx} className={`chart-bar bar-${idx + 1}`} 
+                   style={{ height: `${(val / MAX_HEIGHT) * 100}%` }}>
+                {val > 0 && <div className="chart-bar-value">{val}</div>}
+                <div className="chart-bar-label" style={{ bottom: '-20px', fontSize: '0.8rem', fontWeight: '500' }}>
+                    T{idx + 1}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -73,12 +105,9 @@ const DashboardBody = () => {
   );
 };
 
-// Component con hiển thị từng thẻ Card nhỏ
 const StatCard = ({ icon, color, value, label }) => (
   <div className="stat-card">
-    <div className={`stat-icon icon-${color}`}>
-      <i className={`fas ${icon}`}></i>
-    </div>
+    <div className={`stat-icon icon-${color}`}><i className={`fas ${icon}`}></i></div>
     <div className="stat-info">
       <h3>{value}</h3>
       <p>{label}</p>
