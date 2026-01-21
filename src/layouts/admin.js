@@ -1,27 +1,28 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useNavigate,useLocation } from "react-router";
 
 export default function AdminLayout() {
-  const [activeMenu, setActiveMenu] = useState("recipes");
+  // const [activeMenu, setActiveMenu] = useState("recipes");
+  const location = useLocation();
   const [showSidebar, setShowSidebar] = useState(true);
   const navigate = useNavigate();
 
   // Danh sách items sidebar
   // path: sẽ dùng cho điều hướng khi bật navigate
   const menus = [
-    { id: "dashboard", icon: "fa-chart-bar", label: "Dashboard", path: "/admin/dashboard" },
+    { id: "dashboard", icon: "fa-chart-bar", label: "Dashboard", path: "/admin/" },
     { id: "approve", icon: "fa-clipboard-check", label: "Duyệt công thức", path: "/admin/approve" },
     { id: "recipes", icon: "fa-utensils", label: "Quản lý công thức", path: "/admin/recipes" },
     { id: "categories", icon: "fa-list", label: "Quản lý danh mục", path: "/admin/categories" },
-    { id: "settings", icon: "fa-cog", label: "Cấu hình website", path: "/admin/settings" },
+    { id: "settings", icon: "fa-cog", label: "Cấu hình website", path: "/admin/config" },
     { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
   ];
 
-  function handleClick(menu){
-    setActiveMenu(menu.id);
-    //navigate(menu.path); dùng để thay đổi đường dẫn
-    alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
-  };
+  // function handleClick(menu){
+  //   // setActiveMenu(menu.id);
+  //   navigate(menu.path);// dùng để thay đổi đường dẫn
+  //   // alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
+  // };
 
   return (
     <div className="container-fluid">
@@ -48,20 +49,21 @@ export default function AdminLayout() {
             <ul className="nav flex-column mt-3">
             {/* Danh sách menu */}
             {menus.map(menu => (
-                <li
+              <li
                 key={menu.id}
                 className={`nav-link d-flex align-items-center px-4 py-3 fs-6 ${
-                    activeMenu === menu.id
+                  location.pathname === menu.path ||
+                  location.pathname.startsWith(menu.path + "/")
                     ? "bg-light text-dark border-start border-4 border-danger fw-semibold"
                     : "text-white"
                 }`}
                 style={{ cursor: "pointer" }}
-                onClick={() => handleClick(menu)}
-                >
+                onClick={() => navigate(menu.path)}
+              >
                 <i className={`fas ${menu.icon} fs-5 me-4`}></i>
                 <span>{menu.label}</span>
-                </li>
-            ))}
+              </li>
+            ))}         
             </ul>
         </aside>
         )}
