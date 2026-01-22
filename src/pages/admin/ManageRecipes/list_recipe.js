@@ -1,13 +1,13 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../../contexts/Authen";
+import { useState, useEffect } from 'react';
+import './list_recipe.css';
+import { useAuth } from '../../../contexts/Authen';
 
-const RecipeManagement = () => {
+const API_URL = "http://localhost:8000/";
+
+export default function RecipeManagement(){
   const [recipes, setRecipes] = useState(null);
   const [page, setPage] = useState(1);
-  const {api} = useAuth();
+  const {api, renderDate} = useAuth();
   useEffect(() => {
     // Gọi API lấy danh sách question theo page
     fetch(`${api}recipes?page=${page}`)
@@ -16,6 +16,71 @@ const RecipeManagement = () => {
         setRecipes(res.data);
       });
   }, [page, api]);
+
+  const renderStatus = (status) => {
+    switch (status) {
+      case 'pending':
+        return <span className="badge badge-pending status-pending ">Chờ duyệt</span>;
+      case 'approved':
+      case 'active':
+        return <span className="badge badge-approved status-approved">Đã duyệt</span>;
+      case 'rejected':
+        return <span className="badge badge-rejected status-rejected">Từ chối</span>;
+      default:
+        return <span className="status-badge">Không có</span>;
+    }
+  };
+
+    const renderEvent = (event) => {
+    switch (event) {
+      case 'Tết Nguyên Đán':
+        return <span className="event-badge event-tet">Tết Nguyên Đán</span>;
+
+      case 'Giáng sinh':
+        return <span className="event-badge event-christmas">Giáng sinh</span>;
+
+      case 'Sinh nhật':
+        return <span className="event-badge event-birthday">Sinh nhật</span>;
+
+      case 'Tiệc BBQ':
+        return <span className="event-badge event-bbq">Tiệc BBQ</span>;
+
+      default:
+        return <span className="event-badge">Không có</span>;
+    }
+  };
+
+  const renderRegion = (regionName) => {
+    switch (regionName) {
+      case 'Miền Bắc':
+        return (
+          <span className="region-badge region-north">
+            Miền Bắc
+          </span>
+        );
+
+      case 'Miền Trung':
+        return (
+          <span className="region-badge region-central">
+            Miền Trung
+          </span>
+        );
+
+      case 'Miền Nam':
+        return (
+          <span className="region-badge region-south">
+            Miền Nam
+          </span>
+        );
+
+      default:
+        return (
+          <span className="region-badge">
+            Không có
+          </span>
+        );
+    }
+  };
 
   function handleView(id){
     console.log("Xem ID:", id);
@@ -30,200 +95,148 @@ const RecipeManagement = () => {
   if (recipes === null) {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
+
   return (
-    <div className="container-fluid">
+    <div className="recipe-management-container">
+
       {/* Title */}
-      <div className="row mb-4">
-        <div className="col-12 d-flex justify-content-between align-items-center">
-          <h1 className="h3 mb-0">Quản lý công thức</h1>
-          <span className="text-muted">Tổng cộng {recipes.total} công thức</span>
-        </div>
+      <div className="recipe-page-title">
+        <h1>Quản Lý Công Thức</h1>
+        <span>Tổng cộng {recipes.total} công thức</span>
       </div>
 
       {/* Filter Section */}
-      <div className="card shadow-sm rounded-3 mb-4">
-        <div className="card-body p-4">
-          <div className="row g-3">
-            {/* Region */}
-            <div className="col-md-4 col-sm-6">
-              <label className="form-label fw-medium text-muted">
-                Vùng miền
-              </label>
-              <select className="form-select py-2">
-                <option>Tất cả vùng miền</option>
-                <option>Miền Bắc</option>
-                <option>Miền Trung</option>
-                <option>Miền Nam</option>
-              </select>
-            </div>
-
-            {/* Event */}
-            <div className="col-md-4 col-sm-6">
-              <label className="form-label fw-medium text-muted">
-                Sự kiện
-              </label>
-              <select className="form-select py-2">
-                <option>Tất cả sự kiện</option>
-                <option>Tết</option>
-                <option>Trung thu</option>
-                <option>Ngày thường</option>
-              </select>
-            </div>
-
-            {/* Date */}
-            <div className="col-md-4 col-sm-6">
-              <label className="form-label fw-medium text-muted">
-                Ngày đăng từ
-              </label>
-              <input type="date" className="form-control py-2" />
-            </div>
+      <div className="filter-section active">
+        <div className="filter-row">
+          <div className="filter-group">
+            <label>Vùng miền</label>
+            <select
+              
+            >
+              <option value="all">Tất cả</option>
+              <option value="north">Miền Bắc</option>
+              <option value="central">Miền Trung</option>
+              <option value="south">Miền Nam</option>
+            </select>
           </div>
 
+          <div className="filter-group">
+            <label>Sự kiện</label>
+            <select
+              
+              
+            >
+              <option value="all">Tất cả</option>
+              <option value="tet">Tết</option>
+              <option value="midautumn">Trung thu</option>
+              <option value="normal">Ngày thường</option>
+            </select>
+          </div>
 
-          {/* Buttons */}
-          <div className="d-flex gap-2 mt-4">
-          <button className="btn btn-danger text-white px-4">
-              Áp dụng bộ lọc
-          </button>
-          <button className="btn btn-outline-dark px-4">
-              Đặt lại
-          </button>
+          <div className="filter-group">
+            <label>Ngày đăng từ</label>
+            <input
+              type="date"
+              
+              
+            />
           </div>
         </div>
-      </div>
 
+        <div className="filter-buttons">
+          <button className="filter-btn btn-primary" >
+            Áp dụng
+          </button>
+          <button className="filter-btn btn-secondary" >
+            Đặt lại
+          </button>
+        </div>
+      </div>
 
       {/* Table */}
-      <div className="card shadow-sm rounded-3">
-        <div className="card-header bg-white py-3">
-          <h5 className="mb-0">Danh sách công thức</h5>
+      <div className="recipes-table-container">
+        <div class="table-header">
+          <h3 class="table-title">Tất cả công thức</h3>
         </div>
-
-        <div className="table-responsive">
-          <table className="table table-hover table-borderless mb-0">
-            <thead className="table-light">
-              <tr>
-                <th className="py-3 text-center">Công thức</th>
-                <th className="py-3 text-center">Vùng miền</th>
-                <th className="py-3 text-center">Sự kiện</th>
-                <th className="py-3 text-center">Trạng thái</th>
-                <th className="py-3 text-center">Ngày đăng</th>
-                <th className="py-3 text-center">Thao tác</th>
+        <table className="recipes-table">
+          <thead>
+            <tr>
+              <th>Công thức</th>
+              <th>Vùng miền</th>
+              <th>Sự kiện</th>
+              <th>Trạng thái</th>
+              <th>Ngày đăng</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {recipes.data.map(recipe => (
+              <tr key={recipe.id}>
+                <td>
+                  <div className="recipe-info-cell">
+                    <img src={`${API_URL}storage/${recipe.image_path}` ?? "/placeholder.png"} className="recipe-image" />
+                    <div>
+                      <h4>{recipe.title}</h4>
+                      <p>Độ khó: {recipe.difficulty.name}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>{renderRegion(recipe.region?.name)}</td>
+                <td>{renderEvent(recipe.event?.name)}</td>
+                 <td>{renderStatus(recipe.status)}</td>
+                <td>{renderDate(recipe.created_at)}</td>
+                <td>
+                  <button class="table-action-btn table-btn-view">
+                    <i className="fas fa-eye"></i>
+                    Xem
+                  </button>
+                  <button class="table-action-btn table-btn-delete">
+                    <i className="fas fa-trash"></i>
+                    Xóa
+                  </button>
+                </td>
               </tr>
-            </thead>
+            ))}
+          </tbody>
+        </table>
 
-            <tbody className="align-middle">
-        {recipes.data.map((recipe) => (
-          <tr key={recipe.id}>
-            <td>
-              <div className="d-flex align-items-center gap-3">
-                <img
-                  src={recipe.image_path}
-                  alt={recipe.title}
-                  className="rounded"
-                  style={{ width: 60, height: 60, objectFit: "cover" }}
-                />
+        {/* Pagination */}
+        <div className="pagination">
+    {/* Previous */}
+    <button
+      className="pagination-btn"
+      disabled={recipes.current_page === 1}
+      onClick={() => setPage(recipes.current_page - 1)}
+    >
+      Trước
+    </button>
 
-                <div>
-                  <div className="fw-medium">{recipe.title}</div>
-                  <small className="text-muted">
-                    Độ khó: {recipe.difficulty?.name}
-                  </small>
-                </div>
-              </div>
-            </td>
+    {/* Pages */}
+    {Array.from(
+      { length: recipes.last_page },
+      (_, i) => i + 1
+    ).map(p => (
+      <button
+        key={p}
+        className={`pagination-btn ${
+          p === recipes.current_page ? 'active' : ''
+        }`}
+        onClick={() => setPage(p)}
+      >
+        {p}
+      </button>
+    ))}
 
-            <td className="text-center">
-              <span className="badge rounded-pill bg-light text-dark px-3 py-2 fs-6">
-                {recipe.region.name}
-              </span>
-            </td>
-
-            <td className="text-center">
-              <span className="badge rounded-pill bg-secondary text-dark px-3 py-2 fs-6">
-                {recipe.event?.name ?? '—'}
-              </span>
-            </td>
-
-            <td className="text-center">
-              <span className="badge rounded-pill bg-success text-dark px-3 py-2 fs-6">
-                {recipe.status}
-              </span>
-            </td>
-
-            <td className="text-center">
-              {new Date(recipe.created_at).toLocaleDateString('vi-VN')}
-            </td>
-
-            <td className="text-center">
-              <div className="d-flex justify-content-center gap-2">
-                <button className="btn btn-outline-secondary btn-sm px-4" onClick={() => handleView(recipe.id)}>
-                  <i className="fas fa-eye me-2"></i>
-                  Xem
-                </button>
-                <button className="btn btn-outline-danger btn-sm px-4" onClick={() => handleDelete(recipe.id)}>
-                  <i className="fas fa-trash me-2"></i>
-                  Xóa
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    {/* Next */}
+    <button
+      className="pagination-btn"
+      disabled={recipes.current_page === recipes.last_page}
+      onClick={() => setPage(recipes.current_page + 1)}
+    >
+      Tiếp
+    </button>
   </div>
       </div>
-      
-      {/* Pagination */}
-      <nav className="d-flex justify-content-center mt-4">
-        <ul className="pagination gap-2">
-
-          {/* Previous */}
-          <li className="page-item">
-            <button
-              className="btn btn-outline-danger"
-              disabled={recipes.current_page === 1}
-              onClick={() => setPage(recipes.current_page - 1)}
-            >
-              &laquo;
-            </button>
-          </li>
-
-          {/* Page numbers */}
-          {Array.from({ length: recipes.last_page }, (_, i) => {
-            const pageNumber = i + 1;
-            const isActive = recipes.current_page === pageNumber;
-
-            return (
-              <li key={pageNumber} className="page-item">
-                <button
-                  className={`btn ${
-                    isActive ? "btn-danger text-white" : "btn-outline-danger"
-                  }`}
-                  onClick={() => setPage(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            );
-          })}
-
-          {/* Next */}
-          <li className="page-item">
-            <button
-              className="btn btn-outline-danger"
-              disabled={recipes.current_page === recipes.last_page}
-              onClick={() => setPage(recipes.current_page + 1)}
-            >
-              &raquo;
-            </button>
-          </li>
-
-        </ul>
-      </nav>
-
     </div>
   );
 };
-
-export default RecipeManagement;
