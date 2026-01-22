@@ -5,13 +5,11 @@ import { useAuth } from '../contexts/Authen';
 const MemberLayout = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Ref để xử lý click ra ngoài dropdown (nếu cần mở rộng sau này)
   const dropdownRef = useRef(null);
   
   const navigate = useNavigate();
   const location = useLocation();
-  const { config, store } = useAuth();
+  const {user, logout, config, store } = useAuth();
 
   // 1. Xử lý logic tìm kiếm
   const handleSearch = (e) => {
@@ -24,7 +22,7 @@ const MemberLayout = () => {
   // 2. Xử lý đăng xuất
   const handleLogout = () => {
     if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-      alert('Đăng xuất thành công!');
+      logout()
       navigate('/');
     }
   };

@@ -1,0 +1,212 @@
+/* Container bao ngoài để định vị nút Back */
+.login-wrapper-page {
+    position: relative;
+    min-height: 100vh;
+    background-color: #f9f5f0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* 1. Style nút Quay lại */
+.back-to-home {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.back-link {
+    color: #d32f2f;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 25px; /* Bo tròn hơn */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+    border: 1px solid #e0e0e0;
+}
+
+.back-link:hover {
+    color: #9a0007;
+    background-color: #fdfdfd;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* Container căn giữa Form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Thẻ Card chính - ĐÃ MỞ RỘNG */
+.login-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 550px; /* <--- Đã tăng độ rộng tại đây (Cũ: 420px) */
+}
+
+/* Header */
+.login-header {
+    background-color: #d32f2f;
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+}
+
+.login-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.login-logo-icon {
+    background-color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d32f2f;
+    font-size: 1.6rem;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* Body */
+.login-body {
+    padding: 40px 45px; /* Tăng padding để cân đối với chiều rộng mới */
+}
+
+.login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #9a0007;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+/* Form Elements */
+.form-group { margin-bottom: 20px; }
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fcfcfc;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #d32f2f;
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+}
+
+.password-container { position: relative; }
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+}
+
+/* Options */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.remember-me { display: flex; align-items: center; gap: 8px; }
+.forgot-password { color: #d32f2f; text-decoration: none; font-weight: 500; }
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.btn-login { background-color: #d32f2f; color: white; transition: 0.3s; }
+.btn-login:hover { background-color: #9a0007; }
+
+.btn-google {
+    background-color: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    margin-top: 15px;
+}
+.btn-google:hover { background-color: #f9f9f9; }
+.google-icon { color: #DB4437; }
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+    color: #666;
+}
+.login-divider::before, .login-divider::after {
+    content: ""; flex: 1; border-bottom: 1px solid #e0e0e0;
+}
+.login-divider span { padding: 0 15px; }
+
+.register-link { text-align: center; margin-top: 25px; }
+.register-link a { color: #d32f2f; text-decoration: none; font-weight: 500; }
+
+/* 2. Style Footer (Đã thêm lại) */
+.login-footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e0e0e0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Messages */
+.form-message {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.form-message.error { background-color: #ffebee; color: #c62828; }
+.form-message.success { background-color: #e8f5e9; color: #2e7d32; }
