@@ -27,6 +27,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
 import CreateBlog from './pages/blogs/add_blog';
+import ManageUser from './pages/admin/ManageAccounts/manage_users';
 function App() {
   return (
     <AuthProvider>
@@ -68,6 +69,7 @@ function App() {
             <Route path="cong-thuc" element={<RecipeManagement />} />
             <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
             <Route path="categories" element={<CategoryManagement/>} />
+            <Route path="manageuser" element={<ManageUser/>} />
           </Route>
           <Route path="*" element={<div className="text-center mt-5">404 - Trang không tồn tại</div>} />
         </Routes>

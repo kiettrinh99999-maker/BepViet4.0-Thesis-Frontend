@@ -17,6 +17,7 @@ export default function AdminLayout() {
     { id: "categories", icon: "fa-list", label: "Quản lý danh mục", path: "/admin/categories" },
     { id: "settings", icon: "fa-cog", label: "Cấu hình website", path: "/admin/config" },
     { id: "report", icon: "fa-flag", label: "Report", path: "/admin/report" },
+    { id: "users", icon: "fa-users", label: "Quản lý user", path: "/admin/manageuser" },
   ];
 
   const handleLogout = () => {
