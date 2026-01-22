@@ -1,282 +1,443 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, ListGroup, Modal, Badge, InputGroup } from 'react-bootstrap';
-import { FaSearch, FaCartPlus, FaTrash, FaCheckSquare, FaPrint, FaTimes, FaUtensils, FaArrowRight } from 'react-icons/fa';
-import { FaSquare } from 'react-icons/fa6'; // Icon ô vuông trống
-import './Shopping.css'
-
-// Dữ liệu mẫu (Lấy từ script cũ của bạn)
-const RECIPE_DATA = {
-  "pho-bo": {
-    name: "Phở bò tái nạm gầu gân bò viên đặc biệt",
-    region: "Miền Bắc",
-    ingredients: [
-      { name: "Bánh phở", quantity: "500g", image: "https://images.unsplash.com/photo-1559314809-2b99056a8c4a?w=100" },
-      { name: "Thịt bò tái", quantity: "200g", image: "https://images.unsplash.com/photo-1613478954751-274737d6e6a3?w=100" },
-      { name: "Xương bò", quantity: "1kg", image: "https://images.unsplash.com/photo-1615937651188-80b4f85e783a?w=100" },
-      { name: "Hành tây", quantity: "2 củ", image: "https://images.unsplash.com/photo-1618375682229-873b8852377c?w=100" },
-    ]
-  },
-  "com-tam": {
-    name: "Cơm tấm sườn nướng mật ong",
-    region: "Miền Nam",
-    ingredients: [
-      { name: "Gạo tấm", quantity: "500g", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100" },
-      { name: "Sườn heo", quantity: "800g", image: "https://images.unsplash.com/photo-1544025162-d76690b67f61?w=100" },
-      { name: "Mật ong", quantity: "50ml", image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=100" },
-    ]
-  }
-};
+import { useAuth } from '../../contexts/Authen'; // Import Context từ file Authen.js bạn gửi trước đó
+import './Shopping.css'; 
 
 const ShoppingList = () => {
-  // State
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [shoppingList, setShoppingList] = useState([]);
-  const [showPrintModal, setShowPrintModal] = useState(false);
+    // 1. Lấy context Auth
+    const { api, token, store } = useAuth();
 
-  // Xử lý tìm kiếm công thức
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setSearchResults([]);
-      return;
-    }
-    const results = Object.keys(RECIPE_DATA)
-      .filter(key => RECIPE_DATA[key].name.toLowerCase().includes(searchTerm.toLowerCase()))
-      .map(key => ({ id: key, ...RECIPE_DATA[key] }));
-    setSearchResults(results);
-  }, [searchTerm]);
+    // 2. State
+    const [shoppingList, setShoppingList] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [selectedRecipe, setSelectedRecipe] = useState(null); // Lưu công thức đang chọn để kéo thả
+    const [isDragOver, setIsDragOver] = useState(false);
+    const [showPrintModal, setShowPrintModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-  // Chọn công thức
-  const handleSelectRecipe = (recipe) => {
-    setSelectedRecipe(recipe);
-    setSearchTerm(''); // Xóa ô tìm kiếm cho gọn
-    setSearchResults([]);
-  };
+    // 3. Load danh sách Shopping List từ API khi vào trang
+    useEffect(() => {
+        fetchShoppingList();
+    }, [api, token]);
 
-  // Thêm 1 nguyên liệu vào danh sách
-  const addToShoppingList = (ingredient, recipeName) => {
-    const newItem = {
-      id: Date.now() + Math.random(),
-      ...ingredient,
-      source: recipeName,
-      checked: false
+    const fetchShoppingList = async () => {
+        try {
+            const response = await fetch(`${api}shopping-list`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await response.json();
+            if (result.success) {
+                setShoppingList(result.data);
+            }
+        } catch (error) {
+            console.error("Lỗi tải danh sách:", error);
+        }
     };
-    setShoppingList(prev => [...prev, newItem]);
-  };
 
-  // Thêm tất cả nguyên liệu
-  const addAllIngredients = () => {
-    if (!selectedRecipe) return;
-    const newItems = selectedRecipe.ingredients.map(ing => ({
-      id: Date.now() + Math.random(), // ID tạm
-      ...ing,
-      source: selectedRecipe.name,
-      checked: false
-    }));
-    setShoppingList(prev => [...prev, ...newItems]);
-  };
+    // 4. Tìm kiếm công thức (Gọi API recipes)
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (searchQuery.length < 2) {
+                setSearchResults([]);
+                return;
+            }
+            try {
+                // Gọi API tìm kiếm recipe
+                const response = await fetch(`${api}recipes?keyword=${searchQuery}`, {
+                     headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+                if (result.success) {
+                    setSearchResults(result.data); // API trả về mảng recipes
+                }
+            } catch (error) {
+                console.error("Lỗi tìm kiếm:", error);
+            }
+        }, 500); // Debounce 500ms để đỡ gọi API liên tục
 
-  // Xử lý Check/Uncheck item
-  const toggleCheckItem = (id) => {
-    setShoppingList(prev => prev.map(item => 
-      item.id === id ? { ...item, checked: !item.checked } : item
-    ));
-  };
+        return () => clearTimeout(timer);
+    }, [searchQuery, api, token]);
 
-  // Xóa item
-  const removeItem = (id) => {
-    setShoppingList(prev => prev.filter(item => item.id !== id));
-  };
+    // 5. Chọn công thức để hiển thị nguyên liệu
+    const handleSelectRecipe = async (recipeId) => {
+        try {
+            // Gọi API lấy chi tiết recipe (kèm ingredients)
+            const response = await fetch(`${api}recipes/${recipeId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const result = await response.json();
+            if (result.success) {
+                setSelectedRecipe(result.data);
+                setSearchQuery('');
+                setSearchResults([]);
+            }
+        } catch (error) {
+            console.error("Lỗi lấy chi tiết công thức:", error);
+        }
+    };
 
-  // Các chức năng Toolbar
-  const clearList = () => setShoppingList([]);
-  const checkAll = () => setShoppingList(prev => prev.map(item => ({ ...item, checked: true })));
-  const uncheckAll = () => setShoppingList(prev => prev.map(item => ({ ...item, checked: false })));
+    // 6. Thêm nguyên liệu vào DB (Gọi API)
+    const addToShoppingList = async (ingredient, sourceName) => {
+        // Kiểm tra trùng lặp trên client cho nhanh (hoặc để server lo)
+        const exists = shoppingList.find(item => item.name === ingredient.name && item.source === sourceName);
+        if (exists) {
+            alert(`${ingredient.name} đã có trong danh sách`);
+            return;
+        }
 
-  return (
-    <div className="shopping-page py-4">
-      <Container>
-        {/* Header Title */}
-        <div className="text-center mb-5">
-          <h1 className="font-playfair display-4 fw-bold text-danger">Shopping List</h1>
-          <p className="text-muted">Chọn công thức và tạo danh sách mua sắm dễ dàng</p>
-        </div>
+        try {
+            const response = await fetch(`${api}shopping-list`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    name: ingredient.name,
+                    quantity: ingredient.quantity,
+                    image: ingredient.image, // URL ảnh hoặc path
+                    source: sourceName,      // Tên món ăn nguồn
+                    checked: false
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                // Cập nhật state UI ngay lập tức
+                setShoppingList(prev => [...prev, result.data]);
+                // alert(`Đã thêm ${ingredient.name}`);
+            }
+        } catch (error) {
+            console.error("Lỗi thêm món:", error);
+        }
+    };
 
-        <Row>
-          {/* CỘT TRÁI: Tìm kiếm & Chọn nguyên liệu */}
-          <Col lg={6} className="mb-4">
-            <Card className="border-0 shadow-sm h-100">
-              <Card.Body>
-                <h4 className="font-playfair mb-4 text-danger">
-                  <FaSearch className="me-2" /> Tìm công thức
-                </h4>
+    // 7. Thêm TẤT CẢ nguyên liệu của món đang chọn
+    const handleAddAll = async () => {
+        if (!selectedRecipe) return;
+        
+        setIsLoading(true);
+        // Cách đơn giản: Lặp và gọi API (Hoặc backend nên có endpoint add-bulk)
+        let count = 0;
+        for (const ing of selectedRecipe.ingredients) {
+            const exists = shoppingList.find(item => item.name === ing.name);
+            if (!exists) {
+                await addToShoppingList(ing, selectedRecipe.name);
+                count++;
+            }
+        }
+        setIsLoading(false);
+        if(count > 0) alert(`Đã thêm ${count} nguyên liệu!`);
+    };
+
+    // 8. Update Check/Uncheck (Gọi API PUT)
+    const toggleItemCheck = async (id, currentState) => {
+        // Optimistic Update (Cập nhật giao diện trước cho mượt)
+        const updatedList = shoppingList.map(item => 
+            item.id === id ? { ...item, checked: !currentState } : item
+        );
+        setShoppingList(updatedList);
+
+        try {
+            await fetch(`${api}shopping-list/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ checked: !currentState })
+            });
+        } catch (error) {
+            console.error("Lỗi update:", error);
+            // Revert nếu lỗi (nếu cần thiết)
+        }
+    };
+
+    // 9. Xóa món (Gọi API DELETE)
+    const removeItem = async (id) => {
+        if(!window.confirm("Xóa món này?")) return;
+
+        try {
+            const response = await fetch(`${api}shopping-list/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                setShoppingList(prev => prev.filter(item => item.id !== id));
+            }
+        } catch (error) {
+            console.error("Lỗi xóa:", error);
+        }
+    };
+
+    // 10. Xóa tất cả
+    const clearList = async () => {
+        if (shoppingList.length === 0) return;
+        if (!window.confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách?')) return;
+
+        try {
+            // Giả sử có API clear-all, nếu không thì phải lặp xóa từng cái
+            await fetch(`${api}shopping-list/clear`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setShoppingList([]);
+        } catch (error) {
+            console.error("Lỗi xóa tất cả:", error);
+        }
+    };
+
+    // --- LOGIC KÉO THẢ (DRAG & DROP) ---
+    const handleDragStart = (e, type, data) => {
+        e.dataTransfer.setData('application/json', JSON.stringify({ type, ...data }));
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    };
+
+    const handleDragLeave = () => {
+        setIsDragOver(false);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+
+        const rawData = e.dataTransfer.getData('application/json');
+        if (!rawData) return;
+        
+        const data = JSON.parse(rawData);
+
+        if (data.type === 'ingredient') {
+            // Kéo từ công thức bên trái sang
+            // Data chứa recipeIndex và ingredientIndex -> nhưng giờ ta dùng selectedRecipe
+            // Vì selectedRecipe là state, ta lấy trực tiếp từ đó
+            const ingredient = selectedRecipe.ingredients[data.index];
+            addToShoppingList(ingredient, selectedRecipe.name);
+        } 
+    };
+
+    // --- LOGIC IN ẤN ---
+    const handlePrint = () => {
+        const printContent = document.getElementById('print-modal-content').innerHTML;
+        const printWindow = window.open('', '', 'height=600,width=800');
+        printWindow.document.write('<html><head><title>Print Shopping List</title>');
+        // CSS inline đơn giản để in ra đẹp
+        printWindow.document.write(`
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                .print-header { text-align: center; border-bottom: 2px solid #d32f2f; margin-bottom: 20px; }
+                .print-logo { color: #d32f2f; font-size: 24px; font-weight: bold; }
+                .print-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #ccc; }
+                .print-item img { display: none; } /* Ẩn ảnh khi in cho tiết kiệm mực */
+                .print-item-name { font-weight: bold; }
+                .checked { text-decoration: line-through; color: #999; }
+                .print-actions, .print-modal-close { display: none; }
+            </style>
+        `);
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(printContent);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        setTimeout(() => printWindow.print(), 500);
+    };
+
+    // Helper: Xử lý đường dẫn ảnh (có thể từ store hoặc link ngoài)
+    const getImageUrl = (path) => {
+        if (!path) return 'https://via.placeholder.com/50';
+        if (path.startsWith('http')) return path;
+        return `${store}${path}`; // store lấy từ useAuth
+    };
+
+    return (
+        <div className="container">
+            <h1 className="page-title">Shopping List</h1>
+            <p className="page-subtitle">Kéo thả nguyên liệu vào danh sách mua sắm của bạn</p>
+
+            <div className="shopping-list-container">
                 
-                {/* Search Box */}
-                <div className="position-relative mb-4">
-                  <InputGroup>
-                    <InputGroup.Text className="bg-white"><FaSearch /></InputGroup.Text>
-                    <Form.Control
-                      placeholder="Nhập tên món (vd: Phở, Cơm tấm...)"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </InputGroup>
-                  
-                  {/* Dropdown kết quả tìm kiếm */}
-                  {searchResults.length > 0 && (
-                    <ListGroup className="position-absolute w-100 shadow mt-1" style={{ zIndex: 10 }}>
-                      {searchResults.map(recipe => (
-                        <ListGroup.Item 
-                          key={recipe.id} 
-                          action 
-                          onClick={() => handleSelectRecipe(recipe)}
-                        >
-                          {recipe.name} <Badge bg="light" text="dark" className="float-end">{recipe.region}</Badge>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                  )}
-                </div>
-
-                {/* Khu vực hiển thị công thức đã chọn */}
-                {selectedRecipe ? (
-                  <div className="animate__animated animate__fadeIn">
-                    <div className="d-flex justify-content-between align-items-center mb-3 p-3 bg-light rounded">
-                      <h5 className="mb-0 text-danger font-playfair">{selectedRecipe.name}</h5>
-                      <Button variant="link" size="sm" className="text-muted text-decoration-none" onClick={() => setSelectedRecipe(null)}>
-                        <FaTimes /> Đóng
-                      </Button>
-                    </div>
-
-                    <div className="custom-scroll pe-2">
-                      {selectedRecipe.ingredients.map((ing, idx) => (
-                        <div key={idx} className="ingredient-item d-flex align-items-center p-2 mb-2 rounded bg-white">
-                          <img src={ing.image} alt={ing.name} className="rounded me-3" style={{width: '50px', height: '50px', objectFit: 'cover'}} />
-                          <div className="flex-grow-1">
-                            <div className="fw-bold">{ing.name}</div>
-                            <small className="text-danger fw-bold">{ing.quantity}</small>
-                          </div>
-                          <Button 
-                            variant="outline-danger" 
-                            size="sm" 
-                            className="rounded-circle" 
-                            onClick={() => addToShoppingList(ing, selectedRecipe.name)}
-                          >
-                            <FaCartPlus />
-                          </Button>
+                {/* --- CỘT TRÁI: TÌM KIẾM & CÔNG THỨC --- */}
+                <section className="recipe-search-section">
+                    <h2 className="section-heading"><i className="fas fa-search"></i> Tìm công thức</h2>
+                    
+                    <div className="recipe-search">
+                        <div className="search-container">
+                            <input 
+                                type="text" 
+                                className="search-input" 
+                                placeholder="Nhập tên món (ví dụ: Phở bò...)"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            {/* Kết quả tìm kiếm Dropdown */}
+                            {searchResults.length > 0 && (
+                                <div className="search-results" style={{display: 'block'}}>
+                                    {searchResults.map((recipe) => (
+                                        <div key={recipe.id} className="search-result-item" onClick={() => handleSelectRecipe(recipe.id)}>
+                                            <div className="result-name">{recipe.name}</div>
+                                            {/* Giả sử API trả về region trong recipe */}
+                                            <div className="result-region">{recipe.region?.name || 'Món ngon'}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                      ))}
                     </div>
 
-                    <Button className="btn-custom-primary w-100 mt-3" onClick={addAllIngredients}>
-                      <FaCartPlus className="me-2" /> Thêm tất cả vào danh sách
-                    </Button>
-                  </div>
-                ) : (
-                    // Trạng thái chưa chọn công thức
-                    <div className="text-center text-muted py-5 opacity-50">
-                        <FaUtensils size={40} className="mb-3" />
-                        <p>Hãy tìm và chọn một công thức để xem nguyên liệu</p>
-                    </div>
-                )}
-              </Card.Body>
-            </Card>
-          </Col>
+                    {/* Hiển thị chi tiết công thức đã chọn */}
+                    {selectedRecipe && (
+                        <div className="selected-recipe">
+                            <div className="selected-recipe-header">
+                                <h3 className="selected-recipe-title">{selectedRecipe.name}</h3>
+                                <button className="clear-recipe" onClick={() => setSelectedRecipe(null)}>
+                                    <i className="fas fa-times"></i> Xóa
+                                </button>
+                            </div>
+                            
+                            <div className="ingredients-container">
+                                {selectedRecipe.ingredients && selectedRecipe.ingredients.length > 0 ? (
+                                    selectedRecipe.ingredients.map((ing, idx) => (
+                                        <div 
+                                            key={idx} 
+                                            className="ingredient-draggable"
+                                            draggable="true"
+                                            // Truyền index để handleDrop biết lấy item nào trong mảng selectedRecipe.ingredients
+                                            onDragStart={(e) => handleDragStart(e, 'ingredient', { index: idx })}
+                                        >
+                                            <div className="ingredient-image">
+                                                <img src={getImageUrl(ing.image)} alt={ing.name} />
+                                            </div>
+                                            <div className="ingredient-info">
+                                                <div className="ingredient-name">{ing.name}</div>
+                                                <div className="ingredient-quantity">{ing.quantity} {ing.unit}</div>
+                                            </div>
+                                            <div className="ingredient-drag-icon">
+                                                <i className="fas fa-grip-vertical"></i>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>Không có thông tin nguyên liệu.</p>
+                                )}
+                            </div>
 
-          {/* CỘT PHẢI: Danh sách mua sắm */}
-          <Col lg={6} className="mb-4">
-            <Card className="border-0 shadow-sm h-100">
-              <Card.Body className="d-flex flex-column">
-                <h4 className="font-playfair mb-3 text-danger">
-                   <FaCartPlus className="me-2" /> Danh sách cần mua ({shoppingList.filter(i => !i.checked).length})
-                </h4>
-
-                {/* Toolbar buttons */}
-                <div className="d-flex flex-wrap gap-2 mb-3">
-                  <Button variant="outline-secondary" size="sm" onClick={checkAll}><FaCheckSquare /> Chọn hết</Button>
-                  <Button variant="outline-secondary" size="sm" onClick={uncheckAll}><FaSquare /> Bỏ chọn</Button>
-                  <Button variant="outline-danger" size="sm" onClick={clearList}><FaTrash /> Xóa hết</Button>
-                  <Button className="btn-custom-primary ms-auto" size="sm" onClick={() => setShowPrintModal(true)}>
-                    <FaPrint /> In DS
-                  </Button>
-                </div>
-
-                {/* List Items */}
-                <div className="flex-grow-1 custom-scroll p-2 border rounded bg-light">
-                  {shoppingList.length === 0 ? (
-                    <div className="text-center text-muted h-100 d-flex flex-column justify-content-center align-items-center">
-                      <FaCartPlus size={40} className="mb-3 opacity-25" />
-                      <p>Danh sách trống</p>
-                    </div>
-                  ) : (
-                    shoppingList.map((item) => (
-                      <div key={item.id} className={`shopping-item d-flex align-items-center p-2 mb-2 rounded bg-white shadow-sm ${item.checked ? 'checked' : ''}`}>
-                        <div className="me-3 cursor-pointer" onClick={() => toggleCheckItem(item.id)} style={{cursor: 'pointer'}}>
-                          {item.checked ? <FaCheckSquare className="text-success fs-5" /> : <FaSquare className="text-muted fs-5" />}
+                            <button className="add-to-list-btn" onClick={handleAddAll} disabled={isLoading}>
+                                <i className="fas fa-cart-plus"></i> {isLoading ? 'Đang thêm...' : 'Thêm tất cả vào danh sách'}
+                            </button>
                         </div>
-                        <img src={item.image} alt="" className="rounded me-3" style={{width: '40px', height: '40px', objectFit: 'cover'}} />
-                        <div className="flex-grow-1">
-                          <div className="fw-bold item-name">{item.name}</div>
-                          <div className="small text-muted">{item.source}</div>
+                    )}
+                </section>
+
+                {/* --- CỘT PHẢI: SHOPPING LIST --- */}
+                <section className="shopping-list-section">
+                    <h2 className="section-heading"><i className="fas fa-shopping-cart"></i> Danh sách mua sắm</h2>
+                    
+                    <div className="list-controls">
+                        <button className="control-btn" onClick={clearList}>
+                            <i className="fas fa-trash"></i> Xóa tất cả
+                        </button>
+                        {/* Các nút Chọn tất cả/Bỏ chọn cần gọi API Update hàng loạt, ở đây làm tạm UI */}
+                        <button className="control-btn primary" onClick={() => setShowPrintModal(true)}>
+                            <i className="fas fa-print"></i> In danh sách
+                        </button>
+                    </div>
+
+                    <div 
+                        className={`shopping-list-container-drop ${isDragOver ? 'drag-over' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
+                        {shoppingList.length === 0 ? (
+                            <div className="empty-list-message">
+                                <i className="fas fa-shopping-basket"></i>
+                                <h3>Danh sách trống</h3>
+                                <p>Kéo thả nguyên liệu từ bên trái vào đây</p>
+                            </div>
+                        ) : (
+                            <ul className="shopping-list-items">
+                                {shoppingList.map((item) => (
+                                    <li key={item.id} className={`shopping-list-item ${item.checked ? 'checked' : ''}`}>
+                                        <div className="item-drag-handle"><i className="fas fa-grip-vertical"></i></div>
+                                        <input 
+                                            type="checkbox" 
+                                            className="item-checkbox" 
+                                            checked={item.checked} 
+                                            onChange={() => toggleItemCheck(item.id, item.checked)}
+                                        />
+                                        <div className="item-image">
+                                            <img src={getImageUrl(item.image)} alt={item.name} />
+                                        </div>
+                                        <div className="item-details">
+                                            <div className={`item-name ${item.checked ? 'checked' : ''}`}>{item.name}</div>
+                                            <div className="item-source">Từ: {item.source}</div>
+                                        </div>
+                                        <div className="item-quantity">{item.quantity}</div>
+                                        <button className="item-remove" onClick={() => removeItem(item.id)}>
+                                            <i className="fas fa-times"></i>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        
+                        {/* Chỉ hiện hướng dẫn drop khi có item hoặc khi kéo qua */}
+                        <div className="drop-here-text" style={{display: 'block'}}>
+                            <i className="fas fa-arrow-down"></i>
+                            <p>Thả nguyên liệu vào đây</p>
                         </div>
-                        <div className="fw-bold text-danger me-3">{item.quantity}</div>
-                        <Button variant="link" className="text-danger p-0" onClick={() => removeItem(item.id)}>
-                          <FaTimes />
-                        </Button>
-                      </div>
-                    ))
-                  )}
+                    </div>
+                </section>
+            </div>
+
+            {/* --- MODAL IN --- */}
+            {showPrintModal && (
+                <div className="print-modal" style={{display: 'flex'}}>
+                    <div className="print-modal-content" id="print-modal-content">
+                        <button className="print-modal-close" onClick={() => setShowPrintModal(false)}>&times;</button>
+                        
+                        <div className="print-header">
+                            <div className="print-logo">Bếp Việt 4.0</div>
+                            <p>{new Date().toLocaleDateString('vi-VN')}</p>
+                        </div>
+
+                        <div className="print-section">
+                            <h3>Cần mua ({shoppingList.filter(i => !i.checked).length})</h3>
+                            {shoppingList.filter(i => !i.checked).map((item) => (
+                                <div key={item.id} className="print-item">
+                                    <div className="print-item-info">
+                                        <div className="print-item-name">{item.name}</div>
+                                        <small>{item.source}</small>
+                                    </div>
+                                    <div className="print-item-quantity">{item.quantity}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="print-section">
+                            <h3>Đã mua ({shoppingList.filter(i => i.checked).length})</h3>
+                            {shoppingList.filter(i => i.checked).map((item) => (
+                                <div key={item.id} className="print-item checked">
+                                    <div className="print-item-info">
+                                        <div className="print-item-name checked">{item.name}</div>
+                                        <small>{item.source}</small>
+                                    </div>
+                                    <div className="print-item-quantity">{item.quantity}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="print-actions">
+                            <button className="print-btn secondary" onClick={() => setShowPrintModal(false)}>Đóng</button>
+                            <button className="print-btn primary" onClick={handlePrint}>In ngay</button>
+                        </div>
+                    </div>
                 </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-
-      {/* Modal In Danh Sách */}
-      <Modal show={showPrintModal} onHide={() => setShowPrintModal(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title className="font-playfair text-danger">In danh sách</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-4">
-          <div className="text-center mb-4">
-            <h2 className="font-playfair text-danger">Bếp Việt 4.0</h2>
-            <p className="text-muted">Danh sách mua sắm ngày {new Date().toLocaleDateString('vi-VN')}</p>
-          </div>
-          
-          <h5 className="border-bottom pb-2 mb-3 text-danger">Cần mua</h5>
-          <ListGroup variant="flush" className="mb-4">
-            {shoppingList.filter(i => !i.checked).map(item => (
-               <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center px-0">
-                  <span>
-                    <FaSquare className="me-2 text-muted"/> {item.name} <span className="text-muted small">({item.source})</span>
-                  </span>
-                  <span className="fw-bold">{item.quantity}</span>
-               </ListGroup.Item>
-            ))}
-            {shoppingList.filter(i => !i.checked).length === 0 && <p className="text-muted fst-italic">Không có mục nào.</p>}
-          </ListGroup>
-
-          <h5 className="border-bottom pb-2 mb-3 text-success">Đã mua / Đã có</h5>
-          <ListGroup variant="flush">
-            {shoppingList.filter(i => i.checked).map(item => (
-               <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center px-0 text-muted" style={{textDecoration: 'line-through'}}>
-                  <span>
-                    <FaCheckSquare className="me-2"/> {item.name}
-                  </span>
-                  <span>{item.quantity}</span>
-               </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowPrintModal(false)}>Đóng</Button>
-          <Button variant="danger" onClick={() => window.print()}><FaPrint className="me-2"/> In ngay</Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
+            )}
+        </div>
+    );
 };
 
 export default ShoppingList;
