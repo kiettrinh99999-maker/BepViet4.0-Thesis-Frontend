@@ -20,9 +20,8 @@ const ListRecipe = () => {
   const [regions_data, setRegionData] = useState(null);
   const [events_data, setEventData] = useState(null);
   const [difficult_data, setDiffData] = useState(null);
-  //Lấy cấu hình chung
   useEffect(() => {
-    fetch(api + 'get-event-region')
+    fetch(api + 'get-event-region') // Đảm bảo đúng đường dẫn API bạn đặt trong Laravel
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
@@ -84,7 +83,7 @@ const ListRecipe = () => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
       // Cuộn lên đầu trang cho mượt
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
   // Hàm đặt lại bộ lọc
@@ -164,7 +163,7 @@ const ListRecipe = () => {
                 {/* Giá trị value="" này khớp với state khi reset */}
                 <option value="">Tất cả miền</option>
                 {regions_data && regions_data.map((item) => (
-                  <option key={item.id} value={item.id}>
+<option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
@@ -237,7 +236,7 @@ const ListRecipe = () => {
                   time={`${item.cooking_time} phút`}
                   level={item.difficulty ? item.difficulty.name : 'Trung bình'}
                   rating={item.rates_avg_score ? parseFloat(item.rates_avg_score).toFixed(1) : 0}
-                  reviewCount={item.rates_count || 0}
+reviewCount={item.rates_count || 0}
                   onClick={() => navigate(`/cong-thuc/${item.id}-${item.title_slug}`)}
                 />
               </div>

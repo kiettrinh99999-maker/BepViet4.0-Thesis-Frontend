@@ -1,81 +1,87 @@
-/* Import font chữ chuẩn mẫu */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+/* recipe.css */
 
-/* Khai báo biến màu sắc */
-:root {
-  --primary-color: #d32f2f;
-  --primary-dark: #9a0007;
-  --secondary-color: #ffb74d;
-  --text-dark: #333333;
-  --text-light: #666666;
-  --background-light: #f9f5f0;
-  --background-white: #ffffff;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* Div lớn bao quanh toàn bộ trang */
-.list-recipe-container {
-  font-family: 'Inter', sans-serif;
-  color: var(--text-dark);
-  background-color: #fff;
-  min-height: 100vh;
-}
-
-/* 1. HERO SECTION */
+/* --- 1. HERO SECTION --- */
 .hero {
-  padding: 60px 0;
-  text-align: center;
-  background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80');
   background-size: cover;
   background-position: center;
   color: white;
+  padding: 80px 0;
+  text-align: center;
   margin-bottom: 30px;
+  border-radius: 0 0 20px 20px;
 }
 
 .hero h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
-  margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .hero p {
   font-size: 1.2rem;
-  max-width: 800px;
-  margin: 0 auto 30px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  margin-bottom: 2rem;
+  opacity: 0.9;
 }
 
+/* Tags khu vực trong Hero */
 .hero-tagline {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 15px;
-  font-size: 1.1rem;
-  font-weight: 500;
 }
 
 .hero-tagline span {
-  padding: 8px 20px;
-  background-color: rgba(211, 47, 47, 0.85);
+  padding: 0.5rem 1.2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 25px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.2);
   color: white;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-weight: 500;
+  transition: all 0.3s;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
 }
 
-/* 2. ADD RECIPE SECTION */
+.hero-tagline span:hover {
+  background: white;
+  color: #d32f2f; /* Màu chủ đạo */
+  transform: translateY(-2px);
+}
+
+.hero-tagline span.active-region {
+  background: #fd7e14; /* Màu cam nổi bật */
+  border-color: #fd7e14;
+  color: white;
+}
+
+/* --- 2. CONTAINER CHUNG (Nút Thêm & Bộ lọc) --- */
+.add-recipe-and-filter-container {
+  margin-bottom: 2rem;
+}
+
+/* --- 3. NÚT THÊM CÔNG THỨC --- */
 .add-recipe-section {
-  margin-top: -50px;
+  background-color: white;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 12px;
   position: relative;
   z-index: 10;
-  margin-bottom: 30px;
+}
+
+.add-recipe-section .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-add-recipe {
   padding: 12px 30px;
-  background-color: var(--primary-color);
+  background: linear-gradient(135deg, #fd7e14, #e96d0c);
   color: white;
   border: none;
   border-radius: 30px;
@@ -86,132 +92,149 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
-  margin: 0 auto;
+  box-shadow: 0 4px 15px rgba(253, 126, 20, 0.3);
 }
 
 .btn-add-recipe:hover {
-  background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+  box-shadow: 0 6px 20px rgba(253, 126, 20, 0.4);
 }
 
-/* 3. FILTER SECTION */
+/* --- 4. BỘ LỌC (FILTER) --- */
 .filter-section {
-  background-color: var(--background-white);
+  background-color: white;
   padding: 25px 0;
-  margin-bottom: 40px;
-  box-shadow: var(--shadow);
-  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  margin-bottom: 2rem;
 }
 
 .filter-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 cột đều nhau */
   gap: 20px;
+  align-items: end; /* Căn đáy để input thẳng hàng */
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  min-width: 150px;
 }
 
 .filter-label {
-  font-weight: 600;
-  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #495057;
   font-size: 0.9rem;
 }
 
 .filter-select {
-  padding: 10px 15px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  background-color: white;
-  color: var(--text-dark);
-  cursor: pointer;
   width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  cursor: pointer;
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: #fd7e14;
+  box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.1);
 }
 
+/* Nút Reset Filter */
 .filter-buttons {
   display: flex;
-  gap: 10px;
-}
-
-.filter-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.filter-btn.apply {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.filter-btn.apply:hover {
-  background-color: var(--primary-dark);
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  grid-column: 1 / -1; /* Chiếm toàn bộ hàng dưới cùng */
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
 }
 
 .filter-btn.reset {
-  background-color: #f5f5f5;
-  color: var(--text-light);
-}
-
-.filter-btn.reset:hover {
-  background-color: #e0e0e0;
-  color: var(--text-dark);
-}
-
-/* 4. PAGINATION */
-.pagination-container {
-  margin-top: 50px;
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-.pagination-btn {
-  width: 40px;
-  height: 40px;
+  padding: 0.6rem 1.5rem;
+  background: #6c757d;
+  color: white;
+  border: none;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  background-color: white;
-  color: var(--text-dark);
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  font-weight: 600;
 }
 
-.pagination-btn:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+.filter-btn.reset:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* --- 5. RESPONSIVE --- */
+@media (max-width: 992px) {
+  .filter-container {
+    grid-template-columns: repeat(2, 1fr); /* Tablet: 2 cột */
+  }
+}
+
+@media (max-width: 576px) {
+  .hero h1 { font-size: 2.2rem; }
+  
+  .filter-container {
+    grid-template-columns: 1fr; /* Mobile: 1 cột */
+  }
+  
+  .btn-add-recipe {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* --- 6. PHÂN TRANG (PAGINATION) --- */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.pagination-btn {
+  width: 40px;
+  height: 40px;
+  margin: 0 5px;
+  border: 1px solid #dee2e6;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+}
+
+.pagination-btn:hover:not(.disabled):not(.active) {
+  background-color: #f8f9fa;
+  border-color: #fd7e14;
+  color: #fd7e14;
 }
 
 .pagination-btn.active {
-  background-color: var(--primary-color);
+  background-color: #fd7e14;
+  border-color: #fd7e14;
   color: white;
-  border-color: var(--primary-color);
 }
 
 .pagination-btn.disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background-color: #f9f9f9;
+  background-color: #e9ecef;
 }
