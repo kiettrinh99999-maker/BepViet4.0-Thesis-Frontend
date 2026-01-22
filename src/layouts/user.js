@@ -1,45 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/Authen';
 
 const MemberLayout = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [activeNav, setActiveNav] = useState('home');
+  
+  // Ref để xử lý click ra ngoài dropdown (nếu cần mở rộng sau này)
   const dropdownRef = useRef(null);
+  
   const navigate = useNavigate();
+  const location = useLocation();
+  const { config, store } = useAuth();
 
-  // Đóng dropdown khi click bên ngoài
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleNavClick = (nav) => {
-    setActiveNav(nav);
-    alert(`Chuyển đến trang: ${nav === 'home' ? 'HOME' : 
-           nav === 'recipes' ? 'CÔNG THỨC' : 
-           nav === 'forum' ? 'DIỄN ĐÀN' : 
-           nav === 'blog' ? 'BLOG' : 
-           nav === 'shopping' ? 'SHOPPING LIST' : 
-           'KẾ HOẠCH BỮA ĂN'}`);
-  };
-
-  const handleLogout = () => {
-    if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-      alert('Đăng xuất thành công!');
-      navigate('/');
-    }
-  };
-
+  // 1. Xử lý logic tìm kiếm
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       alert(`Đang tìm kiếm: "${searchQuery}"`);
@@ -47,16 +21,66 @@ const MemberLayout = () => {
     }
   };
 
+  // 2. Xử lý đăng xuất
+  const handleLogout = () => {
+    if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+      alert('Đăng xuất thành công!');
+      navigate('/');
+    }
+  };
+
+  // 3. Định nghĩa Style
   const styles = {
     primaryColor: '#d32f2f',
     primaryDark: '#9a0007',
     secondaryColor: '#ffb74d',
     backgroundLight: '#f9f5f0',
     backgroundWhite: '#ffffff',
+    
+    // Loading Styles
+    loadingWrapper: {
+      height: '100vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#f9f5f0'
+    },
+    logoWrapper: {
+      animation: 'pulse 1.5s infinite'
+    }
   };
 
+  // 4. Hàm helper để xác định style cho Nav Link (Active state)
+  const getNavStyle = (path) => {
+    const isActive = location.pathname === path;
+    return {
+      color: isActive ? styles.primaryColor : '#333333',
+      fontSize: '1rem',
+      fontWeight: isActive ? '700' : '500',
+      textDecoration: 'none',
+      transition: 'color 0.3s ease',
+      borderBottom: isActive ? `2px solid ${styles.primaryColor}` : '2px solid transparent',
+      paddingBottom: '5px',
+      cursor: 'pointer'
+    };
+  };
+
+  // 5. Kiểm tra dữ liệu config trước khi render
+  if (config == null) return (
+    <div style={styles.loadingWrapper}>
+      <div style={styles.logoWrapper}>
+        <h3>Đang tải dữ liệu...</h3>
+      </div>
+    </div>
+  );
+
+  // Lấy data từ config sau khi đã check null
+  const data_config = config.data.data[0];
+  const imageUrl = `${store}/${data_config.image_path}`;
+
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      
       {/* Header */}
       <header style={{
         backgroundColor: styles.backgroundWhite,
@@ -65,7 +89,8 @@ const MemberLayout = () => {
         top: 0,
         zIndex: 1000
       }}>
-        {/* Header Top */}
+        
+        {/* --- Header Top (Màu đỏ) --- */}
         <div style={{
           backgroundColor: styles.primaryColor,
           color: 'white',
@@ -74,6 +99,8 @@ const MemberLayout = () => {
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              
+              {/* Logo Section */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <div style={{
                   width: '50px',
@@ -85,16 +112,24 @@ const MemberLayout = () => {
                   justifyContent: 'center',
                   overflow: 'hidden'
                 }}>
-                  <i className="bi bi-utensils" style={{ fontSize: '1.8rem', color: styles.primaryColor }}></i>
+                  <img
+                    src={imageUrl}
+                    alt="Logo"
+                    style={{
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      objectFit: 'contain'
+                    }}
+                  />
                 </div>
                 <div>
-                  <Link to="/" className="text-white text-decoration-none" style={{ 
-                    fontFamily: "'Playfair Display', serif", 
-                    fontSize: '1.8rem', 
+                  <Link to="/" className="text-white text-decoration-none" style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: '1.8rem',
                     fontWeight: '700',
                     lineHeight: '1.2'
                   }}>
-                    Bếp Việt 4.0
+                    {data_config.name}
                   </Link>
                   <div style={{ fontSize: '0.8rem', opacity: '0.9', fontWeight: '300' }}>
                     Khám phá – Chia sẻ – Gìn giữ tinh hoa ẩm thực Việt Nam
@@ -102,9 +137,9 @@ const MemberLayout = () => {
                 </div>
               </div>
 
-              {/* User Profile */}
-              <div style={{ position: 'relative' }}>
-                <button 
+              {/* User Profile Dropdown */}
+              <div style={{ position: 'relative' }} ref={dropdownRef}>
+                <button
                   className="btn d-flex align-items-center gap-2"
                   style={{
                     backgroundColor: 'white',
@@ -136,7 +171,7 @@ const MemberLayout = () => {
                 </button>
 
                 {isDropdownOpen && (
-                  <div 
+                  <div
                     style={{
                       position: 'absolute',
                       top: 'calc(100% + 5px)',
@@ -151,10 +186,10 @@ const MemberLayout = () => {
                     }}
                     onMouseLeave={() => setIsDropdownOpen(false)}
                   >
-                    <Link 
-                      to="/profile" 
+                    <Link
+                      to="/profile"
                       className="d-flex align-items-center gap-2 text-dark text-decoration-none p-3"
-                      style={{ 
+                      style={{
                         borderBottom: '1px solid #e0e0e0',
                         fontSize: '0.95rem'
                       }}
@@ -162,10 +197,10 @@ const MemberLayout = () => {
                       <i className="bi bi-person" style={{ width: '18px', color: styles.primaryColor }}></i>
                       Hồ sơ
                     </Link>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="d-flex align-items-center gap-2 text-dark text-decoration-none p-3 w-100 border-0 bg-white"
-                      style={{ fontSize: '0.95rem' }}
+                      style={{ fontSize: '0.95rem', cursor: 'pointer' }}
                     >
                       <i className="bi bi-box-arrow-right" style={{ width: '18px', color: styles.primaryColor }}></i>
                       Đăng xuất
@@ -177,107 +212,50 @@ const MemberLayout = () => {
           </div>
         </div>
 
-        {/* Header Main */}
+        {/* --- Header Main (Màu trắng) --- */}
         <div style={{ padding: '15px 0' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
               gap: '15px'
             }}>
+              
+              {/* Navigation Menu */}
               <nav>
-                <ul style={{ 
-                  display: 'flex', 
-                  listStyle: 'none', 
+                <ul style={{
+                  display: 'flex',
+                  listStyle: 'none',
                   gap: '30px',
                   margin: 0,
                   padding: 0,
                   flexWrap: 'wrap'
                 }}>
                   <li>
-                    <Link 
-                      to="/" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      HOME
-                    </Link>
+                    <Link to="/" style={getNavStyle('/')}>HOME</Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/cong-thuc" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      CÔNG THỨC
-                    </Link>
+                    <Link to="/cong-thuc" style={getNavStyle('/cong-thuc')}>CÔNG THỨC</Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/dien-dan" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      DIỄN ĐÀN
-                    </Link>
+                    <Link to="/dien-dan" style={getNavStyle('/dien-dan')}>DIỄN ĐÀN</Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/blog" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      BLOG
-                    </Link>
+                    <Link to="/blog" style={getNavStyle('/blog')}>BLOG</Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/shopping-list" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      SHOPPING LIST
-                    </Link>
+                    <Link to="/shopping-list" style={getNavStyle('/shopping-list')}>SHOPPING LIST</Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/meal-plan" 
-                      className="text-decoration-none fw-medium"
-                      style={{ 
-                        color: '#333333',
-                        fontSize: '1rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      KẾ HOẠCH BỮA ĂN
-                    </Link>
+                    <Link to="/meal-plan" style={getNavStyle('/meal-plan')}>KẾ HOẠCH BỮA ĂN</Link>
                   </li>
                 </ul>
               </nav>
 
-              <div style={{ 
+              {/* Search Box */}
+              <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 backgroundColor: '#f5f5f5',
@@ -301,71 +279,14 @@ const MemberLayout = () => {
                   onKeyPress={handleSearch}
                 />
               </div>
+
             </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section
-      <section style={{ 
-        padding: '40px 0', 
-        textAlign: 'center',
-        backgroundColor: styles.backgroundLight 
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <h1 style={{ 
-            fontFamily: "'Playfair Display', serif", 
-            fontSize: '3rem', 
-            color: styles.primaryDark,
-            marginBottom: '10px'
-          }}>
-            Bếp Việt 4.0
-          </h1>
-          <p style={{ 
-            fontSize: '1.2rem', 
-            color: '#666666',
-            maxWidth: '800px',
-            margin: '0 auto 30px'
-          }}>
-            Khám phá – Chia sẻ – Gìn giữ tinh hoa ẩm thực Việt Nam
-          </p>
-          <div style={{ 
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            fontSize: '1.1rem',
-            color: styles.primaryColor,
-            fontWeight: '500',
-            marginBottom: '30px',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{ 
-              padding: '5px 15px',
-              backgroundColor: 'rgba(211, 47, 47, 0.1)',
-              borderRadius: '20px'
-            }}>
-              Miền Bắc
-            </span>
-            <span style={{ 
-              padding: '5px 15px',
-              backgroundColor: 'rgba(211, 47, 47, 0.1)',
-              borderRadius: '20px'
-            }}>
-              Miền Trung
-            </span>
-            <span style={{ 
-              padding: '5px 15px',
-              backgroundColor: 'rgba(211, 47, 47, 0.1)',
-              borderRadius: '20px'
-            }}>
-              Miền Nam
-            </span>
-          </div>
-        </div>
-      </section> */}
-
       {/* Main Content Area */}
-      <main style={{ backgroundColor: styles.backgroundLight, minHeight: '60vh' }}>
+      <main style={{ backgroundColor: styles.backgroundLight, flex: 1 }}>
         <Outlet />
       </main>
 
@@ -378,7 +299,7 @@ const MemberLayout = () => {
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
           <div style={{ marginBottom: '30px', textAlign: 'center' }}>
-            <div style={{ 
+            <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -396,15 +317,23 @@ const MemberLayout = () => {
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <i className="bi bi-utensils" style={{ color: styles.primaryColor, fontSize: '1.5rem' }}></i>
+                <img
+                    src={imageUrl}
+                    alt="Logo"
+                    style={{
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      objectFit: 'contain'
+                    }}
+                  />
               </div>
-              Bếp Việt 4.0
+              {data_config.name}
             </div>
             <p style={{ marginBottom: '20px', opacity: '0.8' }}>
-              © 2028 BÁS VỌK 4D - Câu lạc bộ ẩm thực VN
+              {data_config.copyright}
             </p>
           </div>
-          <div style={{ 
+          <div style={{
             textAlign: 'center',
             paddingTop: '20px',
             borderTop: '1px solid rgba(255, 255, 255, 0.1)',
@@ -412,12 +341,12 @@ const MemberLayout = () => {
             opacity: '0.7'
           }}>
             <p style={{ margin: 0 }}>
-              Bếp Việt 4.0 - Nơi gìn giữ hương vị Việt | Hotline: 1900 1234 | Email: contact@bepviet40.vn
+              {data_config.name} - Nơi gìn giữ hương vị Việt | Hotline: {data_config.phone} | Email: {data_config.email}
             </p>
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 };
 

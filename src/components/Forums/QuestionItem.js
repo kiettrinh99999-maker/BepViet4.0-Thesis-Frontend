@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router";
+import { useAuth } from "../../contexts/Authen";
 
 export default function QuestionItem({ question }) {
 const navigate = useNavigate();
+const { renderDate } = useAuth();
   return (
     <div
       className="list-group-item py-4 cursor-pointer"
@@ -32,7 +34,7 @@ const navigate = useNavigate();
           </div>
           <div>
             <div className="fw-semibold">{question.user.username}</div>
-            <small className="text-muted">{question.created_at}</small>
+            <small className="text-muted">{renderDate(question.created_at)}</small>
           </div>
         </div>
 

@@ -1,0 +1,244 @@
+.forum-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.forum-header {
+    background-color: var(--background-white);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.forum-title {
+    font-size: 2rem;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+}
+
+.forum-description {
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.forum-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f5f5f5;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.stat-item i {
+    color: var(--primary-color);
+}
+
+.ask-question-form {
+    background-color: var(--background-white);
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.form-title {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--primary-dark);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Questions List */
+.questions-list {
+    background-color: var(--background-white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.question-item {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s;
+}
+
+.question-item:hover {
+    background-color: rgba(255, 182, 77, 0.05);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.question-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.question-title:hover {
+    color: var(--primary-color);
+}
+
+.question-content {
+    color: var(--text-light);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.question-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.question-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.question-stats {
+    display: flex;
+    gap: 15px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat i {
+    color: var(--primary-color);
+}
+
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 60px;
+    gap: 10px;
+}
+
+.pagination-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: white;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.pagination-btn:hover {
+    background-color: #f5f5f5;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+    color: var(--text-light);
+    font-size: 1.2rem;
+    margin: 0 5px;
+}
+
+/* Login Notice */
+.login-notice {
+    text-align: center;
+    padding: 12px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.login-notice i {
+    margin-right: 8px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .forum-stats {
+        flex-direction: column;
+    }
+    
+    .question-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .question-footer {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    .question-stats {
+        flex-wrap: wrap;
+    }
+}

@@ -4,35 +4,57 @@ import { AuthProvider } from './contexts/Authen';
 import { GuestRoute } from './protecteds/RouteRedirect';
 import GuestLayout from './layouts/guest';
 import MemberLayout from './layouts/user';
-import RecipesPage from './pages/recipe';
+import AdminLayout from './layouts/admin';
 // Tạo nhanh vài component để test hiển thị
 import ShoppingList from './pages/shoppinglists/shoppinglist';
 import ForumPage from './pages/forums/list_forum';
+import ForumDetailPage from './pages/forums/detail_forum';
 import { RouterProtected } from './protecteds/RouteProtected';
 import ListRecipe from './pages/recipes/list_recipe';
+import MealPlan from './pages/mealplanes/mealplane';
+import CreateRecipe from './pages/recipes/add_recipe';
+import DashboardBody from './pages/admin/ManageDashboard/dashboard';
+import ConfigBody from './pages/admin/ManageAdmin/config';
+import ProfileBody from './pages/profiles/profile';
+import BlogPage from './pages/blogs/list_blog';
+import ReportBody from './pages/admin/ManageReports/report';
+import RecipeManagement from './pages/admin/ManageRecipes/list_recipe';
+import RecipeDetail from './pages/recipes/detail_recipe';
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
           {/* --- NHÓM 1: GUEST --- */}
-          <Route element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
+          <Route ute element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
+            <Route path="/cong-thuc/:key" element={<RecipeDetail />} />
+
             <Route path="/dien-dan" element={<ForumPage />} />
-            <Route path="/blog" element={<h1>Cài trang blog tại đây</h1>} />
-            {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
+            <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            
+            {/*Những đường dẫn mà phải đăng nhập được kiểm tra */}
             <Route element={<RouterProtected />}>
-              <Route path="/shopping-list" element={<ShoppingList/>} />
-              <Route path="/meal-plan" element={<h1>Meal</h1>} />
-              <Route path="/profile" element={<h1>Profile</h1>} />
+              <Route path="/shopping-list" element={<ShoppingList />} />
+              <Route path="/meal-plan" element={<MealPlan />} />
+              <Route path="/profile" element={<ProfileBody />} />
+              <Route path="/tao-cong-thuc" element={<CreateRecipe />} />
             </Route>
-            {/*Những đường dẫn mà phải đăng nhập được kiểm tra tại đây */}
+            {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
-          {/* --- NHÓM 2: MEMBER (Đích đến) --- */}
-          {/* Cần khai báo route này thì Navigate to="/dashboard" mới chạy được */}
-          <Route path="/dashboard" element={<MemberLayout showLoginNotice={false} />} />
+          <Route path="/login" element={<div>Trang Login</div>} />
+          <Route path="/register" element={<div>Trang Đăng ký</div>} />
+          {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<DashboardBody />} />
+            <Route path="config" element={<ConfigBody />} />
+            <Route path="report" element={<ReportBody />} />
+            <Route path="cong-thuc" element={<RecipeManagement />} />
+            <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

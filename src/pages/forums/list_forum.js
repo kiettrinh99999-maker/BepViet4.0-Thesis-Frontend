@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
-import QuestionItem from "./components/QuestionItem";
+import QuestionItem from "../../components/Forums/QuestionItem";
+import './forum.css';
 
-export default function ForumPage() {
+export default function ForumPage(){
   const [questions, setQuestions] = useState(null);
   const [totalAnswers, setTotalAnswers] = useState(null);
   const [page, setPage] = useState(1);
-  const {user, api} = useAuth();
-  
+  const { user, api } = useAuth();
+
   useEffect(() => {
     // Gọi API lấy danh sách question theo page
     fetch(`${api}questions?page=${page}`)
@@ -31,117 +32,115 @@ export default function ForumPage() {
   if (questions === null || totalAnswers === null) {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
-  return (
-    <div className="container my-4">
 
-      {/* Login notice */}
+    return (
+    <div className="container">
+
+      {/* Login Notice */}
       {!user && (
-        <div className="alert alert-warning d-flex align-items-center mb-4">
-          <i className="fas fa-info-circle me-2"></i>
-          <div>
-            Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu
-            hỏi và tham gia thảo luận.
-          </div>
+        <div className="login-notice">
+          <i className="fas fa-info-circle"></i>
+          Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu hỏi
+          và tham gia thảo luận.
         </div>
       )}
-      {/* Forum header */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <h1 className="text-danger fw-bold mb-2">
-            Diễn Đàn Hỏi Đáp
-          </h1>
 
-          <p className="text-muted mb-3">
-            Nơi trao đổi, thảo luận và giải đáp mọi thắc mắc về ẩm thực Việt Nam.
-            Hãy đặt câu hỏi và chia sẻ kiến thức của bạn!
-          </p>
+      {/* Forum Header */}
+      <div className="forum-header">
+        <h1 className="forum-title">Diễn Đàn Hỏi Đáp</h1>
+        <p className="forum-description">
+          Nơi trao đổi, thảo luận và giải đáp mọi thắc mắc về ẩm thực Việt Nam.
+        </p>
 
-          <div className="d-flex flex-wrap gap-3">
-            <div className="d-flex align-items-center bg-light rounded-pill px-3 py-2">
-              <i className="fas fa-question-circle text-danger me-2"></i>
-              <span>{questions.total} câu hỏi</span>
-            </div>
-
-            <div className="d-flex align-items-center bg-light rounded-pill px-3 py-2">
-              <i className="fas fa-comments text-danger me-2"></i>
-              <span>{totalAnswers} trả lời</span>
-            </div>
+        <div className="forum-stats">
+          <div className="stat-item">
+            <i className="fas fa-question-circle"></i>
+            <span>{questions.total} câu hỏi</span>
+          </div>
+          <div className="stat-item">
+            <i className="fas fa-comments"></i>
+            <span>{totalAnswers} trả lời</span>
           </div>
         </div>
       </div>
 
-      {/* Ask question form */}
-      <div className="card shadow-sm mb-4">
-        <div className="card-body">
-          <h5 className="text-danger mb-3">Đặt Câu Hỏi Mới</h5>
+      {/* Ask Question Form (giữ UI, chưa gắn submit) */}
+      <div className="ask-question-form">
+        <h3 className="form-title">Đặt Câu Hỏi Mới</h3>
+        <form>
+          <div className="form-group">
+            <label>Tiêu đề câu hỏi</label>
+            <input type="text" placeholder="Nhập tiêu đề..." />
+          </div>
+          <div className="form-group">
+            <label>Nội dung câu hỏi</label>
+            <textarea placeholder="Mô tả chi tiết..." />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-semibold">
+                Ảnh minh họa (tuỳ chọn)
+            </label>
 
-          <form>
-            <div className="mb-3">
-              <label className="form-label fw-semibold">
-                Tiêu đề câu hỏi
-              </label>
-              <input
-                type="text"
+            <input
+                type="file"
                 className="form-control"
-                placeholder="Ví dụ: Làm thế nào để phở có nước dùng trong?"
-              />
+                accept="image/*"
+                
+            />
             </div>
-
-            <div className="mb-3">
-              <label className="form-label fw-semibold">
-                Nội dung câu hỏi
-              </label>
-              <textarea
-                className="form-control"
-                rows="4"
-                placeholder="Mô tả chi tiết câu hỏi của bạn..."
-              ></textarea>
-            </div>
-
-            <button type="submit" className="btn btn-danger">
-              <i className="fas fa-paper-plane me-1"></i>
-              Đăng Câu Hỏi
-            </button>
-          </form>
-        </div>
+          <button type="button" className="btn btn-primary">
+            <i className="fas fa-paper-plane"></i> Đăng Câu Hỏi
+          </button>
+        </form>
       </div>
 
-      {/* Questions list */}
-      <div className="card shadow-sm mb-4">
-        <div className="list-group list-group-flush">
-          {questions.data.map(q => (
-            <QuestionItem key={q.id} question={q} />
-          ))}
-        </div>
+      {/* Questions List */}
+    <div className="questions-list">
+        {questions.data.map(q => (
+            <QuestionItem
+                key={q.id}
+                question={q}
+            />
+        ))}
+    </div>
+
+      {/* Pagination (HTML giữ nguyên, chỉ đổi logic) */}
+      <div className="pagination">
+
+        <button
+          className={`pagination-btn ${questions.current_page === 1 ? "disabled" : ""}`}
+          onClick={() => setPage(page - 1)}
+          disabled={questions.current_page === 1}
+        >
+          <i className="fas fa-chevron-left"></i>
+        </button>
+
+        {Array.from({ length: questions.last_page }, (_, i) => {
+          const pageNumber = i + 1;
+          return (
+            <button
+              key={i}
+              className={`pagination-btn ${
+                questions.current_page === pageNumber ? "active" : ""
+              }`}
+              onClick={() => setPage(pageNumber)}
+            >
+              {pageNumber}
+            </button>
+          );
+        })}
+
+        <button
+          className={`pagination-btn ${
+            questions.current_page === questions.last_page ? "disabled" : ""
+          }`}
+          onClick={() => setPage(page + 1)}
+          disabled={questions.current_page === questions.last_page}
+        >
+          <i className="fas fa-chevron-right"></i>
+        </button>
+
       </div>
-
-      {/* Pagination */}
-      <nav className="d-flex justify-content-center mt-4">
-        <ul className="pagination">
-          {/* Previous */}
-          <li className={`page-item ${questions.current_page === 1 ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => setPage(page - 1)}>
-              &laquo;
-            </button>
-          </li>
-          {/* Page numbers */}
-          {Array.from({ length: questions.last_page }, (_, i) => (
-            <li key={i} className={`page-item ${questions.current_page === i + 1 ? 'active' : ''}`}>
-              <button className="page-link" onClick={() => setPage(i + 1)}>
-                {i + 1}
-              </button>
-            </li>
-          ))}
-
-          {/* Next */}
-          <li className={`page-item ${questions.current_page === questions.last_page ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => setPage(page + 1)}>
-              &raquo;
-            </button>
-          </li>
-        </ul>
-      </nav>
-
     </div>
   );
 }

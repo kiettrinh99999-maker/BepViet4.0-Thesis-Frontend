@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, StarFill, Bookmark, Eye, Star } from 'react-bootstrap-icons';
+import { Clock, StarFill, Bookmark, Eye, Star, Flame, Users } from 'react-bootstrap-icons';
 
 const FoodCard = ({ 
   image, 
@@ -52,16 +52,22 @@ const FoodCard = ({
             {description}
           </p>
 
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div className="text-secondary small d-flex align-items-center">
-              <Clock className="me-2" /> {time}
-            </div>
-            <span 
-              className="badge rounded-pill px-3 py-2" 
-              style={{ backgroundColor: '#e6f4ea', color: '#1e7e34', fontWeight: 'normal' }}
-            >
-              {level}
-            </span>
+          {/* Hiển thị chi tiết công thức */}
+          <div className="d-flex justify-content-between align-items-center mb-3 gap-2">
+            {time && (
+              <div className="text-secondary small d-flex align-items-center flex-grow-1">
+                <Clock size={16} className="me-2 text-danger" /> 
+                <span>{time}</span>
+              </div>
+            )}
+            {level && (
+              <span 
+                className="badge rounded-pill px-3 py-2" 
+                style={{ backgroundColor: '#e6f4ea', color: '#1e7e34', fontWeight: 'normal' }}
+              >
+                {level}
+              </span>
+            )}
           </div>
 
           {/* --- PHẦN ĐÁNH GIÁ SAO (ĐÃ SỬA) --- */}
@@ -88,7 +94,7 @@ const FoodCard = ({
 
           {/* Nút bấm */}
           <div className="d-flex gap-2">
-<button className="btn btn-danger flex-grow-1 d-flex align-items-center justify-content-center gap-2 py-2">
+            <button className="btn btn-danger flex-grow-1 d-flex align-items-center justify-content-center gap-2 py-2">
               <Bookmark /> <span>Lưu</span>
             </button>
             
