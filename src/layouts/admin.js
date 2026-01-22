@@ -32,14 +32,7 @@ export default function AdminLayout() {
     return <h4 className="text-center mt-5">Đang tải...</h4>;
   }
 const data_config = config.data.data[0];
-console.log(data_config)
 const imageUrl=store+data_config.image_path
-  // function handleClick(menu){
-  //   // setActiveMenu(menu.id);
-  //   navigate(menu.path);// dùng để thay đổi đường dẫn
-  //   // alert(`Bạn đang ở trang: ${menu.label}`); //thông báo giả, nên xóa khi đã có đường dẫn
-  // };
-
   return (
     <div className="container-fluid">
       <div className="row min-vh-100">
@@ -58,7 +51,7 @@ const imageUrl=store+data_config.image_path
                       style={{ width: 40, height: 40 }}
                     />
                     <h4 className="mb-0 fw-bold">
-                      {config.name}
+                      {data_config.name}
                     </h4>
                 </div>
             </div>
@@ -135,7 +128,6 @@ const imageUrl=store+data_config.image_path
           </footer>
 
         </div>
-
       </div>
     </div>
   );

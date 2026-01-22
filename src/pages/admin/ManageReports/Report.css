@@ -218,3 +218,6 @@
   color: white;
   border-color: var(--primary-color);
 }
+.btn-icon i {
+  pointer-events: none;
+}

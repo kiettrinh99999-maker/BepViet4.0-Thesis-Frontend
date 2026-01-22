@@ -1,0 +1,230 @@
+/* RecipeDetail.css */
+
+/* --- CẤU HÌNH CHUNG --- */
+:root {
+  --primary-color: #d32f2f;
+  --primary-light: #ff6659;
+  --primary-dark: #9a0007;
+  --secondary-color: #ffb74d;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --background-white: #ffffff;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.recipe-detail-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+}
+
+.back-link {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--primary-color); cursor: pointer; margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.recipe-detail-card {
+  background-color: var(--background-white);
+  border-radius: 12px; box-shadow: var(--shadow);
+  margin-bottom: 30px; overflow: hidden;
+}
+
+.recipe-cover-image { width: 100%; height: 400px; object-fit: cover; display: block; }
+.recipe-content-container { padding: 40px; }
+
+/* HEADER & AUTHOR INFO */
+.recipe-header { border-bottom: 1px solid var(--border-color); padding-bottom: 25px; margin-bottom: 30px; }
+.recipe-category { background-color: var(--primary-color); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; display: inline-block; }
+.recipe-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary-dark); margin-bottom: 15px; }
+
+.recipe-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 20px;
+}
+
+/* Style cho Author + Follow Button */
+.recipe-author { display: flex; align-items: center; gap: 15px; }
+.author-avatar { width: 45px; height: 45px; background-color: #eee; border-radius: 50%; overflow: hidden; }
+.author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.author-info { display: flex; flex-direction: column; }
+.author-name { font-weight: 600; color: var(--text-dark); }
+.recipe-date { font-size: 0.85rem; color: var(--text-light); }
+
+/* Nút Follow */
+.btn-follow {
+  padding: 6px 16px;
+  background-color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: all 0.2s;
+}
+.btn-follow:hover { background-color: rgba(211, 47, 47, 0.05); }
+.btn-follow.following {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* STATS & ACTIONS */
+.recipe-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; margin-top: 20px;}
+.stat-item { background-color: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; }
+.stat-icon { font-size: 1.5rem; color: var(--primary-color); margin-bottom: 8px; }
+.stat-value { font-size: 1.1rem; font-weight: 700; display: block; }
+.stat-label { font-size: 0.85rem; color: var(--text-light); }
+
+.recipe-actions-section { 
+  display: flex; gap: 15px; margin: 30px 0; 
+  padding: 20px; border: 1px solid var(--border-color); border-radius: 12px;
+}
+.recipe-action-btn { 
+  flex: 1; padding: 12px 20px; border: none; border-radius: 8px; 
+  font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; 
+  transition: all 0.2s;
+}
+.recipe-action-btn.save { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; }
+.recipe-action-btn.plan { background-color: #e3f2fd; color: #1565c0; }
+
+/* Nút Report bài viết */
+.recipe-action-btn.report { background-color: #ffebee; color: #c62828; }
+.recipe-action-btn.report:hover { background-color: #ffcdd2; }
+
+/* INGREDIENTS & STEPS */
+.section-title { 
+  font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--primary-dark); 
+  margin: 30px 0 20px; border-bottom: 2px solid var(--secondary-color); display: inline-block; padding-bottom: 5px;
+}
+.ingredients-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+.ingredient-item { display: flex; align-items: center; gap: 15px; padding: 10px; background-color: #f9f9f9; border-radius: 8px; }
+.ingredient-image { width: 50px; height: 50px; border-radius: 6px; overflow: hidden; }
+.ingredient-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.steps-list { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
+.step-item { background-color: #fff; padding: 0 0 20px 20px; border-left: 3px solid var(--primary-color); }
+.step-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; }
+.step-number { color: var(--primary-color); font-size: 1.1rem; }
+
+/* --- GRID ẢNH CHO STEPS (MỚI) --- */
+.step-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Tự động chia cột */
+  gap: 10px;
+  margin-top: 15px;
+}
+.media-item {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+  aspect-ratio: 16/9; /* Tỉ lệ khung hình đẹp */
+}
+.media-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.media-item img:hover { transform: scale(1.05); cursor: zoom-in; }
+.media-item video { width: 100%; height: 100%; object-fit: cover; }
+
+/* COMMENTS (CẤU TRÚC FILE GỐC) */
+.comments-section { background-color: var(--background-white); border-radius: 12px; padding: 30px; box-shadow: var(--shadow); margin-top: 40px; }
+.comment-form { background-color: #f9f9f9; border-radius: 10px; padding: 25px; margin-bottom: 30px; }
+.rating-stars i { font-size: 1.5rem; color: #ddd; cursor: pointer; margin-right: 5px; }
+.rating-stars i.active { color: var(--secondary-color); }
+.comment-form textarea { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 8px; min-height: 100px; margin: 15px 0; }
+
+/* Comment Items */
+.comment-item { margin-bottom: 20px; }
+.comment-main { display: flex; gap: 12px; }
+.comment-avatar { width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-content { flex: 1; }
+.comment-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.comment-author { font-weight: 600; margin-right: 10px; }
+.comment-time { color: var(--text-light); font-size: 0.85rem; }
+.comment-actions { display: flex; gap: 15px; margin-top: 5px; }
+.comment-action { background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }
+.comment-action:hover { color: var(--primary-color); }
+.replies-section { margin-left: 52px; margin-top: 15px; border-left: 2px solid #eee; padding-left: 15px; }
+.reply-form { margin-top: 10px; display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: 500; }
+.btn-primary { background: var(--primary-color); color: white; }
+
+@media (max-width: 768px) {
+  .recipe-stats { grid-template-columns: repeat(2, 1fr); }
+  .recipe-actions-section { flex-direction: column; }
+  .step-media-grid { grid-template-columns: 1fr; } /* Mobile hiển thị 1 ảnh/dòng */
+}
+/* File RecipeDetail.css */
+.recipe-description-text {
+  /* Giả sử font cũ là 16px, cộng thêm 3px là 19px */
+  font-size: 20px; 
+  line-height: 1.8; /* Tăng khoảng cách dòng một chút cho dễ đọc khi chữ to */
+  color: #444;
+  white-space: pre-line;
+}
+/* Lớp nền mờ phủ toàn màn hình */
+.report-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Làm tối nền */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Cái cục nội dung */
+.report-box {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 400px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  animation: scaleUp 0.3s ease; /* Hiệu ứng hiện ra */
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.report-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.report-option {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.report-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.report-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel { border: none; background: #eee; padding: 8px 15px; border-radius: 5px; }
+.btn-submit { border: none; background: #ff4d4d; color: white; padding: 8px 15px; border-radius: 5px; }
