@@ -20,6 +20,12 @@ import BlogPage from './pages/blogs/list_blog';
 import ReportBody from './pages/admin/ManageReports/report';
 import RecipeManagement from './pages/admin/ManageRecipes/list_recipe';
 import RecipeDetail from './pages/recipes/detail_recipe';
+import CategoryManagement from './pages/admin/ManageCategories/magage_category';
+import Register from './pages/register';
+import Login from './pages/login';
+import AdminLogin from './pages/admin/AdminLogin';
+import RecipeUpdate from './pages/recipes/update_recipe';
+import HomePage from './pages/home/HomePage';
 function App() {
   return (
     <AuthProvider>
@@ -28,10 +34,9 @@ function App() {
           {/* --- NHÓM 1: GUEST --- */}
           <Route ute element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
-            <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
+            <Route path="/" element={<HomePage/>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
             <Route path="/cong-thuc/:key" element={<RecipeDetail />} />
-
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
             <Route path="/blog" element={<BlogPage />} />
@@ -42,11 +47,16 @@ function App() {
               <Route path="/meal-plan" element={<MealPlan />} />
               <Route path="/profile" element={<ProfileBody />} />
               <Route path="/tao-cong-thuc" element={<CreateRecipe />} />
+            <Route path="/cong-thuc/edit/:slug" element={<RecipeUpdate/>} />
+             
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
-          <Route path="/login" element={<div>Trang Login</div>} />
-          <Route path="/register" element={<div>Trang Đăng ký</div>} />
+          <Route path="/login" element={<Login/>} />
+          
+          <Route path="/admin/login" element={<AdminLogin/>} />
+
+          <Route path="/register" element={<Register/>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardBody />} />
@@ -54,7 +64,9 @@ function App() {
             <Route path="report" element={<ReportBody />} />
             <Route path="cong-thuc" element={<RecipeManagement />} />
             <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
+            <Route path="categories" element={<CategoryManagement/>} />
           </Route>
+          <Route path="*" element={<div className="text-center mt-5">404 - Trang không tồn tại</div>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

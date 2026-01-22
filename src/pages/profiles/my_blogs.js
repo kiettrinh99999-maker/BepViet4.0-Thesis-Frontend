@@ -1,64 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const MyBlogs = () => {
-  // Mock Data
-  const blogsList = [
-    {
-      id: 1,
-      title: "Hành trình của Phở: Từ gánh hàng rong đến thương hiệu quốc gia",
-      image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80",
-      category: "LỊCH SỬ ẨM THỰC",
-      excerpt: "Phở không chỉ là món ăn mà còn là biểu tượng văn hóa Việt Nam. Bài viết khám phá lịch sử...",
-      date: "12/07/2023"
-    },
-    {
-      id: 2,
-      title: "Sài Gòn về đêm: Hành trình khám phá ẩm thực đường phố",
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
-      category: "TRẢI NGHIỆM ẨM THỰC",
-      excerpt: "Từ những quán hủ tiếu mở cửa đến 2h sáng đến những xe bánh mì thịt nướng giữa đêm khuya...",
-      date: "05/07/2023"
-    }
-  ];
+// Nhận thêm prop `styles`
+const MyBlogs = ({ blogs, store, api, onDeleteSuccess, styles }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  return (
-    <div className="tab-pane active fade-in">
-        <div className="section-header">
-            <h2 className="section-title">Bài blog đã viết ({blogsList.length})</h2>
-            <button className="btn btn-primary"><i className="fas fa-plus"></i> Viết bài mới</button>
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Xóa bài viết "${title}"?`)) return;
+    setIsDeleting(true);
+    try {
+        const response = await fetch(`${api}blogs/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
+        const result = await response.json();
+        if (response.ok && result.success) { alert('Đã xóa!'); onDeleteSuccess(id); } 
+        else { alert(result.message); }
+    } catch (error) { console.error("Lỗi:", error); } finally { setIsDeleting(false); }
+  };
+
+  const formatDate = (str) => str ? new Date(str).toLocaleDateString('vi-VN') : '';
+
+  if (!blogs || blogs.length === 0) {
+      return (
+        <div className={`${styles.tabContent} ${styles.fadeIn} ${styles.emptyState}`}>
+            <p className={styles.textMuted}>Chưa có bài blog nào.</p>
+            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
         </div>
-        <div className="blog-posts-grid">
-            {blogsList.map(blog => (
-                <article className="blog-post-card" key={blog.id}>
-                    <div className="blog-image">
-                        <div className="blog-category">{blog.category}</div>
-                        <img src={blog.image} alt={blog.title} />
-                    </div>
-                    <div className="blog-content">
-                        <h3 className="blog-title">{blog.title}</h3>
-                        <p className="blog-excerpt">{blog.excerpt}</p>
-                        <div className="blog-meta">
-                            <div className="blog-author">
-                                <span style={{fontWeight: 600}}>Nguyễn Văn</span>
+      );
+  }
+  return (
+    <div className={`${styles.tabContent} ${styles.fadeIn}`}>
+        <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Blog ({blogs.length})</h2>
+            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
+        </div>
+        <div className={styles.gridContainer}>
+            {blogs.map(blog => {
+                const imageUrl = blog.image_path ? `${store}${blog.image_path}` : '/logo512.png';
+                const userAvatar = blog.user?.profile?.image_path ? `${store}${blog.user.profile.image_path}` : '/logo192.png';
+                
+                return (
+                    <article className={styles.card} key={blog.id}>
+                        <div className={`${styles.cardImage} ${styles.ratio169}`}>
+                            <div className={styles.cardTag}>{blog.blog_category?.name || 'Blog'}</div>
+                            <img src={imageUrl} alt={blog.title} onError={(e)=>{e.target.onerror=null;e.target.src='/logo512.png'}} />
+                        </div>
+                        <div className={styles.cardContent}>
+                            <h3 className={styles.cardTitle}>{blog.title}</h3>
+                            <p className={styles.cardDescription}>{blog.description}</p>
+                            <div className={styles.cardMeta}>
+                                <div style={{display:'flex', alignItems:'center'}}>
+                                    <img src={userAvatar} alt="Au" 
+                                    onError={(e)=>{e.target.onerror=null;e.target.src='/logo512.png'}}
+                                    style={{width:24, height:24, borderRadius:'50%', marginRight:8, objectFit:'cover'}} />
+                                    <span>{blog.user?.profile?.name}</span>
+                                </div>
+                                <div><i className="far fa-calendar"></i> {formatDate(blog.created_at)}</div>
                             </div>
-                            <div className="blog-date">
-                                <i className="far fa-calendar"></i> {blog.date}
+                            <div className={styles.cardActions}>
+                                <button className={`${styles.actionBtn} ${styles.btnEdit}`} onClick={()=>alert('Sửa')}><i className="far fa-edit"></i> Sửa</button>
+                                <button className={`${styles.actionBtn} ${styles.btnDelete}`} onClick={()=>handleDelete(blog.id, blog.title)} disabled={isDeleting}><i className="far fa-trash-alt"></i> Xóa</button>
                             </div>
                         </div>
-                        <div className="blog-actions">
-                            <button className="action-btn edit" onClick={() => alert('Sửa blog: ' + blog.title)}>
-                                <i className="far fa-edit"></i> Chỉnh sửa
-                            </button>
-                            <button className="action-btn delete" onClick={() => alert('Đã xóa blog!')}>
-                                <i className="far fa-trash-alt"></i> Xóa
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            ))}
+                    </article>
+                );
+            })}
         </div>
     </div>
   );
 };
-
 export default MyBlogs;

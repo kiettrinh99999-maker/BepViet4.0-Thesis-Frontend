@@ -1,0 +1,210 @@
+/* Import font giống trong file HTML */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+
+.admin-login-body {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f7fa;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Login Container */
+.admin-login-container {
+    width: 100%;
+    max-width: 420px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.admin-login-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Header Section */
+.admin-login-header {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.admin-logo {
+    width: 70px;
+    height: 70px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.admin-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.admin-subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* Form Section */
+.admin-login-form {
+    padding: 40px 30px 30px;
+}
+
+.admin-form-group {
+    margin-bottom: 20px;
+}
+
+.admin-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.admin-input-group {
+    position: relative;
+}
+
+.admin-input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #95a5a6;
+    transition: color 0.3s;
+}
+
+.admin-form-input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s;
+    outline: none;
+    color: #2c3e50;
+}
+
+.admin-form-input:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.admin-form-input:focus + .admin-input-icon,
+.admin-input-group:focus-within .admin-input-icon {
+    color: #e74c3c;
+}
+
+/* Options */
+.admin-form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.admin-checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #7f8c8d;
+    user-select: none;
+}
+
+.admin-checkbox-container input {
+    margin-right: 8px;
+    accent-color: #e74c3c;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.admin-forgot-password {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.admin-forgot-password:hover {
+    color: #c0392b;
+    text-decoration: underline;
+}
+
+/* Button */
+.admin-login-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.admin-login-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+.admin-login-btn:active {
+    transform: translateY(0);
+}
+
+/* Error Message */
+.admin-error-message {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #fceceb;
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #e74c3c;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer */
+.admin-login-footer {
+    background-color: #f8f9fa;
+    padding: 15px;
+    text-align: center;
+    border-top: 1px solid #ecf0f1;
+    color: #95a5a6;
+    font-size: 13px;
+} 

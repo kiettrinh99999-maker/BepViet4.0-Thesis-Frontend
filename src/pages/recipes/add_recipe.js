@@ -317,7 +317,7 @@ const CreateRecipe = () => {
                     <div className="step-media-wrapper">
                       <div className="media-tabs">
                         <div className={`media-tab ${step.mediaType === 'image' ? 'active' : ''}`} onClick={() => handleStepMediaTypeChange(step.id, 'image')}><i className="fas fa-images"></i> Ảnh</div>
-                        <div className={`media-tab ${step.mediaType === 'video' ? 'active' : ''}`} onClick={() => handleStepMediaTypeChange(step.id, 'video')}><i className="fas fa-video"></i> Video</div>
+                        
                       </div>
                       {step.mediaType === 'image' ? (
                         <div className="step-images-list">

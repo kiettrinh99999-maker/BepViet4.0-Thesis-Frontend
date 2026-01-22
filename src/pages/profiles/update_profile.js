@@ -1,47 +1,123 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import styles from './ProfileBody.module.css'; // Import Module CSS
+import { useAuth } from '../../contexts/Authen';
 
 const UpdateProfile = ({ isOpen, onClose, userProfile, onSave }) => {
+  const { api } = useAuth(); // Lấy api từ Context
   const fileInputRef = useRef(null);
+  
+  // State quản lý form
   const [formData, setFormData] = useState({
-    name: userProfile.name,
-    phone: userProfile.phone,
-    email: userProfile.email
+    name: '',
+    phone: '',
+    email: ''
   });
-  const [avatarPreview, setAvatarPreview] = useState(userProfile.avatar);
+  
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // Lưu file gốc để gửi lên server
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Cập nhật state khi userProfile thay đổi (khi mở modal)
+  useEffect(() => {
+    if (userProfile && isOpen) {
+        setFormData({
+            name: userProfile.name || '',
+            phone: userProfile.phone || '',
+            email: userProfile.email || ''
+        });
+        setAvatarPreview(userProfile.avatar);
+        setSelectedFile(null); // Reset file khi mở lại modal
+    }
+  }, [userProfile, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Gọi hàm lưu ở cha và truyền data mới lên
-    onSave({ ...formData, avatar: avatarPreview });
-  };
-
+  // Xử lý khi chọn ảnh từ máy tính
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file); // Lưu file để gửi API
+      
+      // Tạo URL ảo để xem trước ảnh ngay lập tức
       const reader = new FileReader();
       reader.onload = (e) => setAvatarPreview(e.target.result);
       reader.readAsDataURL(file);
     }
   };
 
+  // Xử lý Submit Form lên Server
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    try {
+        // Sử dụng FormData để gửi được cả Text và File
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('phone', formData.phone);
+        
+        if (selectedFile) {
+            data.append('avatar', selectedFile);
+        }
+
+        // Gọi API: POST /api/profile (Hoặc PUT tùy backend của bạn)
+        // Lưu ý: Không cần set Content-Type header, fetch tự động set multipart/form-data
+        const response = await fetch(`${api}profile/update`, {
+            method: 'POST', 
+            // headers: { 'Authorization': `Bearer ${token}` }, // Bỏ comment nếu cần token
+            body: data, 
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            // Gọi hàm onSave của cha để cập nhật giao diện Profile bên ngoài ngay lập tức
+            onSave({
+                name: formData.name,
+                phone: formData.phone,
+                avatar: avatarPreview // Cập nhật ảnh hiển thị bằng ảnh vừa chọn
+            });
+            onClose(); // Đóng modal
+        } else {
+            alert(result.message || 'Cập nhật thất bại');
+        }
+    } catch (error) {
+        console.error("Lỗi cập nhật:", error);
+        alert('Lỗi kết nối server');
+    } finally {
+        setIsSaving(false);
+    }
+  };
+
   return (
-    <div className="custom-modal-overlay" onClick={(e) => e.target.className === 'custom-modal-overlay' && onClose()}>
-        <div className="custom-modal">
-            <div className="custom-modal-header">
-                <h2 className="custom-modal-title">Chỉnh sửa hồ sơ</h2>
-                <button className="custom-modal-close" onClick={onClose}>&times;</button>
+    // Sử dụng class từ Module CSS
+    <div className={styles.modalOverlay} onClick={(e) => e.target.className === styles.modalOverlay && onClose()}>
+        <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>Chỉnh sửa thông tin cá nhân</h2>
+                <button className={styles.modalClose} onClick={onClose}>&times;</button>
             </div>
-            <div className="custom-modal-body">
+            
+            <div className={styles.modalBody}>
                 <form onSubmit={handleSubmit}>
-                    <div className="avatar-upload">
-                        <div className="avatar-preview">
-                            <img src={avatarPreview} alt="Preview" />
+                    
+                    {/* --- KHU VỰC ẢNH ĐẠI DIỆN (GIỐNG MẪU) --- */}
+                    <div className={styles.avatarUploadWrapper}>
+                        <div className={styles.avatarPreviewCircle}>
+                            <img 
+                                src={avatarPreview || '/logo512.png'} 
+                                alt="Avatar Preview" 
+                                className={styles.avatarPreviewImg} 
+                                onError={(e)=>{e.target.onerror=null;e.target.src='/logo512.png'}} 
+                            />
                         </div>
-                        <button type="button" className="btn btn-outline" onClick={() => fileInputRef.current.click()}>
-                            <i className="fas fa-camera"></i> Thay ảnh
+                        
+                        {/* Nút bấm kích hoạt input file */}
+                        <button type="button" className={styles.btnChangeAvatar} onClick={() => fileInputRef.current.click()}>
+                            <i className="fas fa-camera"></i> Thay đổi ảnh đại diện
                         </button>
+                        
+                        {/* Input file ẩn */}
                         <input 
                             type="file" 
                             ref={fileInputRef} 
@@ -51,39 +127,37 @@ const UpdateProfile = ({ isOpen, onClose, userProfile, onSave }) => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Họ và tên *</label>
+                    {/* --- FORM NHẬP LIỆU --- */}
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Họ và tên</label>
                         <input 
                             type="text" 
-                            className="form-control" 
+                            className={styles.formControl} 
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
                             required 
+                            placeholder="Nhập họ tên của bạn"
                         />
                     </div>
-                    <div className="form-group">
-                        <label className="form-label">Số điện thoại *</label>
+                    
+                    <div className={styles.formGroup}>
+                        <label className={styles.formLabel}>Số điện thoại</label>
                         <input 
                             type="tel" 
-                            className="form-control" 
+                            className={styles.formControl} 
                             value={formData.phone}
                             onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                            required 
+                            placeholder="Nhập số điện thoại"
                         />
                     </div>
-                    <div className="form-group">
-                        <label className="form-label">Email (Không thể sửa)</label>
-                        <input 
-                            type="email" 
-                            className="form-control" 
-                            value={formData.email}
-                            disabled 
-                            style={{backgroundColor: '#f5f5f5'}}
-                        />
-                    </div>
-                    <div className="custom-modal-footer">
-                        <button type="button" className="btn btn-outline" onClick={onClose}>Hủy</button>
-                        <button type="submit" className="btn btn-primary">Lưu thay đổi</button>
+                    
+
+                    {/* Footer Actions */}
+                    <div className={styles.modalFooter}>
+                        <button type="button" className={styles.btnOutline} onClick={onClose}>Hủy bỏ</button>
+                        <button type="submit" className={styles.btnPrimary} disabled={isSaving}>
+                            {isSaving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                        </button>
                     </div>
                 </form>
             </div>

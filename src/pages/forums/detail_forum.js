@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/Authen";
 import { useParams, useNavigate } from "react-router";
 import AnswerItem from "../../components/Forums/AnswerItem";
+import './detail_forum.css';
 
 export default function ForumDetailPage(){
     const {id} = useParams();
     const [question, setQuestion] = useState(null);
     const [answers, setAnswers] = useState(null);
+    const [content, setContent] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const {user, api, store, renderDate } = useAuth();
     useEffect(() => {
@@ -23,6 +26,54 @@ export default function ForumDetailPage(){
                 setAnswers(res.data);
             });
     }, [api, id]);
+
+    async function handleSubmit() {
+        if (!user) {
+            alert("Vui lòng đăng nhập để trả lời câu hỏi");
+            return;
+        }
+
+        if (!content.trim()) {
+            alert("Vui lòng nhập nội dung trả lời");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${api}answers`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                content: content,
+                question_id: question.id,
+                parent_id: null, // reply thì đổi thành answerId
+            }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+            console.error(data);
+            alert("Có lỗi xảy ra");
+            return;
+            }
+
+            // Reset form
+            setContent("");
+
+            //reload trang
+            //window.location.reload();
+        } catch (err) {
+            console.error(err);
+            alert("Không thể kết nối server");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     if (question === null || answers === null) {
         return <h4 className="text-center mt-5">Đang tải...</h4>;
     }
@@ -30,16 +81,15 @@ export default function ForumDetailPage(){
         <div className="container-fluid p-0">
             {/* Login Notice */}
             {!user && (
-                <div className="alert alert-warning d-flex align-items-center mb-4">
-                    <i className="fas fa-info-circle me-2"></i>
-                    <div>
-                        Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu hỏi và tham gia thảo luận.
-                    </div>
+                <div className="login-notice">
+                <i className="fas fa-info-circle"></i>
+                Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để đặt câu hỏi
+                và tham gia thảo luận.
                 </div>
             )}
             <div className="container py-4">
             {/* Back Link */}
-                <button className="btn btn-link text-decoration-none d-inline-flex align-items-center text-danger p-0 mb-3" onClick={() => navigate("/dien-dan")}>
+                <button className="btn btn-link text-decoration-none d-inline-flex text-danger p-0 mb-3" style={{ width: "auto" }} onClick={() => navigate("/dien-dan")}>
                     <i className="fas fa-arrow-left me-2"></i>
                     Quay lại diễn đàn
                 </button>
@@ -61,7 +111,7 @@ export default function ForumDetailPage(){
                         <div className="fw-medium">{question.user.username}</div>
                         <small className="text-muted">{renderDate(question.created_at)}</small>
                         </div>
-                        <button className="btn btn-danger btn-sm ms-3 d-flex align-items-center">
+                        <button className="btn-follow">
                             <i className="fas fa-user-plus me-1"></i>
                             Theo dõi
                         </button>
@@ -81,7 +131,11 @@ export default function ForumDetailPage(){
                 <div className="mb-4">
                     <p className="mb-3">{question.description}</p>
                     <img 
-                    src={`${store}${question.image_path}` ?? "/placeholder.png"}
+                    src={
+                        question.image_path
+                        ? `${store}${question.image_path}`
+                        : "/placeholder.png"
+                    }
                     alt={question.title}
                     className="img-fluid rounded mb-3"
                     style={{ maxHeight: '400px', objectFit: 'cover', width: '100%' }}
@@ -114,13 +168,15 @@ export default function ForumDetailPage(){
                     <textarea 
                     className="form-control" 
                     rows="6" 
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     placeholder="Nhập câu trả lời của bạn tại đây..."
                     ></textarea>
                 </div>
                 <div className="d-flex justify-content-end">
-                    <button className="btn btn-danger d-flex align-items-center">
-                    <i className="fas fa-paper-plane me-2"></i>
-                    Gửi câu trả lời
+                    <button className="btn btn-danger d-flex align-items-center" style={{ width: "auto" }} onClick={handleSubmit}>
+                    <i className="fas fa-paper-plane me-2 px-2 py-1" ></i>
+                        {loading ? "Đang gửi..." : "Gửi câu trả lời"}
                     </button>
                 </div>
                 </div>

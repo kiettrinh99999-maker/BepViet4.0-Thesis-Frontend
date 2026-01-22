@@ -1,0 +1,614 @@
+/* --- BIẾN CỤC BỘ --- */
+.containerWrapper {
+  /* Khai báo biến ngay trong class cha */
+  --primary-color: #d32f2f;
+  --primary-dark: #9a0007;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --bg-light: #f9f5f0;
+  --white: #ffffff;
+  --border-color: #e0e0e0;
+
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  padding-bottom: 60px;
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- HEADER --- */
+.profileHeader {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.profileAvatar {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+}
+
+.profileAvatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.avatarEditBtn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.avatarEditBtn:hover {
+  transform: scale(1.1);
+  background-color: var(--primary-dark);
+}
+
+.profileDetails {
+  flex: 1;
+}
+
+.profileName {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 5px;
+}
+
+.profileStats {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statNumber {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  display: block;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* --- BUTTONS --- */
+.btnPrimary {
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.btnPrimary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btnOutline {
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.btnOutline:hover {
+  background-color: rgba(211, 47, 47, 0.05);
+}
+
+/* --- TABS --- */
+.profileTabs {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.tabsHeader {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 20px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.tabBtn:hover {
+  color: var(--primary-color);
+  background-color: rgba(211, 47, 47, 0.03);
+}
+
+.tabBtn.active {
+  color: var(--primary-color);
+}
+
+.tabBtn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
+.tabContent {
+  padding: 30px;
+}
+
+.fadeIn {
+  animation: fadeInProfile 0.5s ease;
+}
+
+@keyframes fadeInProfile {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* --- GRIDS & SECTIONS --- */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Grid chung */
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* --- CARDS --- */
+.card {
+  background-color: var(--white);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cardImage {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+/* Aspect Ratio riêng */
+.ratio169 { aspect-ratio: 16 / 9; }
+.ratio43 { aspect-ratio: 4 / 3; }
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.card:hover .cardImage img {
+  transform: scale(1.05);
+}
+
+.cardTag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 10;
+  transition: all 0.3s;
+  opacity: 1;
+  visibility: visible;
+}
+
+.card:hover .cardTag {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.cardContent {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.cardDescription {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta Data (Time, difficulty, date) */
+.cardMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  color: var(--text-light);
+}
+
+/* Difficulty Badges */
+.difficulty {
+  padding: 3px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.difficultyEasy { background-color: #e8f5e9; color: #2e7d32; }
+.difficultyMedium { background-color: #fff3e0; color: #f57c00; }
+.difficultyHard { background-color: #ffebee; color: #c62828; }
+
+/* Actions */
+.cardActions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.actionBtn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+
+.btnEdit {
+  background-color: var(--primary-color);
+  color: white;
+}
+.btnEdit:hover {
+  background-color: var(--primary-dark);
+}
+
+.btnDelete {
+  background-color: transparent;
+  color: #c62828;
+  border: 1px solid #c62828;
+}
+.btnDelete:hover {
+  background-color: rgba(198, 40, 40, 0.1);
+}
+
+/* Rating */
+.rating { display: flex; align-items: center; margin-bottom: 15px; }
+.stars { color: #ffb74d; margin-right: 10px; }
+.ratingCount { color: var(--text-light); font-size: 0.9rem; }
+
+/* --- MODAL --- */
+.modalOverlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex; justify-content: center; align-items: center; z-index: 2000;
+}
+
+.modal {
+  background-color: white; border-radius: 12px; max-width: 600px; width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); overflow: hidden;
+}
+
+.modalHeader {
+  padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+}
+
+.modalTitle { font-size: 1.2rem; font-weight: 700; color: #d32f2f; margin: 0; }
+.modalClose { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+
+.modalBody { padding: 20px; }
+.modalFooter { padding: 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* Form inside Modal */
+.formGroup { margin-bottom: 15px; }
+.formLabel { display: block; margin-bottom: 5px; font-weight: 500; }
+.formControl { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+
+.emptyState { text-align: center; padding: 40px 0; }
+.textMuted { color: var(--text-light); }
+
+/* Upload Preview */
+.uploadPlaceholder { text-align: center; border: 2px dashed #ddd; padding: 30px; border-radius: 10px; }
+.avatarPreview { width: 100%; height: 200px; border-radius: 10px; border: 1px solid #ddd; overflow: hidden; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profileInfo { flex-direction: column; text-align: center; }
+  .profileStats { justify-content: center; flex-wrap: wrap; }
+  .gridContainer { grid-template-columns: 1fr; }
+}
+
+.avatarUploadWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.avatarPreviewCircle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+}
+
+.avatarPreviewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Nút thay đổi ảnh giống trong hình */
+.btnChangeAvatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btnChangeAvatar:hover {
+  background-color: #fef2f2; /* Màu nền đỏ rất nhạt khi hover */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btnChangeAvatar i {
+  font-size: 1.1rem;
+}
+
+/* Thanh tiêu đề con + Nút thêm */
+.detailSubHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.detailSubTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin: 0;
+}
+
+/* Nút Thêm công thức (Màu đỏ, bo tròn) */
+.btnAddRecipe {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+}
+
+.btnAddRecipe:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Lưới hiển thị các món ăn trong Modal */
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Card nhỏ hơn card bên ngoài */
+  gap: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 5px; /* Để shadow không bị cắt */
+}
+
+/* Card món ăn nhỏ (Mini Card) */
+.miniCard {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+.miniCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.miniCardImg {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  background-color: #f0f0f0;
+}
+
+.miniCardBody {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.miniCardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+  line-height: 1.3;
+  
+  /* Cắt dòng nếu tên quá dài */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.miniCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
+.miniCardFooter {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f5f5f5;
+  padding-top: 10px;
+}
+
+/* Nút xóa nhỏ (Outline) */
+.btnRemoveMini {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #666;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btnRemoveMini:hover {
+  border-color: #c62828;
+  color: #c62828;
+  background-color: #ffebee;
+}
+
+/* Rating nhỏ */
+.miniRating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+}
+.miniRating i { color: #ffb74d; font-size: 0.8rem; }
+.miniRating span { color: #999; font-size: 0.75rem; }

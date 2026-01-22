@@ -1,0 +1,272 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  --primary-color: #d32f2f;
+  --primary-dark: #9a0007;
+  --text-dark: #333333;
+  --text-light: #666666;
+  --bg-light: #f9f5f0;
+  --white: #ffffff;
+  --border-color: #e0e0e0;
+  --success-color: #2e7d32;
+}
+
+.create-recipe-wrapper {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  min-height: 100vh;
+  padding-bottom: 50px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px; /* Độ rộng chuẩn */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Link Quay lại */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color);
+  text-decoration: none;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+.back-link:hover { text-decoration: underline; color: var(--primary-dark); }
+
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: var(--primary-dark);
+  margin: 10px 0 10px;
+  text-align: center;
+}
+.page-subtitle {
+  color: var(--text-light);
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Khung Form Tổng */
+.form-container {
+  background-color: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  margin-bottom: 40px;
+}
+
+.form-section {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
+}
+.form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-group { margin-bottom: 25px; }
+.form-row { display: flex; gap: 20px; margin-bottom: 25px; }
+.form-row .form-group { flex: 1; margin-bottom: 0; }
+
+.form-label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-dark); }
+.form-label.required::after { content: ' *'; color: var(--primary-color); }
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+.form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.1); }
+textarea.form-control { min-height: 120px; resize: vertical; }
+
+/* Upload Ảnh Bìa */
+.image-upload {
+  border: 2px dashed var(--border-color);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #fff;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.image-upload:hover { border-color: var(--primary-color); background-color: rgba(211, 47, 47, 0.02); }
+.upload-icon { font-size: 2.5rem; color: var(--text-light); margin-bottom: 15px; }
+.main-image-preview { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; }
+.remove-main-img {
+  position: absolute; top: 15px; right: 15px;
+  background: white; border: none; width: 35px; height: 35px; border-radius: 50%;
+  cursor: pointer; color: var(--primary-color); display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10;
+}
+
+/* === NGUYÊN LIỆU (HÀNG NGANG) === */
+.ingredient-item { display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start; }
+.ingredient-input { flex: 2; }
+.quantity-input { flex: 1; }
+.unit-select { flex: 1; }
+.ingredient-image-section { flex: 1; min-width: 120px; }
+
+.ingredient-image-upload {
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  position: relative;
+}
+.ingredient-image-upload:hover { border-color: var(--primary-color); background: #fff5f5; }
+.ingredient-image-upload i { color: var(--text-light); margin-bottom: 5px; }
+.ingredient-image-preview-box { width: 100%; height: 100%; border-radius: 8px; overflow: hidden; position: relative; }
+.ingredient-image-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+.remove-ingredient-image {
+  position: absolute; top: 2px; right: 2px;
+  background: rgba(211,47,47,0.9); color: white; border: none; border-radius: 50%;
+  width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+}
+.remove-ingredient {
+  background: none; border: none; color: var(--primary-color); cursor: pointer; font-size: 1.2rem;
+  padding: 10px; display: flex; align-items: center; justify-content: center; margin-top: 25px;
+}
+.add-ingredient-btn {
+  display: flex; align-items: center; gap: 8px; background-color: #f5f5f5;
+  border: 1px dashed var(--border-color); color: var(--text-light); padding: 12px 20px;
+  border-radius: 8px; cursor: pointer; font-weight: 500; margin-top: 10px;
+}
+
+/* === CÁC BƯỚC THỰC HIỆN (QUAN TRỌNG) === */
+.step-item {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.step-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.step-badge {
+  background: var(--primary-color); color: white; padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+}
+.btn-remove-step {
+  color: #999; cursor: pointer; font-size: 1rem; background: transparent; border: 1px solid #ddd;
+  width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+}
+.btn-remove-step:hover { color: white; background: #d32f2f; border-color: #d32f2f; }
+
+/* Grid chia cột: Text (Trái) | Media (Phải) */
+.step-body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+
+.step-desc-input {
+  width: 100%; min-height: 180px; resize: vertical; padding: 12px;
+  border: 1px solid #ddd; border-radius: 6px; font-family: 'Inter', sans-serif;
+}
+.step-desc-input:focus { outline: none; border-color: var(--primary-color); }
+
+.step-media-wrapper { display: flex; flex-direction: column; gap: 10px; }
+
+/* Tabs */
+.media-tabs { display: flex; background: #f1f1f1; padding: 4px; border-radius: 6px; width: fit-content; }
+.media-tab { padding: 6px 15px; font-size: 0.85rem; cursor: pointer; border-radius: 4px; font-weight: 600; color: #666; }
+.media-tab.active { background: white; color: var(--primary-color); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+/* List Ảnh Ngang */
+.step-images-list { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Box Ảnh đơn */
+.step-img-item {
+  width: 100px; height: 100px; position: relative; border-radius: 6px; border: 1px solid #eee;
+}
+.step-img-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+
+/* Nút xóa ảnh nhỏ trên đầu */
+.btn-remove-img {
+  position: absolute; top: -8px; right: -8px; width: 24px; height: 24px;
+  background: white; color: #d32f2f; border: 1px solid #ffcdd2; border-radius: 50%;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 2;
+}
+.btn-remove-img:hover { background: #d32f2f; color: white; transform: scale(1.1); }
+
+/* Box Dấu Cộng */
+.step-upload-box {
+  width: 100px; height: 100px; border: 2px dashed #ccc; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; background: #fafafa; color: #999;
+}
+.step-upload-box:hover { border-color: var(--primary-color); color: var(--primary-color); background: #fff5f5; }
+
+/* Video Box */
+.step-video-box { border: 1px solid #ddd; padding: 15px; border-radius: 6px; background: #fff; }
+.step-video-box input { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 4px; margin-top: 5px; }
+
+/* Actions */
+.form-actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color); }
+.btn-submit { padding: 12px 30px; background-color: var(--success-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.btn-cancel { padding: 12px 30px; background: transparent; color: var(--text-light); border: 1px solid var(--border-color); border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+@media (max-width: 768px) {
+  .form-row { flex-direction: column; gap: 15px; }
+  .ingredient-item { flex-direction: column; border: 1px solid #eee; padding: 15px; background: white; }
+  .ingredient-input, .quantity-input, .unit-select, .ingredient-image-section { width: 100%; }
+  .step-body-grid { grid-template-columns: 1fr; }
+  .remove-ingredient { align-self: flex-end; margin-top: 0; }
+}
+.suggestion-dropdown {
+  position: absolute;
+  background: white;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 999;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.suggestion-dropdown li {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.suggestion-dropdown li:hover { background: #f5f5f5; }
+.suggestion-dropdown img { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; }
