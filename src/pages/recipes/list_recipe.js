@@ -21,18 +21,37 @@ const ListRecipe = () => {
   const [events_data, setEventData] = useState(null);
   const [difficult_data, setDiffData] = useState(null);
   useEffect(() => {
-    fetch(api + 'get-event-region') // Đảm bảo đúng đường dẫn API bạn đặt trong Laravel
+    fetch(api + 'get-event-region')
       .then((res) => res.json())
-      .then((res) => {
-        if (res.success) {
-          console.log("Dữ liệu API:", res.data);
-          setRegionData(res.data.regions || []);
-          setEventData(res.data.events || []);
-          setDiffData(res.data.difficulties || []);
+      .then((resData) => {
+        console.log("API Response:", resData);
+
+        if (resData.success && resData.data) {
+          // Dữ liệu nằm trong resData.data!
+          console.log("Data object:", resData.data);
+
+          // Truy cập đúng: resData.data.regions, resData.data.events, resData.data.difficulties
+          setRegionData(resData.data.regions || []);
+          setEventData(resData.data.events || []);
+          setDiffData(resData.data.difficulties || []);
+
+          console.log("Regions data:", resData.data.regions);
+          console.log("Events data:", resData.data.events);
+          console.log("Difficulties data:", resData.data.difficulties);
+        } else {
+          console.log("API không thành công hoặc thiếu data");
+          setRegionData([]);
+          setEventData([]);
+          setDiffData([]);
         }
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => {
+        console.error("Lỗi fetch:", err);
+        setRegionData([]);
+        setEventData([]);
+        setDiffData([]);
+      });
+  }, [api]);
 
   //Lấy dữ liệu recipe
   useEffect(() => {
@@ -83,7 +102,7 @@ const ListRecipe = () => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
       // Cuộn lên đầu trang cho mượt
-window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
   // Hàm đặt lại bộ lọc
@@ -146,36 +165,30 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
         {/* --- PHẦN 3: BỘ LỌC (Giữ nguyên) --- */}
         <section className="filter-section px-4">
           <div className="filter-container">
-            {/* ... (Giữ nguyên code bộ lọc của bạn ở đây) ... */}
-            {/* Để gọn code tôi ẩn phần này đi, bạn giữ nguyên code cũ nhé */}
             {/* --- 1. KHU VỰC --- */}
             <div className="filter-group">
               <label className="filter-label">Khu vực</label>
               <select
                 className="filter-select"
-                // QUAN TRỌNG: Thêm dòng này để React điều khiển giá trị hiển thị
                 value={regions}
                 onChange={(e) => {
                   setRegion(e.target.value);
                   setCurrentPage(1);
                 }}
               >
-                {/* Giá trị value="" này khớp với state khi reset */}
                 <option value="">Tất cả miền</option>
                 {regions_data && regions_data.map((item) => (
-<option key={item.id} value={item.id}>
+                  <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
               </select>
             </div>
-
             {/* --- 2. DỊP ĐẶC BIỆT --- */}
             <div className="filter-group">
               <label className="filter-label">Dịp đặc biệt</label>
               <select
                 className="filter-select"
-                // QUAN TRỌNG: Thêm value={events}
                 value={events}
                 onChange={(e) => {
                   setEvent(e.target.value);
@@ -190,7 +203,6 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
                 ))}
               </select>
             </div>
-
             {/* --- 3. ĐỘ KHÓ --- */}
             <div className="filter-group">
               <label className="filter-label">Độ khó</label>
@@ -210,19 +222,20 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="filter-buttons">
+              
+          </div>
+          <div className="filter-group">
               {/* <button className="filter-btn apply"><FilterIcon className="me-1" /> Lọc</button> */}
               <button
                 className="filter-btn reset"
                 onClick={handleResetFilter}
-                style={{ marginLeft: '10px', backgroundColor: '#6c757d', color: 'white' }} // Style nhanh hoặc dùng CSS bên dưới
+                // style={{ marginLeft: '10px', backgroundColor: '#6c757d', color: 'white' }} // Style nhanh hoặc dùng CSS bên dưới
               >
                 <ArrowCounterclockwise className="me-1" /> Đặt lại
               </button></div>
-          </div>
+            </div>
+            
         </section>
-
         {/* --- PHẦN 4: DANH SÁCH MÓN ĂN --- */}
         <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
           {recipes.length > 0 ? (
@@ -236,7 +249,7 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
                   time={`${item.cooking_time} phút`}
                   level={item.difficulty ? item.difficulty.name : 'Trung bình'}
                   rating={item.rates_avg_score ? parseFloat(item.rates_avg_score).toFixed(1) : 0}
-reviewCount={item.rates_count || 0}
+                  reviewCount={item.rates_count || 0}
                   onClick={() => navigate(`/cong-thuc/${item.id}-${item.title_slug}`)}
                 />
               </div>

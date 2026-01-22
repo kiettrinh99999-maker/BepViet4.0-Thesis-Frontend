@@ -238,3 +238,16 @@
   cursor: not-allowed;
   background-color: #e9ecef;
 }
+/* Thêm vào file recipe.css hoặc App.css */
+.filter-section {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Hoặc nếu biết class nào đang ẩn nó */
+.container .filter-section,
+.list-recipe-page .filter-section,
+body .filter-section {
+  display: block !important;
+}
