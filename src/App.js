@@ -20,6 +20,7 @@ import BlogPage from './pages/blogs/list_blog';
 import ReportBody from './pages/admin/ManageReports/report';
 import RecipeManagement from './pages/admin/ManageRecipes/list_recipe';
 import RecipeDetail from './pages/recipes/detail_recipe';
+import Register from './pages/register';
 function App() {
   return (
     <AuthProvider>
@@ -46,7 +47,7 @@ function App() {
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
           <Route path="/login" element={<div>Trang Login</div>} />
-          <Route path="/register" element={<div>Trang Đăng ký</div>} />
+          <Route path="/register" element={<Register/>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<DashboardBody />} />
