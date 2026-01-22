@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useAuth } from "../../contexts/Authen";
 export default function AnswerItem({ answer }) {
     const [showReply, setShowReply] = useState(false);
-
+    const { renderDate } = useAuth();
     return (
         <div className="mb-4">
             <div className="d-flex mb-2">
@@ -16,7 +17,7 @@ export default function AnswerItem({ answer }) {
                             {answer.user.username}
                         </span>
                         <small className="text-muted">
-                            {answer.created_at}
+                            {renderDate(answer.created_at)}
                         </small>
                     </div>
 

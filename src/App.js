@@ -52,8 +52,8 @@ function App() {
             <Route index element={<DashboardBody />} />
             <Route path="config" element={<ConfigBody />} />
             <Route path="report" element={<ReportBody />} />
-            <Route path="cong-thuc" element={<h1>Trang quản lý coog thức</h1>} />
-            <Route path="approve" element={<RecipeManagement />} />
+            <Route path="cong-thuc" element={<RecipeManagement />} />
+            <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
           </Route>
         </Routes>
       </BrowserRouter>
