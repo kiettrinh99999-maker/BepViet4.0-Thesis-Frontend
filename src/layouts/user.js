@@ -5,13 +5,11 @@ import { useAuth } from '../contexts/Authen';
 const MemberLayout = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  
-  // Ref để xử lý click ra ngoài dropdown (nếu cần mở rộng sau này)
   const dropdownRef = useRef(null);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { config, store } = useAuth();
+  const { user, logout, config, store } = useAuth();
 
   // 1. Xử lý logic tìm kiếm
   const handleSearch = (e) => {
@@ -24,7 +22,7 @@ const MemberLayout = () => {
   // 2. Xử lý đăng xuất
   const handleLogout = () => {
     if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-      alert('Đăng xuất thành công!');
+      logout()
       navigate('/');
     }
   };
@@ -36,7 +34,7 @@ const MemberLayout = () => {
     secondaryColor: '#ffb74d',
     backgroundLight: '#f9f5f0',
     backgroundWhite: '#ffffff',
-    
+
     // Loading Styles
     loadingWrapper: {
       height: '100vh',
@@ -80,7 +78,7 @@ const MemberLayout = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      
+
       {/* Header */}
       <header style={{
         backgroundColor: styles.backgroundWhite,
@@ -89,7 +87,7 @@ const MemberLayout = () => {
         top: 0,
         zIndex: 1000
       }}>
-        
+
         {/* --- Header Top (Màu đỏ) --- */}
         <div style={{
           backgroundColor: styles.primaryColor,
@@ -99,7 +97,7 @@ const MemberLayout = () => {
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              
+
               {/* Logo Section */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <div style={{
@@ -152,22 +150,36 @@ const MemberLayout = () => {
                   }}
                   onMouseEnter={() => setIsDropdownOpen(true)}
                 >
-                  <div style={{
-                    width: '30px',
-                    height: '30px',
-                    background: `linear-gradient(135deg, ${styles.primaryColor}, #ff6659)`,
-                    color: 'white',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: '600',
-                    fontSize: '0.9rem',
-                    border: '2px solid white'
-                  }}>
-                    NV
+                  {/* Avatar */}
+                  <div
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: '2px solid white',
+                      background: `linear-gradient(135deg, ${styles.primaryColor}, #ff6659)`
+                    }}
+                  >
+                    <img
+                      src={store+user?.profile?.image_path || "/avatar-default.jpg"}
+                      alt="avatar"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/avatar-default.jpg";
+                      }}
+                    />
                   </div>
-                  <span style={{ color: styles.primaryColor, fontWeight: '600' }}>Nguyễn Văn</span>
+
+                  {/* Tên user */}
+                  <span style={{ color: styles.primaryColor, fontWeight: '600' }}>
+                    {user?.profile?.name}
+                  </span>
                 </button>
 
                 {isDropdownOpen && (
@@ -222,7 +234,7 @@ const MemberLayout = () => {
               flexWrap: 'wrap',
               gap: '15px'
             }}>
-              
+
               {/* Navigation Menu */}
               <nav>
                 <ul style={{
@@ -318,14 +330,14 @@ const MemberLayout = () => {
                 justifyContent: 'center'
               }}>
                 <img
-                    src={imageUrl}
-                    alt="Logo"
-                    style={{
-                      width: '1.5rem',
-                      height: '1.5rem',
-                      objectFit: 'contain'
-                    }}
-                  />
+                  src={imageUrl}
+                  alt="Logo"
+                  style={{
+                    width: '1.5rem',
+                    height: '1.5rem',
+                    objectFit: 'contain'
+                  }}
+                />
               </div>
               {data_config.name}
             </div>

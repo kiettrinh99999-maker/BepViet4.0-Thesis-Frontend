@@ -267,40 +267,7 @@ const GuestLayout = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-5" style={{ textAlign: 'center' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <h1 style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: '3.5rem',
-            fontWeight: 700,
-            color: '#9a0007',
-            marginBottom: '15px'
-          }}>
-            {config.data.data[0].name}
-          </h1>
-          <p style={{ fontSize: '1.2rem', color: '#666666', maxWidth: '800px', margin: '0 auto 30px' }}>
-            Khám phá – Chia sẻ – Gìn giữ tinh hoa ẩm thực Việt Nam
-          </p>
-          <div className="d-flex flex-wrap justify-content-center gap-2" style={{
-            fontSize: '1.1rem',
-            color: '#d32f2f',
-            fontWeight: 500,
-            marginBottom: '30px'
-          }}>
-            {/* Ví dụ các tag miền */}
-            <span style={{ padding: '5px 15px', backgroundColor: 'rgba(211, 47, 47, 0.1)', borderRadius: '20px' }}>
-              Miền Bắc
-            </span>
-            <span style={{ padding: '5px 15px', backgroundColor: 'rgba(211, 47, 47, 0.1)', borderRadius: '20px' }}>
-              Miền Trung
-            </span>
-            <span style={{ padding: '5px 15px', backgroundColor: 'rgba(211, 47, 47, 0.1)', borderRadius: '20px' }}>
-              Miền Nam
-            </span>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Main Content Area */}
       <main style={{ minHeight: '60vh' }}>
