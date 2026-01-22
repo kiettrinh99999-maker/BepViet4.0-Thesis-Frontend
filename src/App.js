@@ -24,6 +24,8 @@ import CategoryManagement from './pages/admin/ManageCategories/magage_category';
 import Register from './pages/register';
 import Login from './pages/login';
 import AdminLogin from './pages/admin/AdminLogin';
+import RecipeUpdate from './pages/recipes/update_recipe';
+import HomePage from './pages/home/HomePage';
 function App() {
   return (
     <AuthProvider>
@@ -32,10 +34,9 @@ function App() {
           {/* --- NHÓM 1: GUEST --- */}
           <Route ute element={<GuestRoute><GuestLayout /><MemberLayout /></GuestRoute>}>
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
-            <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
+            <Route path="/" element={<HomePage/>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
             <Route path="/cong-thuc/:key" element={<RecipeDetail />} />
-
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
             <Route path="/blog" element={<BlogPage />} />
@@ -46,6 +47,8 @@ function App() {
               <Route path="/meal-plan" element={<MealPlan />} />
               <Route path="/profile" element={<ProfileBody />} />
               <Route path="/tao-cong-thuc" element={<CreateRecipe />} />
+            <Route path="/cong-thuc/edit/:slug" element={<RecipeUpdate/>} />
+             
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
@@ -63,6 +66,7 @@ function App() {
             <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
             <Route path="categories" element={<CategoryManagement/>} />
           </Route>
+          <Route path="*" element={<div className="text-center mt-5">404 - Trang không tồn tại</div>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

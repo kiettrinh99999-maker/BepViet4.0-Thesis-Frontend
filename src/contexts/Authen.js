@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
       </div>
     );
   }
-
+  
   // 8. PROVIDE CONTEXT VALUE
   return (
     <AuthContext.Provider value={{ 

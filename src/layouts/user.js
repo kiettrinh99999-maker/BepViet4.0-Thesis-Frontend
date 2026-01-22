@@ -10,7 +10,7 @@ const MemberLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, config, store } = useAuth();
-
+console.log(config)
   // 1. Xử lý logic tìm kiếm
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
