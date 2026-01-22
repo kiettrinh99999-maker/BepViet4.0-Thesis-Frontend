@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     id: 1,
     username: 'nguyen_van_a',
     name: 'Nguyễn Văn A',
-    role: 'member',
+    role: 'guest',
     email: 'vana@example.com',
     avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
     region_id: 1,
