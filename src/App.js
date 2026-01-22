@@ -27,6 +27,7 @@ import AdminLogin from './pages/admin/AdminLogin';
 import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
 import CreateBlog from './pages/blogs/add_blog';
+import ManageUser from './pages/admin/ManageAccounts/manage_users';
 import RecipeDetailReport from './pages/recipes/detail_recipe_report';
 import RecipeApproval from './pages/admin/ManageRecipes/approve_recipe';
 import RecipeDuyet from './pages/recipes/duyet';
@@ -75,6 +76,7 @@ function App() {
             <Route path="report/:id" element={<RecipeDetailReport/>} />
             <Route path="approve" element={<RecipeApproval/>} />
             <Route path="categories" element={<CategoryManagement/>} />
+            <Route path="manageuser" element={<ManageUser/>} />
           </Route>
           <Route path="*" element={<div className="text-center mt-5">404 - Trang không tồn tại</div>} />
         </Routes>
