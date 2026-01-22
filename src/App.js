@@ -30,7 +30,7 @@ function App() {
             {/* PHẢI CÓ ROUTE CON Ở ĐÂY */}
             <Route path="/" element={<h1>Cài đặt trang chủ tại đây</h1>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
-            <Route path="/cong-thuc/:key" element={<RecipeDetail />} />
+            <Route path="/chi-tiet-cong-thuc/:key" element={<RecipeDetail />} />
 
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />

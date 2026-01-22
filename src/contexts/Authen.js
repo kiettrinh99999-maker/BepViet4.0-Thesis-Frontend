@@ -2,6 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+const renderDate = (date) => {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('vi-VN');
+};
+
 export const AuthProvider = ({ children }) => {
   const [api, SetApi] = useState('http://127.0.0.1:8000/api/');
   const [store, SetStore] = useState('http://localhost:8000/storage');
@@ -12,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     fetch(api + 'config').then(response => response.json())
       .then(data => SetConfig(data));
-  }, [])
+  }, [api])
   return (
     <AuthContext.Provider value={{ user, logout, config, api, SetApi, store, SetStore, renderDate }}>
       {children}

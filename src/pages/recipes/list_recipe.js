@@ -1,4 +1,4 @@
-import { PlusCircle, ChevronLeft, ChevronRight, Filter as FilterIcon, ArrowCounterclockwise } from 'react-bootstrap-icons';
+import { PlusCircle, ChevronLeft, ChevronRight, ArrowCounterclockwise } from 'react-bootstrap-icons';
 import FoodCard from '../../components/Recipe/FoodCard';
 import './recipe.css';
 import { useNavigate } from 'react-router-dom';
@@ -6,8 +6,20 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/Authen';
 
 const ListRecipe = () => {
+  // --- States ---
+  const navigate = useNavigate();
+  const [recipes, setRecipes] = useState([]);
+  const [regions, setRegion] = useState('');
+  const [events, setEvent] = useState('');
+  const [difficult, setDiff] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [regions_data, setRegionsData] = useState([]);
+  const [events_data, setEventsData] = useState([]);
+  const [difficult_data, setDifficultData] = useState([]);
+
   // --- Dữ liệu giả (Mock Data) ---
-  const recipes = [
+  const mockRecipes = [
     {
       id: 1,
       image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop",
@@ -16,6 +28,7 @@ const ListRecipe = () => {
       description: "Cơm tấm với sườn nướng mật ong thơm ngon, trứng ốp la...",
       time: "1h 15p",
       level: "Dễ",
+      rating: 4.5,
       reviewCount: "30581"
     },
     {
@@ -26,6 +39,7 @@ const ListRecipe = () => {
       description: "Nước dùng ngọt thanh từ xương hầm 24h, bánh phở tươi...",
       time: "2h 30p",
       level: "TB",
+      rating: 4.8,
       reviewCount: "12400"
     },
     {
@@ -36,10 +50,44 @@ const ListRecipe = () => {
       description: "Vỏ bánh vàng ươm giòn rụm, nhân tôm thịt đầy đặn...",
       time: "45p",
       level: "Dễ",
+      rating: 4.2,
       reviewCount: "8200"
     },
     // Thêm các món khác nếu cần...
   ];
+
+  // Initialize states
+  useEffect(() => {
+    setRecipes(mockRecipes);
+    setTotalPages(1);
+    // Load filter data from API later
+    setRegionsData([
+      { id: 1, name: 'Miền Bắc' },
+      { id: 2, name: 'Miền Trung' },
+      { id: 3, name: 'Miền Nam' }
+    ]);
+    setEventsData([
+      { id: 1, name: 'Tết Nguyên Đán' },
+      { id: 2, name: 'Trung Thu' },
+      { id: 3, name: 'Lễ Tình Nhân' }
+    ]);
+    setDifficultData([
+      { id: 1, name: 'Dễ' },
+      { id: 2, name: 'Trung bình' },
+      { id: 3, name: 'Khó' }
+    ]);
+  }, []);
+
+  const handleResetFilter = () => {
+    setRegion('');
+    setEvent('');
+    setDiff('');
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (pageNum) => {
+    setCurrentPage(pageNum);
+  };
 
   return (
     <div className="list-recipe-page">
@@ -166,10 +214,12 @@ const ListRecipe = () => {
                 description={item.description}
                 time={item.time}
                 level={item.level}
+                rating={item.rating}
                 reviewCount={item.reviewCount}
+                onClick={() => navigate(`/chi-tiet-cong-thuc/${item.id}`)}
               />
             </div>
-          )}
+          ))}
         </div>
 
         {/* --- PHẦN 5: PHÂN TRANG (ĐÃ SỬA) --- */}

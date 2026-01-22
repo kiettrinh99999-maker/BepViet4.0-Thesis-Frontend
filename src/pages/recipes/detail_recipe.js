@@ -142,18 +142,73 @@ const RecipeDetail = () => {
     }
     const currentUserId = user?.id ? `?user_id=${user.id}` : '';
     console.log("Bắt đầu fetch dữ liệu cho slug:", key);
-    fetch(api + 'recipes/' + key + "/" + currentUserId)
-      .then(res => res.json())
-      .then(resData => {
-        console.log("Dữ liệu nhận về:", resData);
-        setRecipe(resData.data || resData);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Lỗi fetch:", err);
-        setError("Lỗi tải dữ liệu");
-        setLoading(false);
-      });
+    
+    // Mock data cho demo
+    const mockRecipes = [
+      {
+        id: 1,
+        image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop",
+        image_path: null,
+        tag: "MIỀN NAM",
+        title: "Cơm tấm sườn nướng mật ong",
+        description: "Cơm tấm với sườn nướng mật ong thơm ngon, trứng ốp la...",
+        cooking_time: "1h 15p",
+        difficulty: "Dễ",
+        rating: 4.5,
+        reviewCount: "30581",
+        user: { id: 1, username: "chef_nam" },
+        region: { name: "Miền Nam" }
+      },
+      {
+        id: 2,
+        image: "https://static.vinwonders.com/production/pho-bo-ha-noi-1.jpg",
+        image_path: null,
+        tag: "HÀ NỘI",
+        title: "Phở bò tái nạm gia truyền",
+        description: "Nước dùng ngọt thanh từ xương hầm 24h, bánh phở tươi...",
+        cooking_time: "2h 30p",
+        difficulty: "TB",
+        rating: 4.8,
+        reviewCount: "12400",
+        user: { id: 2, username: "chef_ha_noi" },
+        region: { name: "Hà Nội" }
+      },
+      {
+        id: 3,
+        image: "https://cdn.tgdd.vn/2020/05/CookProduct/1200-1200x676-46.jpg",
+        image_path: null,
+        tag: "MIỀN TÂY",
+        title: "Bánh xèo miền Tây giòn rụm",
+        description: "Vỏ bánh vàng ươm giòn rụm, nhân tôm thịt đầy đặn...",
+        cooking_time: "45p",
+        difficulty: "Dễ",
+        rating: 4.2,
+        reviewCount: "8200",
+        user: { id: 3, username: "chef_tay" },
+        region: { name: "Miền Tây" }
+      }
+    ];
+
+    const mockRecipe = mockRecipes.find(r => r.id === parseInt(key));
+    
+    if (mockRecipe) {
+      setRecipe(mockRecipe);
+      setLoading(false);
+    } else {
+      // Nếu không có mock data, gọi API thực
+      fetch(api + 'recipes/' + key + "/" + currentUserId)
+        .then(res => res.json())
+        .then(resData => {
+          console.log("Dữ liệu nhận về:", resData);
+          setRecipe(resData.data || resData);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Lỗi fetch:", err);
+          setError("Lỗi tải dữ liệu");
+          setLoading(false);
+        });
+    }
 
   }, [key]);
 
@@ -186,11 +241,13 @@ const RecipeDetail = () => {
 
       <div className="recipe-detail-card">
         {/* Ảnh bìa */}
-        <img
-          src={recipe.image_path ? `${store}${recipe.image_path}` : "https://via.placeholder.com/800x400"}
-          className="recipe-cover-image"
-          alt="cover"
-        />
+        {recipe && (
+          <img
+            src={recipe.image_path ? `${store || ''}${recipe.image_path}` : (recipe.image || "https://via.placeholder.com/800x400")}
+            className="recipe-cover-image"
+            alt="cover"
+          />
+        )}
 
         <div className="recipe-content-container">
           {/* Header */}
@@ -202,13 +259,13 @@ const RecipeDetail = () => {
             <div className="recipe-meta">
               <div className="recipe-author">
                 <div className="author-avatar">
-                  <img src={store + recipe.user?.profile.image_path || "https://via.placeholder.com/50"} alt="Author" />
+                  <img src={recipe.user?.profile?.image_path ? `${store || ''}${recipe.user.profile.image_path}` : "https://via.placeholder.com/50"} alt="Author" />
                 </div>
                 <div className="author-info">
                   <span className="author-name">
-                    {recipe.user?.profile.name || "Đầu bếp ẩn danh"}
+                    {recipe.user?.profile?.name || recipe.user?.username || "Đầu bếp ẩn danh"}
                   </span>
-                  <span className="recipe-date">{renderDate(recipe.created_at)}</span>
+                  <span className="recipe-date">{renderDate ? renderDate(recipe.created_at) : new Date(recipe.created_at).toLocaleDateString('vi-VN')}</span>
                 </div>
 
                 <button
@@ -224,15 +281,15 @@ const RecipeDetail = () => {
             <div className="recipe-stats">
               {/* Dữ liệu backend trả về có thể là cooking_time, prep_time... hãy map cho đúng */}
               <div className="stat-item"><i className="fas fa-clock stat-icon"></i><span className="stat-value">{recipe.cooking_time || 30}p</span><span className="stat-label">Thời gian</span></div>
-              <div className="stat-item"><i className="fas fa-fire stat-icon"></i><span className="stat-value">{recipe.difficulty?.name || "TB"}</span><span className="stat-label">Độ khó</span></div>
+              <div className="stat-item"><i className="fas fa-fire stat-icon"></i><span className="stat-value">{recipe.difficulty?.name || recipe.difficulty || "TB"}</span><span className="stat-label">Độ khó</span></div>
               <div className="stat-item"><i className="fas fa-user-friends stat-icon"></i><span className="stat-value">{recipe.serves || 2}</span><span className="stat-label">Khẩu phần</span></div>
               <div className="stat-item">
                 <i className="fas fa-star stat-icon" style={{ color: '#ffb74d' }}></i>
                 <span className="stat-value">
-                  {recipe.rating_avg ? parseFloat(recipe.rating_avg).toFixed(1) : "0.0"}
+                  {recipe.rating_avg ? parseFloat(recipe.rating_avg).toFixed(1) : (recipe.rating ? parseFloat(recipe.rating).toFixed(1) : "0.0")}
                 </span>
                 <div className="stat-label">
-                  {recipe.rates_count > 0 ? `${recipe.rates_count} đánh giá` : "Chưa có sao"}
+                  {(recipe.rates_count || recipe.reviewCount) > 0 ? `${recipe.rates_count || recipe.reviewCount} đánh giá` : "Chưa có sao"}
                 </div>
               </div>
             </div>
