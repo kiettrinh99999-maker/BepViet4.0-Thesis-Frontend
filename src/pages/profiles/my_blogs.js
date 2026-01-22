@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Nhận thêm prop `styles`
-const MyBlogs = ({ blogs, store, api, onDeleteSuccess, styles }) => {
+const MyBlogs = ({ blogs, store, api, onDeleteSuccess, styles,token }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Xóa bài viết "${title}"?`)) return;
     setIsDeleting(true);
     try {
-        const response = await fetch(`${api}blogs/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
+        const response = await fetch(`${api}auth/profile/blogs/${id}`, { 
+            method: 'DELETE', 
+            headers: { 
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}` // Gửi token lên server
+            }
+        });
         const result = await response.json();
         if (response.ok && result.success) { alert('Đã xóa!'); onDeleteSuccess(id); } 
         else { alert(result.message); }
@@ -21,7 +29,7 @@ const MyBlogs = ({ blogs, store, api, onDeleteSuccess, styles }) => {
       return (
         <div className={`${styles.tabContent} ${styles.fadeIn} ${styles.emptyState}`}>
             <p className={styles.textMuted}>Chưa có bài blog nào.</p>
-            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
+            <button  onClick={() => navigate('/tao-blog')} className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
         </div>
       );
   }
@@ -29,7 +37,7 @@ const MyBlogs = ({ blogs, store, api, onDeleteSuccess, styles }) => {
     <div className={`${styles.tabContent} ${styles.fadeIn}`}>
         <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Blog ({blogs.length})</h2>
-            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
+            <button  onClick={() => navigate('/tao-blog')} className={styles.btnPrimary}><i className="fas fa-plus"></i> Viết bài</button>
         </div>
         <div className={styles.gridContainer}>
             {blogs.map(blog => {

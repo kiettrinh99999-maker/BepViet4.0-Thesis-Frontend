@@ -5,7 +5,6 @@ import MyRecipes from './my_recipes';
 import MyBlogs from './my_blogs';
 import MyCollections from './my_collections';
 import UpdateProfile from './update_profile';
-
 const Profile = () => {
   const { token,api, store } = useAuth();
   const [activeTab, setActiveTab] = useState('recipes');
@@ -13,7 +12,6 @@ const Profile = () => {
   const [myRecipes, setMyRecipes] = useState([]);
   const [myBlogs, setMyBlogs] = useState([]);
   const [myCollections, setMyCollections] = useState([]);
-  
   const [userProfile, setUserProfile] = useState({
     name: 'Đang tải...',
     email: '',
@@ -103,9 +101,9 @@ const Profile = () => {
 
             <div className={styles.tabContent}>
                 {/* Truyền styles xuống con để chúng dùng chung Module CSS */}
-                {activeTab === 'recipes' && <MyRecipes styles={styles} recipes={myRecipes} store={store} api={api} onDeleteSuccess={handleRemoveRecipe} />}
-                {activeTab === 'blogs' && <MyBlogs styles={styles} blogs={myBlogs} store={store} api={api} onDeleteSuccess={handleRemoveBlog} />}
-                {activeTab === 'collections' && <MyCollections styles={styles} collections={myCollections} store={store} api={api} onRefreshProfile={fetchProfile} />}
+                {activeTab === 'recipes' && <MyRecipes styles={styles} recipes={myRecipes} store={store} api={api} token = {token} onDeleteSuccess={handleRemoveRecipe} />}
+                {activeTab === 'blogs' && <MyBlogs styles={styles} blogs={myBlogs} store={store} api={api} token = {token} onDeleteSuccess={handleRemoveBlog} />}
+                {activeTab === 'collections' && <MyCollections styles={styles} collections={myCollections} token = {token} store={store} api={api} onRefreshProfile={fetchProfile} />}
             </div>
         </div>
 

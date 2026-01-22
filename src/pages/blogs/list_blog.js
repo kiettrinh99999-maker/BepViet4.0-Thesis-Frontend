@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect  } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BlogCard from '../../components/Blogs/BlogCard'; 
 import './blog.css'; 
 import { useAuth } from '../../contexts/Authen'; 
@@ -9,13 +10,15 @@ const BlogPage = () => {
   // --- STATE ---
   const [categories, setCategories] = useState([]);
   const [blogPosts, setBlogPosts] = useState([]);
-  
   // State quản lý Filter & Pagination Server-side
   const [activeCategoryId, setActiveCategoryId] = useState('all'); 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1); // Lưu tổng số trang từ server
   
   const [loading, setLoading] = useState(true);
+
+  //chuyển trang
+  const navigate = useNavigate();
 
   // --- FETCH DATA (Gọi lại mỗi khi page hoặc category thay đổi) ---
   useEffect(() => {
@@ -26,7 +29,7 @@ const BlogPage = () => {
         // 1. Gọi danh mục (Chỉ gọi 1 lần nếu muốn tối ưu, nhưng để đây cũng ko sao)
         // Lưu ý: Bạn có thể tách cái này ra useEffect riêng chỉ chạy 1 lần []
         if (categories.length === 0) {
-            const catRes = await fetch(`${api}blog-categories`); 
+            const catRes = await fetch(`${api}categories-blog`); 
             const catData = await catRes.json();
             if (catData.success) {
                 setCategories([{ id: 'all', name: 'Tất cả' }, ...catData.data]);
@@ -106,7 +109,10 @@ const BlogPage = () => {
       <section className="add-blog-section">
         <div className="container">
             <div className="add-blog-container">
-                <button className="btn-add-blog" onClick={() => alert('Chức năng đang phát triển')}>
+                <button 
+                    className="btn-add-blog"
+                    onClick={() => navigate('/tao-blog')}
+                    >
                     <i className="fas fa-plus-circle"></i>
                     Thêm Blog Mới
                 </button>

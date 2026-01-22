@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Nhận thêm prop `styles`
-const MyRecipes = ({ recipes, store, api, onDeleteSuccess, styles }) => {
+const MyRecipes = ({ recipes, store, api, onDeleteSuccess, styles,token }) => {
+  const navigate = useNavigate();
+
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Xóa công thức "${title}"?`)) return;
     setIsDeleting(true);
     try {
-        const response = await fetch(`${api}recipes/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
+        const response = await fetch(`${api}auth/profile/recipes/${id}`, { 
+            method: 'DELETE', 
+            headers: { 
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            } 
+        });
         const result = await response.json();
-        if (response.ok && result.success) { alert('Đã xóa!'); onDeleteSuccess(id); } 
-        else { alert(result.message); }
+        if (response.ok && result.success) { alert('Đã xóa thành công!'); onDeleteSuccess(id); } 
+        else { alert(result.message|| 'Lỗi khi xóa'); }
     } catch (error) { console.error("Lỗi:", error); } finally { setIsDeleting(false); }
   };
 
@@ -24,16 +33,17 @@ const MyRecipes = ({ recipes, store, api, onDeleteSuccess, styles }) => {
       return (
         <div className={`${styles.tabContent} ${styles.fadeIn} ${styles.emptyState}`}>
             <p className={styles.textMuted}>Chưa có công thức nào.</p>
-            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Thêm ngay</button>
+            <button onClick={() => navigate('/tao-cong-thuc')} className={styles.btnPrimary}><i className="fas fa-plus"></i> Thêm ngay</button>
         </div>
       );
   }
 
   return (
+    
     <div className={`${styles.tabContent} ${styles.fadeIn}`}>
         <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Công thức ({recipes.length})</h2>
-            <button className={styles.btnPrimary}><i className="fas fa-plus"></i> Thêm</button>
+            <button  onClick={() => navigate('/tao-cong-thuc')} className={styles.btnPrimary}><i className="fas fa-plus"></i> Thêm</button>
         </div>
         
         <div className={styles.gridContainer}>

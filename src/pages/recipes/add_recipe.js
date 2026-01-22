@@ -179,7 +179,7 @@ const CreateRecipe = () => {
   return (
     <div className="create-recipe-wrapper">
       <div className="container">
-        <Link to="/recipes" className="back-link">
+        <Link to="/cong-thuc" className="back-link">
           <i className="fas fa-arrow-left"></i> Quay lại danh sách
         </Link>
         <h1 className="page-title">Tạo Công Thức Mới</h1>
