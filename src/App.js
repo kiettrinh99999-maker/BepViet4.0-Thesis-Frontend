@@ -26,6 +26,7 @@ import Login from './pages/login';
 import AdminLogin from './pages/admin/AdminLogin';
 import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
+import CreateBlog from './pages/blogs/add_blog';
 function App() {
   return (
     <AuthProvider>
@@ -37,9 +38,9 @@ function App() {
             <Route path="/" element={<HomePage/>} />
             <Route path="/cong-thuc" element={<ListRecipe />} />
             <Route path="/cong-thuc/:key" element={<RecipeDetail />} />
+            <Route path="/blog" element={<BlogPage />} />
             <Route path="/dien-dan" element={<ForumPage />} />
             <Route path="/dien-dan/cau-hoi/:id" element={<ForumDetailPage />} />
-            <Route path="/blog" element={<BlogPage />} />
             
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra */}
             <Route element={<RouterProtected />}>
@@ -49,6 +50,8 @@ function App() {
               <Route path="/tao-cong-thuc" element={<CreateRecipe />} />
             <Route path="/cong-thuc/edit/:slug" element={<RecipeUpdate/>} />
              
+              <Route path="/tao-blog" element={<CreateBlog />} />
+          
             </Route>
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
