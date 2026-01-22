@@ -1,234 +1,305 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/Authen';
 import './RecipeDetail.css';
 
-// --- COMPONENT CON: ITEM BÌNH LUẬN (ĐỆ QUY) ---
-const CommentItem = ({ comment }) => {
+// --- COMPONENT CON: ITEM BÌNH LUẬN ---
+const CommentItem = ({ comment, store }) => {
   const [isReplying, setIsReplying] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(comment.likes || 0);
-
-  const toggleLike = () => {
-    setLiked(!liked);
-    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
-  };
+  const userAvatar = comment.user?.profile?.image_path
+    ? `${store}${comment.user.profile.image_path}`
+    : "https://via.placeholder.com/50";
+  const userName = comment.user?.profile?.name || comment.user?.username || "Người dùng ẩn danh";
 
   return (
     <div className="comment-item">
       <div className="comment-main">
         <div className="comment-avatar">
-          {comment.avatar ? <img src={comment.avatar} alt="user" /> : <i className="fas fa-user"></i>}
+          <img src={userAvatar} alt={userName} />
         </div>
         <div className="comment-content">
           <div className="comment-header">
             <div>
-              <span className="comment-author">{comment.user}</span>
-              <span className="comment-time">{comment.time}</span>
+              <span className="comment-author">{userName}</span>
+              <span className="comment-time">
+                {new Date(comment.created_at).toLocaleDateString('vi-VN')}
+              </span>
             </div>
-            {/* Hiển thị Rating nếu có */}
-            {comment.rating && (
-              <div style={{color: '#ffb74d'}}>
-                {[...Array(5)].map((_, i) => (
-                  <i key={i} className={`fas fa-star ${i < comment.rating ? '' : 'fa-regular'}`} style={{fontSize:'0.8rem'}}></i>
-                ))}
-              </div>
-            )}
           </div>
-          
+
           <div className="comment-text">{comment.content}</div>
-          
+
           <div className="comment-actions">
-            <button className="comment-action" onClick={toggleLike} style={{color: liked ? '#d32f2f' : ''}}>
-              <i className="fas fa-thumbs-up"></i> {likeCount > 0 ? likeCount : 'Thích'}
-            </button>
             <button className="comment-action" onClick={() => setIsReplying(!isReplying)}>
               <i className="fas fa-reply"></i> Trả lời
             </button>
           </div>
 
-          {/* Form Reply */}
           {isReplying && (
-            <div className="reply-form">
-              <input type="text" placeholder={`Trả lời ${comment.user}...`} style={{flex:1, padding:'8px', borderRadius:'4px', border:'1px solid #ddd'}} />
-              <button className="btn btn-primary" style={{padding:'5px 15px', fontSize:'0.8rem'}}>Gửi</button>
+            <div className="reply-form" style={{ display: 'flex', marginTop: '10px' }}>
+              <input type="text" placeholder={`Trả lời ${userName}...`} style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }} />
+              <button className="btn btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', marginLeft: '10px' }}>Gửi</button>
             </div>
           )}
         </div>
       </div>
-
-      {/* Đệ quy Replies */}
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="replies-section">
-          {comment.replies.map(reply => (
-            <CommentItem key={reply.id} comment={reply} />
-          ))}
-        </div>
-      )}
     </div>
   );
 };
 
 // --- COMPONENT CHÍNH ---
 const RecipeDetail = () => {
-  const [isFollowing, setIsFollowing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [userRating, setUserRating] = useState(0);
 
-  // Dữ liệu mẫu
-  const recipe = {
-    title: "Phở Bò Hà Nội",
-    category: "Món Nước",
-    image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=800&q=80",
-    date: "20/01/2024",
-    // Thông tin Tác giả
-    author: {
-      name: "Bếp Trưởng Tú",
-      avatar: "https://placehold.co/100?text=Tu", // Link avatar
-      isVerified: true
-    },
-    stats: { prep: "30 phút", cook: "8 giờ", serves: "4 người", cal: "450 kcal" },
-    ingredients: [
-      { name: "Xương ống bò", quantity: "1 kg", img: "https://placehold.co/50" },
-      { name: "Thịt bò thăn", quantity: "500g", img: "https://placehold.co/50" },
-      { name: "Bánh phở", quantity: "1 kg", img: "https://placehold.co/50" }
-    ],
-    // Dữ liệu Steps hỗ trợ NHIỀU ẢNH (medias array)
-    steps: [
-      { 
-        id: 1, 
-        time: "15 phút", 
-        content: "Sơ chế xương bò: Rửa sạch xương, luộc sơ qua nước sôi khoảng 5 phút để loại bỏ bọt bẩn và mùi hôi, sau đó rửa sạch lại bằng nước lạnh.", 
-        medias: [
-          { type: 'image', url: 'https://placehold.co/600x400?text=Buoc+1.1+Rua+Xuong' },
-          { type: 'image', url: 'https://placehold.co/600x400?text=Buoc+1.2+Chan+Nuoc+Soi' }
-        ]
-      },
-      { 
-        id: 2, 
-        time: "60 phút", 
-        content: "Ninh nước dùng: Cho xương vào nồi áp suất cùng gừng nướng, hành tím nướng, thảo quả, quế, hồi. Ninh lửa nhỏ để nước trong và ngọt.", 
-        medias: [
-          { type: 'video', url: 'https://www.w3schools.com/html/mov_bbb.mp4' }, // Video
-          { type: 'image', url: 'https://placehold.co/600x400?text=Buoc+2+Ninh+Xuong' }
-        ]
-      },
-      {
-        id: 3, 
-        time: "10 phút",
-        content: "Hoàn thiện: Chần bánh phở, xếp thịt bò tái lên trên. Chan nước dùng nóng hổi ngập bánh phở, rắc thêm hành lá và thưởng thức.",
-        medias: [] // Không có ảnh vẫn chạy tốt
+  // State quản lý dữ liệu và trạng thái tải
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [reload, setReload] = useState(null);
+
+  const { user, api, store, renderDate } = useAuth();
+  const { key } = useParams();
+  const navigate = useNavigate();
+  //Report
+  // Quản lý việc đóng/mở cái "cục" báo cáo và nội dung
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const handleSendReport = async () => {
+    if (!reportReason.trim()) {
+      alert("Vui lòng nhập nội dung báo cáo!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${api}admin/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: reportReason,  
+          user_id: user?.id,      
+          recipe_id: recipe?.id,  
+          status: 'pending'      
+        })
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        alert("Báo cáo của bạn đã được gửi thành công!");
+        setShowReport(false); 
+        setReportReason(""); 
+      } else {
+        alert("Lỗi: " + (resData.message || "Không thể gửi báo cáo"));
       }
-    ],
-    comments: [
-      {
-        id: 1, user: "Nguyễn Văn A", avatar: null, time: "2 giờ trước", rating: 5, content: "Nước dùng rất ngọt, công thức chuẩn!", likes: 10,
-        replies: [
-          { id: 11, user: "Bếp Trưởng Tú", avatar: "https://placehold.co/100?text=Tu", time: "1 giờ trước", content: "Cảm ơn bạn đã ủng hộ!", likes: 2, replies: [] }
-        ]
+    } catch (error) {
+      console.error("Lỗi kết nối API:", error);
+      alert("Không thể kết nối tới máy chủ.");
+    }
+  };
+  //Hàm xử lý follow
+  const handleFollow = async () => {
+    if (!user?.id) {
+      alert("Vui lòng đăng nhập để theo dõi đầu bếp!");
+      return;
+    }
+    if (user.id === recipe.user_id) {
+      alert("Bạn không thể tự theo dõi chính mình.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${api}toggle-follow`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          follower_id: user.id,
+          following_id: recipe.user_id
+        })
+      });
+
+      const resData = await response.json();
+
+      if (resData.success) {
+        const newStatus = resData.data.status === 'active';
+        setRecipe(prev => ({
+          ...prev,
+          is_followed: newStatus
+        }));
+      } else {
+        alert(resData.message || "Có lỗi xảy ra");
       }
-    ]
+    } catch (error) {
+      console.error("Lỗi khi gọi API follow:", error);
+    }
   };
 
+  // Lấy dữ liệu
+  useEffect(() => {
+    if (!key || !api) {
+      console.log("Chưa có slug hoặc api, đang chờ...");
+      return;
+    }
+    const currentUserId = user?.id ? `?user_id=${user.id}` : '';
+    console.log("Bắt đầu fetch dữ liệu cho slug:", key);
+    fetch(api + 'recipes/' + key + "/" + currentUserId)
+      .then(res => res.json())
+      .then(resData => {
+        console.log("Dữ liệu nhận về:", resData);
+        setRecipe(resData.data || resData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Lỗi fetch:", err);
+        setError("Lỗi tải dữ liệu");
+        setLoading(false);
+      });
+
+  }, [key]);
+
+  // --- MÀN HÌNH LOADING ---
+  if (loading) {
+    return (
+      <div className="recipe-detail-container" style={{ textAlign: 'center', padding: '50px' }}>
+        <div className="spinner-border text-primary" role="status"></div>
+        <p>Đang tải công thức...</p>
+      </div>
+    );
+  }
+
+  // --- MÀN HÌNH LỖI ---
+  if (error || !recipe) {
+    return (
+      <div className="recipe-detail-container" style={{ textAlign: 'center', padding: '50px' }}>
+        <h3>{error || "Không tìm thấy dữ liệu"}</h3>
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>Quay lại</button>
+      </div>
+    );
+  }
+  console.log(recipe)
+  // --- MÀN HÌNH CHÍNH (Đã có dữ liệu recipe) ---
   return (
     <div className="recipe-detail-container">
-      {/* Back Link */}
-      <div className="back-link" onClick={() => window.history.back()}>
+      <div className="back-link" onClick={() => navigate(-1)}>
         <i className="fas fa-arrow-left"></i> Quay lại
       </div>
 
       <div className="recipe-detail-card">
-        <img src={recipe.image} className="recipe-cover-image" alt="cover" />
-        
+        {/* Ảnh bìa */}
+        <img
+          src={recipe.image_path ? `${store}${recipe.image_path}` : "https://via.placeholder.com/800x400"}
+          className="recipe-cover-image"
+          alt="cover"
+        />
+
         <div className="recipe-content-container">
-          {/* Header & Author */}
+          {/* Header */}
           <div className="recipe-header">
-            <span className="recipe-category">{recipe.category}</span>
+            {/* Sử dụng optional chaining (?.) đề phòng dữ liệu thiếu */}
+            <span className="recipe-category">{recipe.region?.name || "Món Việt"}</span>
             <h1 className="recipe-title">{recipe.title}</h1>
-            
+
             <div className="recipe-meta">
               <div className="recipe-author">
                 <div className="author-avatar">
-                   <img src={recipe.author.avatar} alt="Author" />
+                  <img src={store + recipe.user?.profile.image_path || "https://via.placeholder.com/50"} alt="Author" />
                 </div>
                 <div className="author-info">
-                  <span className="author-name">{recipe.author.name} <i className="fas fa-check-circle" style={{color:'#2196f3', fontSize:'0.8rem'}}></i></span>
-                  <span className="recipe-date">Đăng ngày: {recipe.date}</span>
+                  <span className="author-name">
+                    {recipe.user?.profile.name || "Đầu bếp ẩn danh"}
+                  </span>
+                  <span className="recipe-date">{renderDate(recipe.created_at)}</span>
                 </div>
-                
-                {/* --- NÚT FOLLOW (THEO DÕI) --- */}
-                <button 
-                  className={`btn-follow ${isFollowing ? 'following' : ''}`}
-                  onClick={() => setIsFollowing(!isFollowing)}
+
+                <button
+                  className={`btn-follow ${recipe.is_followed ? 'following' : ''}`}
+                  onClick={handleFollow}
                 >
-                  {isFollowing ? (
-                    <><i className="fas fa-check"></i> Đang theo dõi</>
-                  ) : (
-                    <><i className="fas fa-plus"></i> Theo dõi</>
-                  )}
+                  {recipe.is_followed ? <><i className="fas fa-check"></i> Đang theo dõi</> : <><i className="fas fa-plus"></i> Theo dõi</>}
                 </button>
               </div>
 
-              <div className="recipe-rating">
-                <i className="fas fa-star" style={{color: '#ffb74d'}}></i> 4.9 (120 đánh giá)
-              </div>
             </div>
-            
+
             <div className="recipe-stats">
-               <div className="stat-item"><i className="fas fa-clock stat-icon"></i><span className="stat-value">{recipe.stats.prep}</span><span className="stat-label">Chuẩn bị</span></div>
-               <div className="stat-item"><i className="fas fa-fire stat-icon"></i><span className="stat-value">{recipe.stats.cook}</span><span className="stat-label">Nấu</span></div>
-               <div className="stat-item"><i className="fas fa-user-friends stat-icon"></i><span className="stat-value">{recipe.stats.serves}</span><span className="stat-label">Khẩu phần</span></div>
-               <div className="stat-item"><i className="fas fa-utensils stat-icon"></i><span className="stat-value">{recipe.stats.cal}</span><span className="stat-label">Calo</span></div>
+              {/* Dữ liệu backend trả về có thể là cooking_time, prep_time... hãy map cho đúng */}
+              <div className="stat-item"><i className="fas fa-clock stat-icon"></i><span className="stat-value">{recipe.cooking_time || 30}p</span><span className="stat-label">Thời gian</span></div>
+              <div className="stat-item"><i className="fas fa-fire stat-icon"></i><span className="stat-value">{recipe.difficulty?.name || "TB"}</span><span className="stat-label">Độ khó</span></div>
+              <div className="stat-item"><i className="fas fa-user-friends stat-icon"></i><span className="stat-value">{recipe.serves || 2}</span><span className="stat-label">Khẩu phần</span></div>
+              <div className="stat-item">
+                <i className="fas fa-star stat-icon" style={{ color: '#ffb74d' }}></i>
+                <span className="stat-value">
+                  {recipe.rating_avg ? parseFloat(recipe.rating_avg).toFixed(1) : "0.0"}
+                </span>
+                <div className="stat-label">
+                  {recipe.rates_count > 0 ? `${recipe.rates_count} đánh giá` : "Chưa có sao"}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="recipe-actions-section">
-             <button className={`recipe-action-btn save ${isSaved ? 'saved' : ''}`} onClick={() => setIsSaved(!isSaved)}>
-                <i className={`fas ${isSaved ? 'fa-check' : 'fa-bookmark'}`}></i> {isSaved ? 'Đã lưu' : 'Lưu công thức'}
-             </button>
-             <button className="recipe-action-btn plan"><i className="fas fa-calendar-plus"></i> Lên kế hoạch</button>
-             
-             {/* --- NÚT BÁO CÁO (REPORT) --- */}
-             <button className="recipe-action-btn report" onClick={() => alert("Đã mở form báo cáo!")}>
-                <i className="fas fa-flag"></i> Báo lỗi
-             </button>
+            <button className={`recipe-action-btn save ${isSaved ? 'saved' : ''}`} onClick={() => setIsSaved(!isSaved)}>
+              <i className={`fas ${isSaved ? 'fa-check' : 'fa-bookmark'}`}></i> {isSaved ? 'Đã lưu' : 'Lưu công thức'}
+            </button>
+            <button className="recipe-action-btn plan"><i className="fas fa-calendar-plus"></i> Lên kế hoạch</button>
+            <button className="recipe-action-btn report" onClick={() => setShowReport(true)}>
+              <i className="fas fa-flag"></i> Tố cáo
+            </button>
+          </div>
+
+          {/* Phần Mô tả công thức */}
+          <div className="recipe-description-section" style={{ marginTop: '20px' }}>
+            <div
+              className="recipe-description-text"
+              style={{ fontSize: 'calc(100% + 3px)', lineHeight: '1.6' }}
+            >
+              {/* Sử dụng optional chaining để tránh lỗi nếu recipe.description bị null */}
+              {recipe?.description || "Chưa có mô tả cho công thức này."}
+            </div>
           </div>
 
           {/* Ingredients */}
           <div className="recipe-section">
             <h3 className="section-title">Nguyên liệu</h3>
             <div className="ingredients-list">
-              {recipe.ingredients.map((item, i) => (
+              {recipe.ingredients && recipe.ingredients.map((item, i) => (
                 <div className="ingredient-item" key={i}>
-                  <div className="ingredient-image"><img src={item.img} alt={item.name} /></div>
-                  <div><div className="ingredient-name">{item.name}</div><div className="ingredient-quantity">{item.quantity}</div></div>
+                  {/* Nếu backend không có ảnh nguyên liệu thì dùng ảnh mặc định */}
+                  <div className="ingredient-image">
+                    {console.log(store + item.image_path)}
+                    <img src={store + item.image_path} alt={item.name} />
+                  </div>
+                  <div>
+                    <div className="ingredient-name">{item.name}</div>
+                    <div className="ingredient-quantity">{item.pivot.quantity} {item.pivot.unit}</div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Steps với HỖ TRỢ NHIỀU ẢNH */}
+          {/* Steps */}
           <div className="recipe-section">
             <h3 className="section-title">Cách làm</h3>
             <div className="steps-list">
-              {recipe.steps.map(step => (
-                <div key={step.id} className="step-item">
+              {recipe.steps && recipe.steps.map((step, index) => (
+                <div key={step.id || index} className="step-item">
                   <div className="step-header">
-                    <span className="step-number">Bước {step.id}</span>
-                    <span className="step-time"><i className="far fa-clock"></i> {step.time}</span>
+                    <span className="step-number">Bước {index + 1}</span>
+                    {/* Nếu step không có time, ẩn đi
+                    {step.time && <span className="step-time"><i className="far fa-clock"></i> {step.time}</span>} */}
                   </div>
                   <div className="step-content">
-                    <p>{step.content}</p>
-                    
-                    {/* Render Mảng Media (Grid) */}
-                    {step.medias && step.medias.length > 0 && (
+                    <p>{step.step_name || step.description}</p>
+
+                    {/* Render ảnh của bước (backend trả về step_images) */}
+                    {step.step_images && step.step_images.length > 0 && (
                       <div className="step-media-grid">
-                        {step.medias.map((media, idx) => (
+                        {step.step_images.map((img, idx) => (
                           <div className="media-item" key={idx}>
-                            {media.type === 'video' ? (
-                              <video controls src={media.url}></video>
-                            ) : (
-                              <img src={media.url} alt={`Step ${step.id} - ${idx}`} />
-                            )}
+                            <img src={`${store}${img.image_path}`} alt={`Step ${index + 1}`} />
                           </div>
                         ))}
                       </div>
@@ -239,31 +310,72 @@ const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* Comments */}
+          {/* Comments Section */}
+          {/* Comments Section */}
           <div className="comments-section">
-            <h3 className="section-title" style={{marginTop:0}}>Bình luận</h3>
-            
+            <h3 className="section-title" style={{ marginTop: 0 }}>
+              Bình luận ({recipe.recipe_comments?.length || 0})
+            </h3>
+
+            {/* Form gửi bình luận mới */}
             <div className="comment-form">
-               <div className="rating-stars">
-                 {[1,2,3,4,5].map(star => (
-                   <i key={star} className={`fas fa-star ${star <= userRating ? 'active' : ''}`} onClick={()=>setUserRating(star)}></i>
-                 ))}
-               </div>
-               <textarea placeholder="Viết bình luận của bạn..."></textarea>
-               <div style={{textAlign:'right'}}>
-                 <button className="btn btn-primary">Gửi đánh giá</button>
-               </div>
+              <textarea placeholder="Chia sẻ cảm nghĩ của bạn về món ăn này..."></textarea>
+              <div style={{ textAlign: 'right', marginTop: '10px' }}>
+                <button className="btn btn-primary">Gửi bình luận</button>
+              </div>
             </div>
 
-            <div>
-              {recipe.comments.map(comment => (
-                <CommentItem key={comment.id} comment={comment} />
-              ))}
+            {/* Danh sách bình luận thực tế từ API */}
+            <div className="comments-list">
+              {recipe.recipe_comments && recipe.recipe_comments.length > 0 ? (
+                recipe.recipe_comments.map(comment => (
+                  <CommentItem
+                    key={comment.id}
+                    comment={comment}
+                    store={store} // Truyền store xuống để xử lý ảnh
+                  />
+                ))
+              ) : (
+                <p style={{ color: '#777', fontStyle: 'italic', textAlign: 'center', padding: '20px' }}>
+                  Chưa có bình luận nào. Hãy là người đầu tiên!
+                </p>
+              )}
             </div>
           </div>
 
         </div>
       </div>
+      {/* Cái cục báo cáo hiện lên */}
+      {showReport && (
+        <div className="report-overlay" style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+          background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center',
+          alignItems: 'center', zIndex: 9999
+        }}>
+          <div className="report-box" style={{
+            background: 'white', padding: '20px', borderRadius: '10px', width: '350px'
+          }}>
+            <h3 style={{ marginTop: 0 }}>Lý do báo cáo</h3>
+            <textarea
+              style={{ width: '100%', height: '100px', marginBottom: '10px', padding: '10px' }}
+              placeholder="Nhập lý do tại đây..."
+              onChange={(e) => setReportReason(e.target.value)}
+            ></textarea>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button onClick={() => setShowReport(false)} style={{ padding: '5px 15px' }}>Hủy</button>
+              <button
+                onClick={() => {
+                  handleSendReport()
+                  setShowReport(false);
+                }}
+                style={{ padding: '5px 15px', background: '#ff4d4d', color: 'white', border: 'none', borderRadius: '4px' }}
+              >
+                Gửi báo cáo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

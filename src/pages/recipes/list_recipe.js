@@ -20,8 +20,9 @@ const ListRecipe = () => {
   const [regions_data, setRegionData] = useState(null);
   const [events_data, setEventData] = useState(null);
   const [difficult_data, setDiffData] = useState(null);
+  //Lấy cấu hình chung
   useEffect(() => {
-    fetch(api + 'get-event-region') // Đảm bảo đúng đường dẫn API bạn đặt trong Laravel
+    fetch(api + 'get-event-region')
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
@@ -237,7 +238,7 @@ const ListRecipe = () => {
                   level={item.difficulty ? item.difficulty.name : 'Trung bình'}
                   rating={item.rates_avg_score ? parseFloat(item.rates_avg_score).toFixed(1) : 0}
                   reviewCount={item.rates_count || 0}
-                  onClick={() => navigate(`/cong-thuc/${item.title_slug || item.id}`)}
+                  onClick={() => navigate(`/cong-thuc/${item.id}-${item.title_slug}`)}
                 />
               </div>
             ))
