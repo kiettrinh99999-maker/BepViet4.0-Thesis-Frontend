@@ -8,7 +8,7 @@ export default function ForumDetailPage(){
     const [question, setQuestion] = useState(null);
     const [answers, setAnswers] = useState(null);
     const navigate = useNavigate();
-    const {user, api} = useAuth();
+    const {user, api, store, renderDate } = useAuth();
     useEffect(() => {
         fetch(`${api}questions/${id}`)
             .then(res => res.json())
@@ -59,7 +59,7 @@ export default function ForumDetailPage(){
                         </div>
                         <div>
                         <div className="fw-medium">{question.user.username}</div>
-                        <small className="text-muted">{question.created_at}</small>
+                        <small className="text-muted">{renderDate(question.created_at)}</small>
                         </div>
                         <button className="btn btn-danger btn-sm ms-3 d-flex align-items-center">
                             <i className="fas fa-user-plus me-1"></i>
@@ -81,7 +81,7 @@ export default function ForumDetailPage(){
                 <div className="mb-4">
                     <p className="mb-3">{question.description}</p>
                     <img 
-                    src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                    src={`${store}${question.image_path}` ?? "/placeholder.png"}
                     alt={question.title}
                     className="img-fluid rounded mb-3"
                     style={{ maxHeight: '400px', objectFit: 'cover', width: '100%' }}
