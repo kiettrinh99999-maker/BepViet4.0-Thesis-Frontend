@@ -19,13 +19,11 @@ const GuestLayout = () => {
   };
 
   const handleLogin = () => {
-    // navigate('/login');
-    alert('Chuyển đến trang Đăng nhập');
+    navigate('/login');
   };
 
   const handleRegister = () => {
-    // navigate('/register');
-    alert('Chuyển đến trang Đăng ký');
+    navigate('/register');
   };
 
   // Xử lý khi bấm vào các link bị giới hạn
@@ -166,12 +164,16 @@ const GuestLayout = () => {
                     backgroundColor: 'transparent',
                     borderRadius: '20px',
                     padding: '6px 20px',
-                    fontWeight: 500,
+                    fontWeight: 400,
                     transition: 'all 0.3s',
-                    fontSize: '0.9rem'
+                    fontSize: '0.9rem',
+                    display: 'flex',          
+                    alignItems: 'center',    
+                    whiteSpace: 'nowrap',     
+                    gap: '8px'
                   }}
                 >
-                  <i className="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                  <i className="fas fa-sign-in-alt me"></i>Đăng nhập
                 </button>
                 <button
                   className="btn btn-hover-register"
