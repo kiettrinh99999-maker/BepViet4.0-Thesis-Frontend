@@ -7,7 +7,7 @@ import MyCollections from './my_collections';
 import UpdateProfile from './update_profile';
 
 const Profile = () => {
-  const { api, store } = useAuth();
+  const { token,api, store } = useAuth();
   const [activeTab, setActiveTab] = useState('recipes');
   const [showEditModal, setShowEditModal] = useState(false);
   const [myRecipes, setMyRecipes] = useState([]);
@@ -25,7 +25,7 @@ const Profile = () => {
   const fetchProfile = async () => {
       try {
         const response = await fetch(`${api}profile`, {
-            headers: { 'Accept': 'application/json' }
+            headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
         if (result.success) {

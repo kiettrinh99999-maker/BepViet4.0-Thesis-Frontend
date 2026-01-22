@@ -115,15 +115,15 @@ export const AuthProvider = ({ children }) => {
   // 8. PROVIDE CONTEXT VALUE
   return (
     <AuthContext.Provider value={{ 
-      user, 
       setUser, 
-      token,
       login, 
       logout, 
       config, 
       api, 
+      user, 
       SetApi, 
       store, 
+      token,
       SetStore, 
       renderDate,
       isAuthenticated: !!user && !!token

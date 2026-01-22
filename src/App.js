@@ -23,6 +23,7 @@ import RecipeDetail from './pages/recipes/detail_recipe';
 import CategoryManagement from './pages/admin/ManageCategories/magage_category';
 import Register from './pages/register';
 import Login from './pages/login';
+import AdminLogin from './pages/admin/Admin';
 function App() {
   return (
     <AuthProvider>
@@ -49,6 +50,9 @@ function App() {
             {/*Những đường dẫn mà phải đăng nhập được kiểm tra*/}
           </Route>
           <Route path="/login" element={<Login/>} />
+          
+          <Route path="/admin/login" element={<AdminLogin/>} />
+
           <Route path="/register" element={<Register/>} />
           {/* --- NHÓM 2: ADMIN (Đích đến) ------ */}
           <Route path="/admin" element={<AdminLayout />}>
