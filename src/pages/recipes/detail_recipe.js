@@ -405,20 +405,6 @@ const RecipeDetail = () => {
         </div>
       )}
 
-      {/* THÊM: Hiển thị trạng thái kết nối */}
-      <div style={{
-        position: 'fixed',
-        top: '70px',
-        right: '20px',
-        background: isConnected ? '#4CAF50' : '#f44336',
-        color: 'white',
-        padding: '5px 10px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        zIndex: 999
-      }}>
-        {isConnected ? '🟢 Real-time' : '🔴 Offline'}
-      </div>
 
       <div className="back-link" onClick={() => navigate(-1)}>
         <i className="fas fa-arrow-left"></i> Quay lại
