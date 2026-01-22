@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/Authen";
-export default function AnswerItem({ answer }) {
+export default function AnswerItem({ answer, onReload }) {
     const [showReply, setShowReply] = useState(false);
     const [replyContent, setReplyContent] = useState("");
     const [loading, setLoading] = useState(false);
@@ -19,31 +19,31 @@ export default function AnswerItem({ answer }) {
         setLoading(true);
 
         try {
+            //Gửi request POST để tạo answer con mới
             const res = await fetch(`${api}answers`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                content: replyContent,
-                question_id: answer.question_id,
-                parent_id: answer.id,
-            }),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    content: replyContent,
+                    question_id: answer.question_id,
+                    parent_id: answer.id,
+                }),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-            console.error(data);
-            alert("Gửi phản hồi thất bại");
-            return;
+                console.error(data);
+                alert("Gửi phản hồi thất bại");
+                return;
             }
 
             setReplyContent("");
             setShowReply(false);
 
-            //reload trang
-            // window.location.reload();
+            onReload();
 
         } catch (err) {
             console.error(err);

@@ -13,13 +13,17 @@ export default function ForumPage(){
   const [page, setPage] = useState(1);
   const { user, api } = useAuth();
 
-  useEffect(() => {
+  function fetchQuestions(){
     // Gọi API lấy danh sách question theo page
     fetch(`${api}questions?page=${page}`)
       .then(res => res.json())
       .then(res => {
         setQuestions(res.data);
       });
+  };
+
+  useEffect(() => {
+    fetchQuestions();
   }, [page, api]);
 
   useEffect(() => {
@@ -44,6 +48,7 @@ export default function ForumPage(){
 
     setLoading(true);
 
+    //Tạo FormData để gửi dữ liệu
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -52,6 +57,7 @@ export default function ForumPage(){
     }
 
     try {
+      //Gửi request POST tạo câu hỏi mới
       const res = await fetch(`${api}questions`, {
         method: "POST",
         body: formData,
@@ -70,12 +76,13 @@ export default function ForumPage(){
       setDescription("");
       setImageFile(null);
 
-      //reload trang
-      //window.location.reload();
+      //Load lại danh sách câu hỏi
+      fetchQuestions();
     } catch (err) {
       console.error(err);
       alert("Không thể kết nối server");
     } finally {
+      //Tắt loading dù thành công hay thất bại
       setLoading(false);
     }
   };

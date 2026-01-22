@@ -19,12 +19,15 @@ export default function ForumDetailPage(){
                 setQuestion(res.data);
             });
     }, [api, id]);
-    useEffect(() => {
+    function fetchAnswers(){
         fetch(`${api}questions/${id}/answers`)
             .then(res => res.json())
             .then(res => {
                 setAnswers(res.data);
             });
+    };
+    useEffect(() => {
+        fetchAnswers();
     }, [api, id]);
 
     async function handleSubmit() {
@@ -41,6 +44,7 @@ export default function ForumDetailPage(){
         setLoading(true);
 
         try {
+            //Gửi request POST tạo answer mới
             const res = await fetch(`${api}answers`, {
             method: "POST",
             headers: {
@@ -49,7 +53,7 @@ export default function ForumDetailPage(){
             body: JSON.stringify({
                 content: content,
                 question_id: question.id,
-                parent_id: null, // reply thì đổi thành answerId
+                parent_id: null, 
             }),
             });
 
@@ -61,15 +65,16 @@ export default function ForumDetailPage(){
             return;
             }
 
-            // Reset form
+            //reset textarea
             setContent("");
 
-            //reload trang
-            //window.location.reload();
+            //load lại danh sách câu trả lời
+            fetchAnswers();
         } catch (err) {
             console.error(err);
             alert("Không thể kết nối server");
         } finally {
+            //Tắt trạng thái loading dù thành công hay thất bại
             setLoading(false);
         }
     }
@@ -130,16 +135,29 @@ export default function ForumDetailPage(){
                 {/* Question Content */}
                 <div className="mb-4">
                     <p className="mb-3">{question.description}</p>
-                    <img 
-                    src={
-                        question.image_path
-                        ? `${store}${question.image_path}`
-                        : "/placeholder.png"
-                    }
-                    alt={question.title}
-                    className="img-fluid rounded mb-3"
-                    style={{ maxHeight: '400px', objectFit: 'cover', width: '100%' }}
+                    <div
+                style={{
+                    position: "relative",
+                    width: "100%",
+                    paddingTop: "56.25%", // 16:9
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    background: "#f8f9fa",
+                }}
+                >
+                    <img
+                        src={question.image_path ? `${store}${question.image_path}` : "/placeholder.png"}
+                        alt={question.title}
+                        style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        }}
                     />
+                </div>
                 </div>
                 </div>
             </div>
@@ -155,7 +173,7 @@ export default function ForumDetailPage(){
                     </h2>
 
                     {answers.map(answer => (
-                        <AnswerItem key={answer.id} answer={answer} />
+                        <AnswerItem key={answer.id} answer={answer} onReload={fetchAnswers}/>
                     ))}
                 </div>
             </div>
