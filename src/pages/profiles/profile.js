@@ -24,7 +24,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
       try {
-        const response = await fetch(`${api}profile`, {
+        const response = await fetch(`${api}auth/profile`, {
             headers: { 'Accept': 'application/json','Authorization': `Bearer ${token}` }
         });
         const result = await response.json();
@@ -109,7 +109,7 @@ const Profile = () => {
             </div>
         </div>
 
-        <UpdateProfile isOpen={showEditModal} onClose={() => setShowEditModal(false)} userProfile={userProfile} onSave={handleUpdateProfile} />
+        <UpdateProfile isOpen={showEditModal} onClose={() => setShowEditModal(false)} userProfile={userProfile} token = {token} onSave={handleUpdateProfile} />
       </div>
     </div>
   );
