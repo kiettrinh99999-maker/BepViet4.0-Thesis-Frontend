@@ -1,0 +1,115 @@
+/* RecipeDetail.css */
+
+/* --- CẤU HÌNH CHUNG --- */
+:root {
+  --primary-color: #d32f2f;
+  --secondary-color: #ffb74d;
+  --text-dark: #333;
+  --text-light: #666;
+  --bg-white: #fff;
+  --border: #e0e0e0;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.recipe-detail-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; color: var(--text-dark); font-family: 'Inter', sans-serif; }
+.back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--primary-color); cursor: pointer; margin-bottom: 20px; font-weight: 500; }
+
+.recipe-detail-card { background: var(--bg-white); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 30px; }
+.recipe-cover-image { width: 100%; height: 400px; object-fit: cover; }
+.recipe-content-container { padding: 40px; }
+
+/* HEADER */
+.recipe-header { border-bottom: 1px solid var(--border); padding-bottom: 25px; margin-bottom: 30px; }
+.recipe-category { background: var(--primary-color); color: #fff; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-bottom: 15px; }
+.recipe-title { font-size: 2.5rem; color: #9a0007; margin-bottom: 15px; font-family: 'Playfair Display', serif; }
+
+.recipe-meta { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+.recipe-author { display: flex; align-items: center; gap: 15px; }
+.author-avatar { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; background: #eee; }
+.author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.author-name { font-weight: 600; }
+
+.btn-follow { padding: 6px 16px; border: 1px solid var(--primary-color); background: #fff; color: var(--primary-color); border-radius: 20px; cursor: pointer; font-weight: 600; }
+.btn-follow.following { background: var(--primary-color); color: #fff; }
+
+/* STATS */
+.recipe-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
+.stat-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; gap: 5px; align-items: center; }
+.stat-item i { font-size: 1.5rem; color: var(--primary-color); }
+.stat-item span { font-weight: 700; }
+
+/* ACTIONS */
+.recipe-actions-section { display: flex; gap: 15px; margin: 30px 0; }
+.recipe-action-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; gap: 8px; }
+.recipe-action-btn.save { background: linear-gradient(135deg, var(--primary-color), #9a0007); color: #fff; }
+.recipe-action-btn.report { background: #ffebee; color: #c62828; }
+
+.recipe-description-text { font-size: 1.1rem; line-height: 1.8; color: #444; margin-top: 20px; white-space: pre-line; }
+
+/* INGREDIENTS & STEPS */
+.section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #9a0007; margin: 30px 0 20px; border-bottom: 2px solid var(--secondary-color); display: inline-block; }
+.ingredients-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+.ingredient-item { display: flex; align-items: center; gap: 15px; padding: 10px; background: #f9f9f9; border-radius: 8px; }
+.ingredient-image { width: 50px; height: 50px; border-radius: 6px; overflow: hidden; }
+.ingredient-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.steps-list { display: flex; flex-direction: column; gap: 30px; margin-top: 20px; }
+.step-item { background: #fff; padding-left: 20px; border-left: 3px solid var(--primary-color); }
+.step-header { font-weight: 600; margin-bottom: 10px; color: var(--primary-color); }
+.step-media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
+.media-item { aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: #000; }
+.media-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+.media-item img:hover { transform: scale(1.05); }
+
+/* COMMENTS & RATING */
+.comments-section { background: var(--bg-white); border-radius: 12px; padding: 30px; box-shadow: var(--shadow); margin-top: 40px; }
+.comment-form { background: #f9f9f9; padding: 25px; border-radius: 10px; margin-bottom: 30px; }
+.comment-form textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; min-height: 100px; margin-top: 15px; font-family: inherit; }
+
+/* === PHẦN RATING MỚI === */
+.rating-input-area { margin-bottom: 15px; }
+.rating-input-area p { font-weight: 600; margin-bottom: 5px; color: #555; }
+.star-rating-input { font-size: 1.8rem; display: flex; align-items: center; gap: 5px; }
+.star-rating-input .star { color: #ddd; cursor: pointer; transition: color 0.2s; }
+.star-rating-input .star.active { color: var(--secondary-color); }
+.star-rating-input .rating-text { font-size: 0.9rem; color: #777; margin-left: 10px; font-weight: normal; }
+
+/* COMMENT ITEMS */
+.comment-wrapper { margin-bottom: 20px; }
+.comment-main { display: flex; gap: 12px; }
+.comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: #ccc; overflow: hidden; flex-shrink: 0; }
+.comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.comment-content { flex: 1; }
+.comment-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+.comment-author { font-weight: 600; margin-right: 10px; }
+.comment-time { color: var(--text-light); font-size: 0.8rem; }
+.comment-actions { margin-top: 5px; }
+.comment-action { background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }
+.comment-action:hover { color: var(--primary-color); }
+
+/* REPLIES */
+.replies-list { margin-left: 52px; margin-top: 10px; border-left: 2px solid #eee; padding-left: 15px; }
+.reply-form { margin-top: 10px; display: flex; gap: 10px; }
+.reply-form input { flex: 1; padding: 8px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+.btn { padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: 500; }
+.btn-primary { background: var(--primary-color); color: #fff; }
+.btn-sm { padding: 5px 15px; font-size: 0.8rem; }
+.no-comments { text-align: center; color: #888; font-style: italic; padding: 20px; }
+
+/* REPORT POPUP - ĐÃ SỬA LỖI DÒNG DƯỚI */
+.report-overlay { 
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+  background: rgba(0,0,0,0.5); 
+  display: flex; justify-content: center; align-items: center; 
+  z-index: 9999; 
+}
+
+.report-box { background: #fff; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: popUp 0.3s ease; }
+.report-textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin: 15px 0; resize: none; }
+.report-btns { display: flex; justify-content: flex-end; gap: 10px; }
+.btn-cancel { background: #eee; padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; }
+.btn-submit { background: #d32f2f; color: #fff; padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; }
+
+@keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (max-width: 768px) { .recipe-stats { grid-template-columns: repeat(2, 1fr); } .step-media-grid { grid-template-columns: 1fr; } }
+

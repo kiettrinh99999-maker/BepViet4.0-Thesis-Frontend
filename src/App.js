@@ -26,6 +26,7 @@ import Login from './pages/login';
 import AdminLogin from './pages/admin/AdminLogin';
 import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
+import RecipeDetailReport from './pages/recipes/detail_recipe_report';
 function App() {
   return (
     <AuthProvider>
@@ -63,6 +64,7 @@ function App() {
             <Route path="config" element={<ConfigBody />} />
             <Route path="report" element={<ReportBody />} />
             <Route path="cong-thuc" element={<RecipeManagement />} />
+            <Route path="report/:id" element={<RecipeDetailReport/>} />
             <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
             <Route path="categories" element={<CategoryManagement/>} />
           </Route>
