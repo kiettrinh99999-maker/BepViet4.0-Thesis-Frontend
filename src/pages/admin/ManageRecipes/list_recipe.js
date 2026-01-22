@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import './list_recipe.css';
 import { useAuth } from '../../../contexts/Authen';
 
-const API_URL = "http://localhost:8000/";
-
 export default function RecipeManagement(){
   const [recipes, setRecipes] = useState(null);
   const [page, setPage] = useState(1);
+  const [regionId, setRegionId] = useState('');
+  const [eventId, setEventId] = useState('');
   const {api, renderDate, store} = useAuth();
   useEffect(() => {
     // Gọi API lấy danh sách question theo page
@@ -22,7 +22,6 @@ export default function RecipeManagement(){
       case 'pending':
         return <span className="badge badge-pending status-pending ">Chờ duyệt</span>;
       case 'approved':
-      case 'active':
         return <span className="badge badge-approved status-approved">Đã duyệt</span>;
       case 'rejected':
         return <span className="badge badge-rejected status-rejected">Từ chối</span>;
