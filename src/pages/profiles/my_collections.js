@@ -1,82 +1,290 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const MyCollections = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState('create'); // 'create' | 'edit'
+const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) => {
+    const navigate = useNavigate();
 
-  const collectionsList = [
-    { id: 1, title: "Ẩm thực Miền Bắc", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80", count: "12 công thức" },
-    { id: 2, title: "Đặc sản Miền Trung", image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80", count: "8 công thức" },
-    { id: 3, title: "Hương vị Miền Nam", image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80", count: "15 công thức" },
-    { id: 4, title: "Thực đơn chay", image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80", count: "10 công thức" }
-  ];
+    // --- STATE QUẢN LÝ ---
+    const [showModal, setShowModal] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    
+    const [modalMode, setModalMode] = useState('create');
+    const [editingId, setEditingId] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    
+    const [formData, setFormData] = useState({ name: '', image: null });
+    const [previewImage, setPreviewImage] = useState(null);
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    alert(modalMode === 'create' ? "Đã tạo bộ sưu tập mới" : "Đã cập nhật bộ sưu tập");
-    setShowModal(false);
-  }
+    const [currentCollection, setCurrentCollection] = useState(null);
+    const [detailRecipes, setDetailRecipes] = useState([]);
 
-  return (
-    <div className="tab-pane active fade-in">
-        <div className="section-header">
-            <h2 className="section-title">Bộ sưu tập đã lưu ({collectionsList.length})</h2>
-            <button className="btn btn-primary" onClick={() => { setModalMode('create'); setShowModal(true); }}>
-                <i className="fas fa-plus"></i> Tạo bộ sưu tập
-            </button>
-        </div>
+    // --- LOGIC XEM CHI TIẾT ---
+    const handleViewDetail = async (id) => {
+        try {
+            const response = await fetch(`${api}collections/${id}`);
+            const result = await response.json();
+            if (result.success) {
+                setCurrentCollection(result.data);
+                setDetailRecipes(result.data.recipes || []);
+                setShowDetailModal(true);
+            } else {
+                alert(result.message);
+            }
+        } catch (error) { console.error("Lỗi tải chi tiết:", error); }
+    };
+
+    // --- LOGIC XÓA MÓN KHỎI BST ---
+    const handleRemoveRecipeFromCollection = async (e, recipeId) => {
+        e.stopPropagation();
+        if (!window.confirm("Bạn có chắc muốn xóa món này khỏi bộ sưu tập?")) return;
+
+        try {
+            const response = await fetch(`${api}collections/${currentCollection.id}/remove-recipe`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ recipe_id: recipeId })
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+                handleViewDetail(currentCollection.id); 
+                if (onRefreshProfile) onRefreshProfile(); 
+            } else {
+                alert(result.message);
+            }
+        } catch (error) { console.error("Lỗi xóa món:", error); }
+    };
+
+    const handleGoToRecipes = () => { navigate('/recipes'); };
+    const goToRecipeDetail = (recipeId) => { navigate(`/recipes/${recipeId}`); };
+
+    // --- CRUD COLLECTION ---
+    const handleDeleteCollection = async (id, name) => {
+        // [ĐÃ SỬA] Xóa dòng e.stopPropagation() ở đây vì đã xử lý ở onClick
+        if (!window.confirm(`Xóa bộ sưu tập "${name}"?`)) return;
         
-        <div className="collection-grid">
-            {collectionsList.map(col => (
-                <div className="collection-card" key={col.id} onClick={() => alert('Mở: ' + col.title)}>
-                    <div className="collection-image">
-                        <img src={col.image} alt={col.title} />
-                    </div>
-                    <div className="collection-content">
-                        <h3 className="collection-title">{col.title}</h3>
-                        <p className="collection-count">{col.count}</p>
-                        <div className="collection-actions">
-                            <button className="action-btn edit" onClick={(e) => { e.stopPropagation(); setModalMode('edit'); setShowModal(true); }}>
-                                <i className="far fa-edit"></i> Sửa
-                            </button>
-                            <button className="action-btn delete" onClick={(e) => { e.stopPropagation(); alert('Đã xóa!'); }}>
-                                <i className="far fa-trash-alt"></i> Xóa
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            ))}
-        </div>
+        setIsDeleting(true);
+        try {
+            const response = await fetch(`${api}collections/${id}`, { 
+                method: 'DELETE', 
+                headers: { 'Accept': 'application/json' } 
+            });
+            const result = await response.json();
+            if (response.ok && result.success) {
+                alert('Đã xóa thành công!');
+                if (onRefreshProfile) onRefreshProfile(); 
+            } else { alert(result.message); }
+        } catch (error) { console.error("Lỗi:", error); } 
+        finally { setIsDeleting(false); }
+    };
 
-        {/* Modal Tạo/Sửa Bộ Sưu Tập */}
-        {showModal && (
-            <div className="custom-modal-overlay" onClick={(e) => e.target.className === 'custom-modal-overlay' && setShowModal(false)}>
-                <div className="custom-modal">
-                    <div className="custom-modal-header">
-                        <h2 className="custom-modal-title">{modalMode === 'create' ? 'Tạo bộ sưu tập' : 'Sửa bộ sưu tập'}</h2>
-                        <button className="custom-modal-close" onClick={() => setShowModal(false)}>&times;</button>
+    const handleSaveCollection = async (e) => {
+        e.preventDefault();
+        if(!formData.name.trim()) { alert("Nhập tên bộ sưu tập"); return; }
+        setIsSaving(true);
+        try {
+            const data = new FormData();
+            data.append('name', formData.name);
+            if (formData.image) data.append('image', formData.image);
+            let url = `${api}collections`;
+            
+            // --- LOGIC XỬ LÝ SỬA (UPDATE) ---
+            if (modalMode === 'edit') {
+                url = `${api}collections/${editingId}`;
+                // [QUAN TRỌNG] Thêm dòng này để giả lập PUT khi gửi file
+                data.append('_method', 'PUT'); 
+            }
+            const response = await fetch(url, { method: 'POST', body: data });
+            const result = await response.json();
+            if (result.success) {
+                alert(modalMode === 'create' ? "Tạo thành công!" : "Cập nhật thành công!");
+                setShowModal(false);
+                if (onRefreshProfile) onRefreshProfile();
+            } else { alert(result.message); }
+        } catch (error) { console.error("Lỗi:", error); } 
+        finally { setIsSaving(false); }
+    };
+
+    const handleOpenCreate = () => { setModalMode('create'); setEditingId(null); setFormData({ name: '', image: null }); setPreviewImage(null); setShowModal(true); };
+    
+    const handleOpenEdit = (col) => { 
+        setModalMode('edit'); setEditingId(col.id); 
+        setFormData({ name: col.name, image: null }); 
+        setPreviewImage(col.image_path ? `${store}/${col.image_path}` : '/logo512.png'); 
+        setShowModal(true); 
+    };
+    
+    const handleFileChange = (e) => { 
+        const file = e.target.files[0]; 
+        if (file) { 
+            setFormData({ ...formData, image: file }); 
+            setPreviewImage(URL.createObjectURL(file)); 
+        } 
+    };
+
+    const renderMiniStars = (score) => {
+        const num = parseFloat(score) || 0;
+        return Array(5).fill(0).map((_, i) => <i key={i} className={i < Math.round(num) ? "fas fa-star" : "far fa-star"} style={{color: '#ffb74d', fontSize: '0.8rem'}}></i>);
+    };
+
+    if (!collections || collections.length === 0) {
+        return (
+            <div className={`${styles.tabContent} ${styles.fadeIn} ${styles.emptyState}`}>
+                <p className={styles.textMuted}>Bạn chưa tạo bộ sưu tập nào.</p>
+                <button className={styles.btnPrimary} onClick={handleOpenCreate}><i className="fas fa-plus"></i> Tạo ngay</button>
+                {showModal && renderModal()}
+            </div>
+        );
+    }
+
+    return (
+        <div className={`${styles.tabContent} ${styles.fadeIn}`}>
+            <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>Bộ sưu tập ({collections.length})</h2>
+                <button className={styles.btnPrimary} onClick={handleOpenCreate}><i className="fas fa-plus"></i> Tạo mới</button>
+            </div>
+            
+            <div className={styles.gridContainer}>
+                {collections.map(col => {
+                    const imageUrl = col.image_path ? `${store}/${col.image_path}` : '/logo512.png'; 
+                    return (
+                        <div className={styles.card} key={col.id} onClick={() => handleViewDetail(col.id)}>
+                            <div className={`${styles.cardImage} ${styles.ratio43}`}>
+                                <img src={imageUrl} alt={col.name} onError={(e) => {e.target.onerror = null; e.target.src='/logo512.png'}} />
+                            </div>
+                            <div className={styles.cardContent}>
+                                <h3 className={styles.cardTitle}>{col.name}</h3>
+                                <p className={styles.statLabel}><i className="fas fa-utensils"></i> {col.recipes_count || 0} công thức</p>
+                                <div className={styles.cardActions}>
+                                    <button className={`${styles.actionBtn} ${styles.btnEdit}`} onClick={(e) => { e.stopPropagation(); handleOpenEdit(col); }}><i className="far fa-edit"></i> Sửa</button>
+                                    <button className={`${styles.actionBtn} ${styles.btnDelete}`} onClick={(e) => { e.stopPropagation(); handleDeleteCollection(col.id, col.name); }} disabled={isDeleting}><i className="far fa-trash-alt"></i> Xóa</button>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {showModal && renderModal()}
+            {showDetailModal && renderDetailModal()}
+        </div>
+    );
+
+    function renderModal() {
+        return (
+            <div className={styles.modalOverlay} onClick={(e) => e.target.className === styles.modalOverlay && setShowModal(false)}>
+                <div className={styles.modal}>
+                    <div className={styles.modalHeader}>
+                        <h2 className={styles.modalTitle}>{modalMode === 'create' ? 'Tạo mới' : 'Sửa'}</h2>
+                        <button className={styles.modalClose} onClick={() => setShowModal(false)}>&times;</button>
                     </div>
-                    <div className="custom-modal-body">
-                        <form onSubmit={handleSave}>
-                            <div className="form-group" style={{textAlign: 'center', border: '2px dashed #e0e0e0', padding: 20, marginBottom: 20}}>
-                                <i className="fas fa-image" style={{fontSize: '2rem', color: '#ccc'}}></i>
-                                <p style={{color: '#666'}}>Tải ảnh bìa lên</p>
+                    <div className={styles.modalBody}>
+                        <form onSubmit={handleSaveCollection}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Ảnh bìa</label>
+                                <label htmlFor="colUpload" style={{cursor:'pointer', width:'100%'}}>
+                                    {previewImage ? 
+                                        <div className={styles.avatarPreview}><img src={previewImage} style={{width:'100%', height:'100%', objectFit:'cover'}} alt="Preview"/></div> : 
+                                        <div className={styles.uploadPlaceholder}><i className="fas fa-image" style={{fontSize:'2rem', color:'#ccc'}}></i><p>Chọn ảnh</p></div>
+                                    }
+                                </label>
+                                <input id="colUpload" type="file" onChange={handleFileChange} style={{display:'none'}} accept="image/*" />
                             </div>
-                            <div className="form-group">
-                                <label className="form-label">Tên bộ sưu tập *</label>
-                                <input type="text" className="form-control" placeholder="Ví dụ: Món ăn yêu thích" required />
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>Tên bộ sưu tập</label>
+                                <input type="text" className={styles.formControl} required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
                             </div>
-                            <div className="custom-modal-footer">
-                                <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Hủy</button>
-                                <button type="submit" className="btn btn-primary">Lưu</button>
+                            <div className={styles.modalFooter}>
+                                <button type="button" className={styles.btnOutline} onClick={() => setShowModal(false)}>Hủy</button>
+                                <button type="submit" className={styles.btnPrimary} disabled={isSaving}>{isSaving ? 'Lưu...' : 'Lưu'}</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-        )}
-    </div>
-  );
+        );
+    }
+
+    function renderDetailModal() {
+        return (
+            <div className={styles.modalOverlay} onClick={(e) => e.target.className === styles.modalOverlay && setShowDetailModal(false)}>
+                <div className={styles.modal} style={{ maxWidth: '900px', width: '95%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+                    <div className={styles.modalHeader}>
+                        <h2 className={styles.modalTitle} style={{fontSize: '1.5rem'}}>{currentCollection?.name}</h2>
+                        <button className={styles.modalClose} onClick={() => setShowDetailModal(false)}>&times;</button>
+                    </div>
+                    
+                    <div className={styles.modalBody} style={{ flex: 1, overflowY: 'auto' }}>
+                        <div className={styles.detailSubHeader}>
+                            <h4 className={styles.detailSubTitle}>Công thức trong bộ sưu tập</h4>
+                            <button className={styles.btnAddRecipe} onClick={handleGoToRecipes}>
+                                <i className="fas fa-plus"></i> Thêm công thức
+                            </button>
+                        </div>
+
+                        <div className={styles.detailGrid}>
+                            {detailRecipes.length === 0 ? (
+                                <p className={styles.textMuted} style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px' }}>
+                                    Chưa có món ăn nào. Hãy nhấn "Thêm công thức" để khám phá!
+                                </p>
+                            ) : (
+                                detailRecipes.map(recipe => {
+                                    const difficultyName = recipe.difficulty?.name || 'Trung bình';
+                                    let diffClass = styles.difficultyMedium;
+                                    if(recipe.difficulty_id === 1) diffClass = styles.difficultyEasy;
+                                    if(recipe.difficulty_id === 3) diffClass = styles.difficultyHard;
+
+                                    const avgScore = recipe.rates_avg_score || 0;
+                                    const countRate = recipe.rates_count || 0;
+
+                                    return (
+                                        <div 
+                                            key={recipe.id} 
+                                            className={styles.miniCard}
+                                            onClick={() => goToRecipeDetail(recipe.id)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <img 
+                                                src={recipe.image_path ? `${store}/${recipe.image_path}` : '/logo512.png'} 
+                                                alt={recipe.title}
+                                                className={styles.miniCardImg}
+                                                onError={(e) => {e.target.onerror = null; e.target.src='/logo512.png'}}
+                                            />
+                                            <div className={styles.miniCardBody}>
+                                                <h5 className={styles.miniCardTitle} title={recipe.title}>{recipe.title}</h5>
+                                                <div className={styles.miniCardMeta}>
+                                                    <span><i className="far fa-clock"></i> {recipe.cooking_time || 30}p</span>
+                                                    <span className={`${styles.difficulty} ${diffClass}`} style={{fontSize: '0.7rem', padding: '2px 8px'}}>{difficultyName}</span>
+                                                </div>
+                                                <div className={styles.miniCardFooter}>
+                                                    <div className={styles.miniRating}>
+                                                        {renderMiniStars(avgScore)}
+                                                        <span style={{marginLeft: '5px'}}>({countRate} đánh giá)</span>
+                                                    </div>
+                                                    <button 
+                                                        className={styles.btnRemoveMini} 
+                                                        onClick={(e) => handleRemoveRecipeFromCollection(e, recipe.id)}
+                                                        title="Xóa khỏi BST"
+                                                    >
+                                                        <i className="fas fa-times"></i> Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    </div>
+
+                    <div className={styles.modalFooter}>
+                        <button type="button" className={styles.btnOutline} onClick={() => setShowDetailModal(false)}>Đóng</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 };
 
 export default MyCollections;
