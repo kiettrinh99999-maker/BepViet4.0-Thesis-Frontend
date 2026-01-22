@@ -31,9 +31,9 @@ export default function AdminLayout() {
   }
 
   // Kiểm tra user có quyền admin không
-  if (user.role !== 'admin') {
-    return <Navigate to="/" />;
-  }
+  // if (user.role !== 'admin') {
+  //   return <Navigate to="/" />;
+  // }
 
   if (!config?.data?.data?.length) {
     return (

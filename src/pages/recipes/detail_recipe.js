@@ -54,7 +54,7 @@ const buildCommentTree = (comments) => {
 const CommentItem = ({ comment, store, onReply, level = 0 }) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const {renderDate}=useAuth();
+  const { renderDate } = useAuth();
   const userAvatar = comment.user?.profile?.image_path
     ? `${store}${comment.user.profile.image_path}`
     : "https://via.placeholder.com/50";
@@ -181,40 +181,40 @@ const RecipeDetail = () => {
     if (!recipe?.id) return;
     // Subscribe tới channel
     const channel = echo.channel(`recipe.${recipe.id}`);
-    
+
     // Lắng nghe event new-comment
     channel.listen('.new-comment', (data) => {
       const newComment = data.comment;
-      
+
       // THÊM: Hiển thị thông báo
       setNewCommentAlert({
         user: newComment.user?.username || 'Ai đó',
-        content: newComment.content.length > 50 
-          ? newComment.content.substring(0, 50) + '...' 
+        content: newComment.content.length > 50
+          ? newComment.content.substring(0, 50) + '...'
           : newComment.content
       });
-      
+
       // THÊM: Tự động ẩn thông báo sau 5 giây
       setTimeout(() => setNewCommentAlert(null), 5000);
-      
+
       // Thêm comment mới vào state
       setRecipe(prev => {
         // Kiểm tra xem comment đã tồn tại chưa
         const exists = prev.recipe_comments?.some(c => c.id === newComment.id);
         if (exists) return prev;
-        
+
         return {
           ...prev,
           recipe_comments: [...(prev.recipe_comments || []), newComment]
         };
       });
     });
-    
+
     // THÊM: Theo dõi trạng thái kết nối
     echo.connector.pusher.connection.bind('connected', () => {
       setIsConnected(true);
     });
-    
+
     echo.connector.pusher.connection.bind('disconnected', () => {
       setIsConnected(false);
     });
@@ -323,9 +323,37 @@ const RecipeDetail = () => {
   // --- 7. XỬ LÝ BÁO CÁO ---
   const handleSendReport = async () => {
     if (!reportReason.trim()) return alert("Nhập lý do!");
-    // Logic gọi API report... (giống code cũ)
-    alert("Đã gửi báo cáo!");
-    setShowReport(false);
+    if (!user?.id) {
+      alert("Vui lòng đăng nhập để báo cáo!");
+      return;
+    }
+    try {
+      const response = await fetch(`${api}admin/report`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          recipe_id: recipe.id,
+          user_id: user.id,
+          content: reportReason,
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok || data.success) {
+        alert("Đã gửi báo cáo thành công!");
+        setShowReport(false);
+        setReportReason("");
+      } else {
+        alert("❌ Lỗi: " + (data.message || "Có lỗi xảy ra"));
+      }
+    } catch (error) {
+      console.error(error);
+      alert("❌ Không thể kết nối đến máy chủ.");
+    }
   };
 
   // THÊM: Hàm đóng thông báo
@@ -360,7 +388,7 @@ const RecipeDetail = () => {
           <div>
             <strong>{newCommentAlert.user}</strong> vừa bình luận: "{newCommentAlert.content}"
           </div>
-          <button 
+          <button
             onClick={handleCloseAlert}
             style={{
               background: 'none',
@@ -376,21 +404,7 @@ const RecipeDetail = () => {
           </button>
         </div>
       )}
-      
-      {/* THÊM: Hiển thị trạng thái kết nối */}
-      <div style={{
-        position: 'fixed',
-        top: '70px',
-        right: '20px',
-        background: isConnected ? '#4CAF50' : '#f44336',
-        color: 'white',
-        padding: '5px 10px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        zIndex: 999
-      }}>
-        {isConnected ? '🟢 Real-time' : '🔴 Offline'}
-      </div>
+
 
       <div className="back-link" onClick={() => navigate(-1)}>
         <i className="fas fa-arrow-left"></i> Quay lại

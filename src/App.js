@@ -28,6 +28,9 @@ import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
 import CreateBlog from './pages/blogs/add_blog';
 import ManageUser from './pages/admin/ManageAccounts/manage_users';
+import RecipeDetailReport from './pages/recipes/detail_recipe_report';
+import RecipeApproval from './pages/admin/ManageRecipes/approve_recipe';
+import RecipeDuyet from './pages/recipes/duyet';
 function App() {
   return (
     <AuthProvider>
@@ -66,8 +69,12 @@ function App() {
             <Route index element={<DashboardBody />} />
             <Route path="config" element={<ConfigBody />} />
             <Route path="report" element={<ReportBody />} />
+            <Route path="approve/:id" element={< RecipeDuyet />} />
+
             <Route path="cong-thuc" element={<RecipeManagement />} />
-            <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
+           
+            <Route path="report/:id" element={<RecipeDetailReport/>} />
+            <Route path="approve" element={<RecipeApproval/>} />
             <Route path="categories" element={<CategoryManagement/>} />
             <Route path="manageuser" element={<ManageUser/>} />
           </Route>
