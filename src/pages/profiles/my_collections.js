@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) => {
+const MyCollections = ({ collections, store, api, onRefreshProfile, styles,token }) => {
     const navigate = useNavigate();
 
     // --- STATE QUẢN LÝ ---
@@ -22,7 +22,13 @@ const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) =>
     // --- LOGIC XEM CHI TIẾT ---
     const handleViewDetail = async (id) => {
         try {
-            const response = await fetch(`${api}collections/${id}`);
+            const response = await fetch(`${api}auth/collections/${id}`,{
+                 method: 'GET',
+                headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            }
+        });
             const result = await response.json();
             if (result.success) {
                 setCurrentCollection(result.data);
@@ -40,9 +46,13 @@ const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) =>
         if (!window.confirm("Bạn có chắc muốn xóa món này khỏi bộ sưu tập?")) return;
 
         try {
-            const response = await fetch(`${api}collections/${currentCollection.id}/remove-recipe`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            const response = await fetch(`${api}auth/collections/${currentCollection.id}/remove-recipe`, {
+               method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}` // <--- THÊM TOKEN
+                },
                 body: JSON.stringify({ recipe_id: recipeId })
             });
             const result = await response.json();
@@ -56,7 +66,7 @@ const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) =>
         } catch (error) { console.error("Lỗi xóa món:", error); }
     };
 
-    const handleGoToRecipes = () => { navigate('/recipes'); };
+    const handleGoToRecipes = () => { navigate('/tao-cong-thuc'); };
     const goToRecipeDetail = (recipeId) => { navigate(`/recipes/${recipeId}`); };
 
     // --- CRUD COLLECTION ---
@@ -66,9 +76,12 @@ const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) =>
         
         setIsDeleting(true);
         try {
-            const response = await fetch(`${api}collections/${id}`, { 
+            const response = await fetch(`${api}auth/collections/${id}`, { 
                 method: 'DELETE', 
-                headers: { 'Accept': 'application/json' } 
+                headers: { 
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}` // <--- THÊM TOKEN
+                }
             });
             const result = await response.json();
             if (response.ok && result.success) {
@@ -87,15 +100,22 @@ const MyCollections = ({ collections, store, api, onRefreshProfile, styles }) =>
             const data = new FormData();
             data.append('name', formData.name);
             if (formData.image) data.append('image', formData.image);
-            let url = `${api}collections`;
+            let url = `${api}auth/collections`;
             
             // --- LOGIC XỬ LÝ SỬA (UPDATE) ---
             if (modalMode === 'edit') {
-                url = `${api}collections/${editingId}`;
+                url = `${api}auth/collections/${editingId}`;
                 // [QUAN TRỌNG] Thêm dòng này để giả lập PUT khi gửi file
                 data.append('_method', 'PUT'); 
             }
-            const response = await fetch(url, { method: 'POST', body: data });
+            const response = await fetch(url, { 
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` // <--- THÊM TOKEN
+                    // Không set Content-Type khi dùng FormData
+                },
+                 body: data
+              });
             const result = await response.json();
             if (result.success) {
                 alert(modalMode === 'create' ? "Tạo thành công!" : "Cập nhật thành công!");
