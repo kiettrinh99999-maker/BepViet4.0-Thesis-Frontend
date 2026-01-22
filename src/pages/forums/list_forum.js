@@ -6,6 +6,10 @@ import './forum.css';
 export default function ForumPage(){
   const [questions, setQuestions] = useState(null);
   const [totalAnswers, setTotalAnswers] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const { user, api } = useAuth();
 
@@ -18,7 +22,6 @@ export default function ForumPage(){
       });
   }, [page, api]);
 
-  
   useEffect(() => {
     // Gọi API lấy tổng số answer
     fetch(api + "answers")
@@ -27,6 +30,56 @@ export default function ForumPage(){
         setTotalAnswers(res.data.total);
       });
   }, [api]);
+
+  async function handleSubmit(){
+    if (!user) {
+      alert("Vui lòng đăng nhập để đặt câu hỏi");
+      return;
+    }
+
+    if (!title.trim() || !description.trim()) {
+      alert("Vui lòng nhập đầy đủ tiêu đề và nội dung");
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
+    try {
+      const res = await fetch(`${api}questions`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data);
+        alert("Có lỗi xảy ra");
+        return;
+      }
+
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setImageFile(null);
+
+      //reload trang
+      //window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("Không thể kết nối server");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   
   //Nếu chưa fetch xong sẽ hiển thị thông báo đang tải
   if (questions === null || totalAnswers === null) {
@@ -64,32 +117,48 @@ export default function ForumPage(){
         </div>
       </div>
 
-      {/* Ask Question Form (giữ UI, chưa gắn submit) */}
+      {/* Ask Question Form */}
       <div className="ask-question-form">
         <h3 className="form-title">Đặt Câu Hỏi Mới</h3>
         <form>
           <div className="form-group">
             <label>Tiêu đề câu hỏi</label>
-            <input type="text" placeholder="Nhập tiêu đề..." />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập tiêu đề..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
           <div className="form-group">
             <label>Nội dung câu hỏi</label>
-            <textarea placeholder="Mô tả chi tiết..." />
-          </div>
-          <div className="mb-3">
-            <label className="form-label fw-semibold">
-                Ảnh minh họa (tuỳ chọn)
-            </label>
-
-            <input
-                type="file"
-                className="form-control"
-                accept="image/*"
-                
+            <textarea
+              className="form-control"
+              placeholder="Mô tả chi tiết..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
-            </div>
-          <button type="button" className="btn btn-primary">
-            <i className="fas fa-paper-plane"></i> Đăng Câu Hỏi
+          </div>
+          <div className="form-group">
+            <label className="form-label fw-semibold">
+              Ảnh minh họa (tuỳ chọn)
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+            />
+          </div>
+          <button
+            type="button"
+            className="btn btn-danger px-2 py-2" style={{ width: "auto" }}
+            onClick={handleSubmit}
+            disabled={loading || !user}
+          >
+            <i className="fas fa-paper-plane"></i>{" "}
+            {loading ? "Đang gửi..." : "Đăng Câu Hỏi"}
           </button>
         </form>
       </div>
