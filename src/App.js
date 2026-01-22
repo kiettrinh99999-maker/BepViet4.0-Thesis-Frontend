@@ -23,7 +23,7 @@ import RecipeDetail from './pages/recipes/detail_recipe';
 import CategoryManagement from './pages/admin/ManageCategories/magage_category';
 import Register from './pages/register';
 import Login from './pages/login';
-import AdminLogin from './pages/admin/Admin';
+import AdminLogin from './pages/admin/AdminLogin';
 function App() {
   return (
     <AuthProvider>

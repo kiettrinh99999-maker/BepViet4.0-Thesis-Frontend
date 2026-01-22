@@ -28,7 +28,7 @@ const AdminLogin = () => {
 
         try {
             // Sử dụng endpoint login giống user (hoặc endpoint riêng cho admin nếu backend có)
-            const response = await fetch(`${api}auth/login`, {
+            const response = await fetch(`${api}admin/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
