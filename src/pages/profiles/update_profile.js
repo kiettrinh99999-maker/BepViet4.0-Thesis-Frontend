@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import styles from './ProfileBody.module.css'; // Import Module CSS
 import { useAuth } from '../../contexts/Authen';
 
-const UpdateProfile = ({ isOpen, onClose, userProfile, onSave }) => {
+const UpdateProfile = ({ isOpen, onClose, userProfile, onSave,token }) => {
   const { api } = useAuth(); // Lấy api từ Context
   const fileInputRef = useRef(null);
   
@@ -62,9 +62,9 @@ const UpdateProfile = ({ isOpen, onClose, userProfile, onSave }) => {
 
         // Gọi API: POST /api/profile (Hoặc PUT tùy backend của bạn)
         // Lưu ý: Không cần set Content-Type header, fetch tự động set multipart/form-data
-        const response = await fetch(`${api}profile/update`, {
+        const response = await fetch(`${api}auth/profile/update`, {
             method: 'POST', 
-            // headers: { 'Authorization': `Bearer ${token}` }, // Bỏ comment nếu cần token
+            headers: { 'Authorization': `Bearer ${token}` },
             body: data, 
         });
 

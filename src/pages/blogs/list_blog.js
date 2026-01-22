@@ -1,137 +1,197 @@
 import React, { useState, useEffect } from 'react';
-import BlogCard from '../../components/Blogs/BlogCard';
-import './blog.css';
+import BlogCard from '../../components/Blogs/BlogCard'; 
+import './blog.css'; 
+import { useAuth } from '../../contexts/Authen'; 
 
 const BlogPage = () => {
-  const [activeCategory, setActiveCategory] = useState('Tất cả');
+  const { api, store } = useAuth(); 
+
+  // --- STATE ---
+  const [categories, setCategories] = useState([]);
+  const [blogPosts, setBlogPosts] = useState([]);
   
-  // Danh sách danh mục để hiển thị bộ lọc
-  const categories = [
-    'Tất cả', 'Lịch sử ẩm thực', 'Trải nghiệm ẩm thực', 
-    'Đặc sản vùng miền', 'Văn hóa ẩm thực', 'Nguyên liệu đặc biệt', 
-    'Công thức bí truyền', 'Ẩm thực đường phố'
-  ];
+  // State quản lý Filter & Pagination Server-side
+  const [activeCategoryId, setActiveCategoryId] = useState('all'); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1); // Lưu tổng số trang từ server
+  
+  const [loading, setLoading] = useState(true);
 
-  // Dữ liệu mẫu - Sau này bạn sẽ dùng useEffect để gọi API từ Laravel
-  const [blogPosts, setBlogPosts] = useState([
-    {
-      id: 1,
-      category: 'LỊCH SỬ ẨM THỰC',
-      title: 'Hành trình của Phở: Từ những gánh hàng rong đến thương hiệu quốc gia',
-      excerpt: 'Phở không chỉ là món ăn mà còn là biểu tượng văn hóa Việt Nam. Bài viết khám phá lịch sử hình thành và phát triển của phở...',
-      author: 'Mai Trang',
-      authorInitials: 'MT',
-      date: '12/07/2023',
-      image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 2,
-      category: 'TRẢI NGHIỆM ẨM THỰC',
-      title: 'Sài Gòn về đêm: Hành trình khám phá ẩm thực đường phố không ngủ',
-      excerpt: 'Từ những quán hủ tiếu mở cửa đến 2h sáng đến những xe bánh mì thịt nướng giữa đêm khuya, Sài Gòn mang đến trải nghiệm độc đáo...',
-      author: 'Trung Vũ',
-      authorInitials: 'TV',
-      date: '05/07/2023',
-      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 3,
-      category: 'ĐẶC SẢN VÙNG MIỀN',
-      title: 'Cao Lầu Hội An: Bí mật từ sợi mì độc nhất vô nhị',
-      excerpt: 'Cao lầu Hội An không chỉ là món ăn mà còn là câu chuyện về sự giao thoa văn hóa Việt - Hoa - Nhật...',
-      author: 'Lan Hương',
-      authorInitials: 'LH',
-      date: '28/06/2023',
-      image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80'
-    }
-  ]);
+  // --- FETCH DATA (Gọi lại mỗi khi page hoặc category thay đổi) ---
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  // Logic lọc bài viết theo danh mục (Client-side filter)
-  const filteredPosts = activeCategory === 'Tất cả' 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category.toLowerCase() === activeCategory.toLowerCase());
+        // 1. Gọi danh mục (Chỉ gọi 1 lần nếu muốn tối ưu, nhưng để đây cũng ko sao)
+        // Lưu ý: Bạn có thể tách cái này ra useEffect riêng chỉ chạy 1 lần []
+        if (categories.length === 0) {
+            const catRes = await fetch(`${api}blog-categories`); 
+            const catData = await catRes.json();
+            if (catData.success) {
+                setCategories([{ id: 'all', name: 'Tất cả' }, ...catData.data]);
+            }
+        }
+
+        // 2. Gọi bài viết với tham số page và category_id
+        // URL sẽ dạng: .../api/blogs?page=1&category_id=2
+        let url = `${api}blogs?page=${currentPage}`;
+        if (activeCategoryId !== 'all') {
+            url += `&category_id=${activeCategoryId}`;
+        }
+
+        const blogRes = await fetch(url); 
+        const blogData = await blogRes.json();
+
+        if (blogData.success) {
+            setBlogPosts(blogData.data); // Set dữ liệu bài viết
+            setTotalPages(blogData.pagination.last_page); // Set tổng số trang từ server
+        }
+
+      } catch (error) {
+        console.error("Lỗi tải dữ liệu:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [api, currentPage, activeCategoryId]); // <--- QUAN TRỌNG: Thêm dependencies vào đây
+
+  // --- HANDLERS ---
+
+  // Khi chọn danh mục: Reset về trang 1 và set ID danh mục mới
+  const handleCategoryChange = (id) => {
+      setActiveCategoryId(id);
+      setCurrentPage(1); // Luôn quay về trang 1 khi lọc mới
+  };
+
+  // Khi chọn trang: Set trang mới (useEffect sẽ tự chạy lại API)
+  const handlePageChange = (pageNumber) => {
+      setCurrentPage(pageNumber);
+      // Cuộn lên đầu blog section cho trải nghiệm tốt hơn
+      document.querySelector('.blog-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Helper format dữ liệu
+  const formatPostData = (post) => {
+      let imageUrl = 'https://via.placeholder.com/800x600?text=No+Image';
+      if (post.image_path) {
+          imageUrl = post.image_path.startsWith('http') ? post.image_path : `${store}${post.image_path}`;
+      }
+      
+      return {
+          ...post,
+          image: imageUrl,
+          description: post.description,
+          category: post.blog_category?.name || 'Chung',
+          author: post.user?.profile?.name || post.user?.username || 'Admin',
+          authorInitials: (post.user?.profile?.name || 'A').charAt(0).toUpperCase(),
+          date: new Date(post.created_at).toLocaleDateString('vi-VN')
+      };
+  };
 
   return (
-    <div className="blog-page-wrapper">
-      {/* Thông báo đăng nhập */}
-      {/* <div className="container">
-        <div className="login-notice">
-          <i className="fas fa-info-circle"></i> Tài khoản chưa đăng nhập. Vui lòng <strong>Đăng nhập</strong> để tương tác và lưu bài viết yêu thích.
-        </div>
-      </div> */}
-
+    <div className="blog-page-body">
+      
       {/* Hero Section */}
       <section className="hero">
         <div className="container">
-          <h1>Blog Ẩm Thực Việt</h1>
-          <p>Khám phá những câu chuyện, trải nghiệm và kiến thức đặc biệt về ẩm thực ba miền</p>
-          <div className="hero-tagline">
-            <span>Lịch sử ẩm thực</span>
-            <span>Trải nghiệm văn hóa</span>
-            <span>Đặc sản vùng miền</span>
-          </div>
+            <h1>Blog Ẩm Thực Việt</h1>
+            <p>Khám phá những câu chuyện, trải nghiệm và kiến thức đặc biệt về ẩm thực ba miền</p>
         </div>
       </section>
 
-      {/* Bộ lọc danh mục */}
+      {/* Nút Thêm Blog Mới */}
+      <section className="add-blog-section">
+        <div className="container">
+            <div className="add-blog-container">
+                <button className="btn-add-blog" onClick={() => alert('Chức năng đang phát triển')}>
+                    <i className="fas fa-plus-circle"></i>
+                    Thêm Blog Mới
+                </button>
+            </div>
+        </div>
+      </section>
+
+      {/* Danh mục Blog */}
       <section className="categories-section">
         <div className="container">
-          <div className="categories-container">
-            {categories.map((cat) => (
-              <button 
-                key={cat}
-                className={`category-btn ${activeCategory === cat ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+            <div className="categories-container">
+                {categories.map((cat) => (
+                    <button 
+                        key={cat.id} 
+                        className={`category-btn ${activeCategoryId === cat.id ? 'active' : ''}`}
+                        onClick={() => handleCategoryChange(cat.id)}
+                    >
+                        {cat.name}
+                    </button>
+                ))}
+            </div>
         </div>
       </section>
 
-      {/* Bài viết nổi bật (Featured Post) */}
-      <section className="featured-blog">
-        <div className="container">
-          <div className="featured-card">
-            <div className="featured-image">
-              <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80" alt="Bánh chưng Tết" />
-            </div>
-            <div className="featured-content">
-              <div className="featured-badge">NỔI BẬT</div>
-              <h2 className="featured-title">Bánh Chưng - Hồn cốt ẩm thực Tết Việt</h2>
-              <p className="featured-excerpt">Khám phá lịch sử hàng ngàn năm của bánh chưng, từ truyền thuyết Lang Liêu đến ý nghĩa triết lý Âm Dương Ngũ Hành trong từng lớp bánh.</p>
-              <button className="action-btn view" style={{ width: 'fit-content', padding: '10px 25px' }}>
-                <i className="far fa-eye"></i> Đọc bài viết
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Danh sách bài viết */}
+      {/* Blog Grid */}
       <section className="blog-section">
         <div className="container">
-          <h2 className="section-title">Bài Viết Mới Nhất</h2>
-          <div className="blog-grid">
-            {filteredPosts.length > 0 ? (
-              filteredPosts.map((post) => (
-                <BlogCard key={post.id} post={post} />
-              ))
+            <h2 className="section-title1" >
+                {activeCategoryId === 'all' ? 'Bài Viết Mới Nhất' : `Chuyên mục: ${categories.find(c => c.id === activeCategoryId)?.name}`}
+            </h2>
+            
+            {loading ? (
+                <div style={{textAlign: 'center', padding: '20px'}}>Đang tải dữ liệu...</div>
             ) : (
-              <p className="no-posts">Không có bài viết nào trong danh mục này.</p>
-            )}
-          </div>
+                <>
+                    <div className="blog-grid">
+                        {blogPosts.length > 0 ? (
+                            blogPosts.map(post => (
+                                <BlogCard key={post.id} post={formatPostData(post)} />
+                            ))
+                        ) : (
+                            <p style={{textAlign: 'center', gridColumn: '1/-1', color: '#666', padding: '20px'}}>
+                                Chưa có bài viết nào trong danh mục này.
+                            </p>
+                        )}
+                    </div>
 
-          {/* Phân trang */}
-          <div className="pagination">
-            <button className="pagination-btn disabled"><i className="fas fa-chevron-left"></i></button>
-            <button className="pagination-btn active">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <span className="pagination-ellipsis">...</span>
-            <button className="pagination-btn"><i className="fas fa-chevron-right"></i></button>
-          </div>
+                    {/* Phân trang - Sử dụng dữ liệu từ Server (totalPages) */}
+                    {totalPages > 1 && (
+                        <div className="pagination">
+                            {/* Nút Previous */}
+                            <button 
+                                className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                                onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <i className="fas fa-chevron-left"></i>
+                            </button>
+
+                            {/* Render số trang */}
+                            {[...Array(totalPages)].map((_, index) => {
+                                const pageNum = index + 1;
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                                        onClick={() => handlePageChange(pageNum)}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                );
+                            })}
+
+                            {/* Nút Next */}
+                            <button 
+                                className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                                onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <i className="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
       </section>
     </div>
