@@ -10,7 +10,15 @@ const CreateRecipe = () => {
   const [difficult_data, setDiffData] = useState(null);
   const [ingredients_data, setIngredientsData] = useState(null);
   const [categories_data, setCategoriesData] = useState([]);
- const navigate = useNavigate();
+  const [aiLoading, setAiLoading] = useState({});
+  const GOC_API_KEY = process.env.REACT_APP_GROQ_API_KEY
+  //Hàm chuyển ảnh về máy
+  const urlToFile = async (url, filename, mimeType) => {
+    const res = await fetch(url);
+    const buf = await res.arrayBuffer();
+    return new File([buf], filename, { type: mimeType });
+  };
+  const navigate = useNavigate();
   // Lấy cấu hình chung
   useEffect(() => {
     fetch(api + 'get-event-region')
@@ -30,15 +38,15 @@ const CreateRecipe = () => {
 
   // --- STATE ---
   const [formData, setFormData] = useState({
-    name: '', 
-    description: '', 
-    time: '', 
+    name: '',
+    description: '',
+    time: '',
     serving: '',
     recipe_category_id: '',
     region_id: '',
     difficulty_id: '',
     event_id: '',
-    mainImage: null, 
+    mainImage: null,
     mainImagePreview: null,
   });
 
@@ -55,6 +63,95 @@ const CreateRecipe = () => {
       videoUrl: ''
     }
   ]);
+  // --- XỬ LÝ AI "MAGIC" ---
+  const handleAiSuggestIngredient = async (id, keyword) => {
+    if (!keyword || keyword.length < 2) {
+      alert("Vui lòng nhập tên nguyên liệu để AI gợi ý!");
+      return;
+    }
+
+    setAiLoading(prev => ({ ...prev, [id]: true }));
+
+    try {
+      const response = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${GOC_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            messages: [
+              {
+                role: "system",
+                content: "Chỉ trả về JSON, không giải thích"
+              },
+              {
+                role: "user",
+                content: `Với nguyên liệu "${keyword}", hãy trả về JSON:
+{
+  "vietnamese_name": "Tên tiếng Việt chuẩn",
+  "english_name": "Tên tiếng Anh (1 từ duy nhất)",
+  "unit": "Gram/Cái/Ml"
+}`
+              }
+            ],
+            temperature: 0.2
+          })
+        }
+      );
+
+      const result = await response.json();
+
+      if (!result.choices) {
+        throw new Error("Groq không trả dữ liệu");
+      }
+
+      let text = result.choices[0].message.content;
+
+      const jsonStr = text.match(/\{[\s\S]*\}/)?.[0];
+      if (!jsonStr) throw new Error("AI không trả JSON hợp lệ");
+
+      const data = JSON.parse(jsonStr);
+
+      const imageUrl = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(data.english_name)}.png`;
+
+      setIngredients(prev =>
+        prev.map(ing =>
+          ing.id === id
+            ? {
+              ...ing,
+              name: data.vietnamese_name,
+              unit: data.unit || "Gram",
+              imagePreview: imageUrl
+            }
+            : ing
+        )
+      );
+
+      const file = await urlToFile(
+        imageUrl,
+        `${data.english_name}.png`,
+        "image/png"
+      );
+
+      if (file) {
+        setIngredients(prev =>
+          prev.map(ing =>
+            ing.id === id ? { ...ing, image: file } : ing
+          )
+        );
+      }
+
+    } catch (error) {
+      console.error("AI ERROR:", error);
+      alert("AI lỗi: " + error.message);
+    } finally {
+      setAiLoading(prev => ({ ...prev, [id]: false }));
+    }
+  };
 
   // --- HANDLERS ẢNH BÌA ---
   const handleMainImageChange = (e) => {
@@ -163,9 +260,9 @@ const CreateRecipe = () => {
       const result = await response.json();
       if (response.ok && result.success) {
         alert("Đăng công thức thành công!");
-         navigate('/cong-thuc', { 
-       state: { refresh: true } 
-  });
+        navigate('/cong-thuc', {
+          state: { refresh: true }
+        });
       } else {
         console.error("Lỗi Validation:", result.errors);
         alert("Có lỗi xảy ra: " + (result.message || "Vui lòng kiểm tra lại dữ liệu"));
@@ -179,7 +276,7 @@ const CreateRecipe = () => {
   return (
     <div className="create-recipe-wrapper">
       <div className="container">
-        <Link to="/recipes" className="back-link">
+        <Link to="/cong-thuc" className="back-link">
           <i className="fas fa-arrow-left"></i> Quay lại danh sách
         </Link>
         <h1 className="page-title">Tạo Công Thức Mới</h1>
@@ -255,45 +352,31 @@ const CreateRecipe = () => {
               </div>
             </div>
 
-            {/* 2. NGUYÊN LIỆU */}
+            {/* NGUYÊN LIỆU (ĐÃ TÍCH HỢP AI) */}
             <div className="form-section">
-              <h2 className="section-title"><i className="fas fa-carrot"></i> Nguyên Liệu</h2>
-              {/* Datalist gợi ý cho Tên và Đơn vị */}
-              <datalist id="ingredient-list">
-                {ingredients_data?.map((item) => (<option key={item.id} value={item.name} />))}
-              </datalist>
-              <datalist id="unit-list">
-                <option value="Gram" /><option value="Ml" /><option value="Cái" /><option value="Thìa cà phê" /><option value="Thìa canh" /><option value="Quả" /><option value="Bát" />
-              </datalist>
-
+              <h2 className="section-title">Nguyên Liệu</h2>
               {ingredients.map(ing => (
                 <div className="ingredient-item" key={ing.id}>
                   <div className="ingredient-input">
                     <label className="form-label required">Tên</label>
-                    <input type="text" className="form-control" list="ingredient-list" value={ing.name} onChange={e => handleIngredientChange(ing.id, 'name', e.target.value)} required />
+                    <div style={{ display: 'flex', gap: '5px' }}>
+                      <input type="text" className="form-control" value={ing.name} onChange={e => handleIngredientChange(ing.id, 'name', e.target.value)} placeholder="VD: thit bo..." required />
+                      {/* NÚT MAGIC */}
+                      <button type="button" className="btn-ai-suggest" onClick={() => handleAiSuggestIngredient(ing.id, ing.name)} disabled={aiLoading[ing.id]}
+                        style={{ background: 'linear-gradient(45deg, #8e2de2, #4a00e0)', color: 'white', border: 'none', borderRadius: '4px', width: '45px', cursor: 'pointer' }}>
+                        {aiLoading[ing.id] ? <i className="fas fa-spinner fa-spin"></i> : <i className="fas fa-magic"></i>}
+                      </button>
+                    </div>
                   </div>
-                  <div className="quantity-input">
-                    <label className="form-label required">SL</label>
-                    <input type="number" className="form-control" value={ing.quantity} onChange={e => handleIngredientChange(ing.id, 'quantity', e.target.value)} required />
-                  </div>
-                  <div className="unit-select">
-                    <label className="form-label required">Đơn vị</label>
-                    {/* SỬA ĐỔI: Sử dụng input list để người dùng có thể nhập tự do */}
-                    <input type="text" className="form-control" list="unit-list" value={ing.unit} onChange={e => handleIngredientChange(ing.id, 'unit', e.target.value)} placeholder="Nhập đơn vị..." required />
-                  </div>
+                  <div className="quantity-input"><label>SL</label><input type="number" className="form-control" value={ing.quantity} onChange={e => handleIngredientChange(ing.id, 'quantity', e.target.value)} required /></div>
+                  <div className="unit-select"><label>Đơn vị</label><input type="text" className="form-control" value={ing.unit} onChange={e => handleIngredientChange(ing.id, 'unit', e.target.value)} required /></div>
+
+                  {/* ẢNH (AI SẼ TỰ ĐIỀN VÀO ĐÂY) */}
                   <div className="ingredient-image-section">
-                    <label className="form-label">Ảnh</label>
-                    {ing.imagePreview ? (
-                      <div className="ingredient-image-preview-box">
-                        <img src={ing.imagePreview} alt="Ing" />
-                        <button type="button" className="remove-ingredient-image" onClick={() => removeIngredientImage(ing.id)}><i className="fas fa-times"></i></button>
-                      </div>
-                    ) : (
-                      <div className="ingredient-image-upload" onClick={() => document.getElementById(`ingImg-${ing.id}`).click()}>
-                        <i className="fas fa-camera"></i>
-                        <input type="file" id={`ingImg-${ing.id}`} hidden accept="image/*" onChange={(e) => handleIngredientImage(ing.id, e)} />
-                      </div>
-                    )}
+                    {ing.imagePreview ?
+                      <div className="ingredient-image-preview-box"><img src={ing.imagePreview} alt="" /><button type="button" onClick={() => removeIngredientImage(ing.id)}>×</button></div>
+                      : <div className="ingredient-image-upload" onClick={() => document.getElementById(`ingImg-${ing.id}`).click()}><i className="fas fa-camera"></i><input type="file" id={`ingImg-${ing.id}`} hidden onChange={(e) => handleIngredientImage(ing.id, e)} /></div>
+                    }
                   </div>
                   <button type="button" className="remove-ingredient" onClick={() => removeIngredient(ing.id)}><i className="fas fa-trash"></i></button>
                 </div>
@@ -317,7 +400,7 @@ const CreateRecipe = () => {
                     <div className="step-media-wrapper">
                       <div className="media-tabs">
                         <div className={`media-tab ${step.mediaType === 'image' ? 'active' : ''}`} onClick={() => handleStepMediaTypeChange(step.id, 'image')}><i className="fas fa-images"></i> Ảnh</div>
-                        
+
                       </div>
                       {step.mediaType === 'image' ? (
                         <div className="step-images-list">

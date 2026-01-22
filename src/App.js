@@ -26,6 +26,9 @@ import Login from './pages/login';
 import AdminLogin from './pages/admin/AdminLogin';
 import RecipeUpdate from './pages/recipes/update_recipe';
 import HomePage from './pages/home/HomePage';
+import RecipeDetailReport from './pages/recipes/detail_recipe_report';
+import RecipeApproval from './pages/admin/ManageRecipes/approve_recipe';
+import RecipeDuyet from './pages/recipes/duyet';
 function App() {
   return (
     <AuthProvider>
@@ -62,8 +65,12 @@ function App() {
             <Route index element={<DashboardBody />} />
             <Route path="config" element={<ConfigBody />} />
             <Route path="report" element={<ReportBody />} />
+            <Route path="approve/:id" element={< RecipeDuyet />} />
+
             <Route path="cong-thuc" element={<RecipeManagement />} />
-            <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
+           
+            <Route path="report/:id" element={<RecipeDetailReport/>} />
+            <Route path="approve" element={<RecipeApproval/>} />
             <Route path="categories" element={<CategoryManagement/>} />
           </Route>
           <Route path="*" element={<div className="text-center mt-5">404 - Trang không tồn tại</div>} />

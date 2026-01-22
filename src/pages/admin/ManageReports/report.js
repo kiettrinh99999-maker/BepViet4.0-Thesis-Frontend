@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import './Report.css';
 import { useAuth } from "../../../contexts/Authen";
-
+import { useNavigate } from 'react-router-dom';
 const ReportBody = () => {
   // 1. STATE MANAGEMENT
   const [recipesReport, setRecipesReport] = useState([]); // Dữ liệu báo cáo
   const [loading, setLoading] = useState(true);           // Trạng thái loading
-
+const navigate = useNavigate();
   // State cho bộ lọc
   const [filters, setFilters] = useState({
     status: 'all',
     date: ''
   });
-
+  //Xem chi tiết
+  const handleViewReportDetail = (reportId, recipeId) => {
+    navigate(`/admin/report/${reportId}`, {
+      state: { recipeId: recipeId } // Có thể truyền thêm data nếu cần
+    });
+  };
   // State cho phân trang
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -243,7 +248,7 @@ const ReportBody = () => {
                           onClick={() => {
                             // Logic chuyển hướng trang xem chi tiết ở đây
                             console.log("Chuyển đến trang chi tiết bài viết:", item.recipe_id);
-                            // nav(`/recipes/${item.recipe_id}`); 
+                            navigate(`${item.id}`); 
                           }}
                         >
                           <i className="fas fa-eye"></i>
