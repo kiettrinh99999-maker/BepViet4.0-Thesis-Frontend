@@ -5,19 +5,34 @@ import { useAuth } from '../../../contexts/Authen';
 export default function RecipeManagement(){
   const [recipes, setRecipes] = useState(null);
   const [page, setPage] = useState(1);
-  const [regionId, setRegionId] = useState('');
-  const [eventId, setEventId] = useState('');
-  const {api, renderDate, store} = useAuth();
-  useEffect(() => {
-    // Gọi API lấy danh sách question theo page
-    fetch(`${api}recipes?page=${page}`)
-      .then(res => res.json())
-      .then(res => {
-        setRecipes(res.data);
-      });
-  }, [page, api]);
+  // State dùng để fetch API
+const [regionId, setRegionId] = useState("");
+const [eventId, setEventId] = useState("");
 
-  const renderStatus = (status) => {
+// State tạm khi người dùng chọn
+const [tmpRegionId, setTmpRegionId] = useState("");
+const [tmpEventId, setTmpEventId] = useState("");
+  const {api, renderDate, store} = useAuth();
+  
+  useEffect(() => {
+  let url = `${api}recipes?page=${page}`;
+
+  if (regionId) {
+    url += `&region_id=${regionId}`;
+  }
+
+  if (eventId) {
+    url += `&event_id=${eventId}`;
+  }
+
+  fetch(url)
+    .then(res => res.json())
+    .then(res => {
+      setRecipes(res.data);
+    });
+}, [page, api, regionId, eventId]);
+
+  function renderStatus(status){
     switch (status) {
       case 'pending':
         return <span className="badge badge-pending status-pending ">Chờ duyệt</span>;
@@ -30,7 +45,7 @@ export default function RecipeManagement(){
     }
   };
 
-    const renderEvent = (event) => {
+    function renderEvent(event){
     switch (event) {
       case 'Tết Nguyên Đán':
         return <span className="event-badge event-tet">Tết Nguyên Đán</span>;
@@ -49,7 +64,7 @@ export default function RecipeManagement(){
     }
   };
 
-  const renderRegion = (regionName) => {
+  function renderRegion(regionName){
     switch (regionName) {
       case 'Miền Bắc':
         return (
@@ -109,22 +124,47 @@ export default function RecipeManagement(){
         <div className="filter-row">
           <div className="filter-group">
             <label>Vùng miền</label>
-            <select>
+            {/* <select
+              value={tmpRegionId}
+              onChange={(e) => setTmpRegionId(e.target.value)}
+            >
               <option value="all">Tất cả</option>
               <option value="Miền Bắc">Miền Bắc</option>
               <option value="Miền Trung">Miền Trung</option>
               <option value="Miền Nam">Miền Nam</option>
+            </select> */}
+            <select
+              value={tmpRegionId}
+              onChange={(e) => setTmpRegionId(e.target.value)}
+            >
+              <option value="">Tất cả</option>
+              <option value="1">Miền Bắc</option>
+              <option value="2">Miền Trung</option>
+              <option value="3">Miền Nam</option>
             </select>
           </div>
 
           <div className="filter-group">
             <label>Sự kiện</label>
-            <select>
+            {/* <select
+              value={tmpEventId}
+              onChange={(e) => setTmpEventId(e.target.value)}
+            >
               <option value="all">Tất cả</option>
               <option value="Tết Nguyên Đán">Tết Nguyên Đán</option>
               <option value="Giáng sinh">Giáng sinh</option>
               <option value="Sinh nhật">Sinh nhật</option>
               <option value="Tiệc BBQ">Tiệc BBQ</option>
+            </select> */}
+            <select
+              value={tmpEventId}
+              onChange={(e) => setTmpEventId(e.target.value)}
+            >
+              <option value="">Tất cả</option>
+              <option value="1">Tết Nguyên Đán</option>
+              <option value="2">Giáng sinh</option>
+              <option value="3">Sinh nhật</option>
+              <option value="4">Tiệc BBQ</option>
             </select>
           </div>
 
@@ -134,7 +174,11 @@ export default function RecipeManagement(){
           </div>
         </div>
 
-        <div className="filter-buttons">
+        <div className="filter-buttons" onClick={() => {
+          setRegionId(tmpRegionId);
+          setEventId(tmpEventId);
+          setPage(1);
+        }}>
           <button className="filter-btn btn-primary" >
             Áp dụng
           </button>

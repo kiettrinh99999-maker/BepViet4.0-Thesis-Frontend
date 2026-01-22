@@ -40,8 +40,13 @@ const imageUrl=store+data_config.image_path
         {/* Sidebar chỉ hiển thị khi showSidebar = true */}
         {showSidebar && (
         <aside
-            className="col-12 col-lg-2 text-white p-0"
-            style={{ backgroundColor: "#2c3e50", minHeight: "100vh"}}
+            className="col-12 col-lg-2 text-white p-0 position-fixed top-0 start-0"
+            style={{
+    backgroundColor: "#2c3e50",
+    height: "100vh",
+    width: "16.666667%", // tương đương col-lg-2
+    zIndex: 1000
+  }}
         >
             <div className="text-center py-4 border-bottom border-secondary">
                 <div className="d-flex align-items-center justify-content-center gap-2">
@@ -78,7 +83,10 @@ const imageUrl=store+data_config.image_path
         )}
 
         {/* Right container */}
-        <div className={showSidebar ? "col-lg-10 col-12 p-0 d-flex flex-column" : "col-12 p-0 d-flex flex-column"}>
+        <div
+          className={showSidebar ? "col-lg-10 col-12 p-0 d-flex flex-column" : "col-12 p-0"}
+          style={{ marginLeft: showSidebar ? "16.666667%" : "0" }}
+        >
         
           {/* Main content */}
           <main className="flex-grow-1">

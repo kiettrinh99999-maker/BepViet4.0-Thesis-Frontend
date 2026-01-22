@@ -20,6 +20,7 @@ import BlogPage from './pages/blogs/list_blog';
 import ReportBody from './pages/admin/ManageReports/report';
 import RecipeManagement from './pages/admin/ManageRecipes/list_recipe';
 import RecipeDetail from './pages/recipes/detail_recipe';
+import CategoryManagement from './pages/admin/ManageCategories/magage_category';
 function App() {
   return (
     <AuthProvider>
@@ -54,6 +55,7 @@ function App() {
             <Route path="report" element={<ReportBody />} />
             <Route path="cong-thuc" element={<RecipeManagement />} />
             <Route path="approve" element={<h1>Trang duyệt công thức</h1>} />
+            <Route path="categories" element={<CategoryManagement/>} />
           </Route>
         </Routes>
       </BrowserRouter>
