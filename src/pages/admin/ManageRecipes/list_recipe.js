@@ -7,7 +7,7 @@ const API_URL = "http://localhost:8000/";
 export default function RecipeManagement(){
   const [recipes, setRecipes] = useState(null);
   const [page, setPage] = useState(1);
-  const {api, renderDate} = useAuth();
+  const {api, renderDate, store} = useAuth();
   useEffect(() => {
     // Gọi API lấy danh sách question theo page
     fetch(`${api}recipes?page=${page}`)
@@ -110,36 +110,28 @@ export default function RecipeManagement(){
         <div className="filter-row">
           <div className="filter-group">
             <label>Vùng miền</label>
-            <select
-              
-            >
+            <select>
               <option value="all">Tất cả</option>
-              <option value="north">Miền Bắc</option>
-              <option value="central">Miền Trung</option>
-              <option value="south">Miền Nam</option>
+              <option value="Miền Bắc">Miền Bắc</option>
+              <option value="Miền Trung">Miền Trung</option>
+              <option value="Miền Nam">Miền Nam</option>
             </select>
           </div>
 
           <div className="filter-group">
             <label>Sự kiện</label>
-            <select
-              
-              
-            >
+            <select>
               <option value="all">Tất cả</option>
-              <option value="tet">Tết</option>
-              <option value="midautumn">Trung thu</option>
-              <option value="normal">Ngày thường</option>
+              <option value="Tết Nguyên Đán">Tết Nguyên Đán</option>
+              <option value="Giáng sinh">Giáng sinh</option>
+              <option value="Sinh nhật">Sinh nhật</option>
+              <option value="Tiệc BBQ">Tiệc BBQ</option>
             </select>
           </div>
 
           <div className="filter-group">
             <label>Ngày đăng từ</label>
-            <input
-              type="date"
-              
-              
-            />
+            <input type="date"/>
           </div>
         </div>
 
@@ -174,7 +166,7 @@ export default function RecipeManagement(){
               <tr key={recipe.id}>
                 <td>
                   <div className="recipe-info-cell">
-                    <img src={`${API_URL}storage/${recipe.image_path}` ?? "/placeholder.png"} className="recipe-image" />
+                    <img src={`${store}${recipe.image_path}` ?? "/placeholder.png"} className="recipe-image" />
                     <div>
                       <h4>{recipe.title}</h4>
                       <p>Độ khó: {recipe.difficulty.name}</p>

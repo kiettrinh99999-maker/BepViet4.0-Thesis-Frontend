@@ -3,14 +3,12 @@ import { useAuth } from "../../contexts/Authen";
 import { useParams, useNavigate } from "react-router";
 import AnswerItem from "../../components/Forums/AnswerItem";
 
-const API_URL = "http://localhost:8000/";
-
 export default function ForumDetailPage(){
     const {id} = useParams();
     const [question, setQuestion] = useState(null);
     const [answers, setAnswers] = useState(null);
     const navigate = useNavigate();
-    const {user, api, renderDate} = useAuth();
+    const {user, api, store, renderDate } = useAuth();
     useEffect(() => {
         fetch(`${api}questions/${id}`)
             .then(res => res.json())
@@ -83,7 +81,7 @@ export default function ForumDetailPage(){
                 <div className="mb-4">
                     <p className="mb-3">{question.description}</p>
                     <img 
-                    src={`${API_URL}storage/${question.image_path}` ?? "/placeholder.png"}
+                    src={`${store}${question.image_path}` ?? "/placeholder.png"}
                     alt={question.title}
                     className="img-fluid rounded mb-3"
                     style={{ maxHeight: '400px', objectFit: 'cover', width: '100%' }}
